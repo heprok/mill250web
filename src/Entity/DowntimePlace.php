@@ -31,7 +31,7 @@ class DowntimePlace
     private int $id;
 
     /**
-     * @ORM\Column(type="string", length=128,
+     * @ORM\Column(type="string", length=128, name="text",
      *      options={"comment":"Название места"})
      * @Groups({"downtime_place:read", "downtime_place:write", "downtime:read"})
      */

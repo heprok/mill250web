@@ -1,7 +1,14 @@
 doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
-
+        types:
+            bnom: App\Doctrine\Type\BnomType
+            bnom[]: App\Doctrine\Type\BnomArrayType
+            bcut: App\Doctrine\Type\BnomArrayType
+            docdatetime: App\Doctrine\Type\DoctrineDateTimeType
+        mapping_types:
+            _bnom: bnom
+            bnom[]: array
         # IMPORTANT: You MUST configure your server version,
         # either here or in the DATABASE_URL env var (see .env file)
         #server_version: '5.7'
