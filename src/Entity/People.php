@@ -28,21 +28,21 @@ class People
     private int $id;
 
     /**
-     * @ORM\Column(type="string", length=30)
+     * @ORM\Column(type="string", length=30,
      *      options={"comment":"Фамилия"})
      * @Groups({"people:write", "people:read", "shift:read"})
      */
     private string $fam;
 
     /**
-     * @ORM\Column(type="string", length=30, nullable=true)
+     * @ORM\Column(type="string", length=30, nullable=true,
      *      options={"comment":"Имя"})
      * @Groups({"people:write", "people:read", "shift:read"})
      */
     private ?string $nam;
 
     /**
-     * @ORM\Column(type="string", length=30, nullable=true)
+     * @ORM\Column(type="string", length=30, nullable=true,
      *      options={"comment":"Отчество"})
      * @Groups({"people:write", "people:read", "shift:read"})
      */

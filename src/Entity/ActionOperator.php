@@ -28,7 +28,8 @@ class ActionOperator
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=128)
+     * @ORM\Column(type="string", length=128,
+     *      options={"comment":"Название действия"})
      * @Groups({"action_operator:read", "action_operator:write"})
      */
     private $name;

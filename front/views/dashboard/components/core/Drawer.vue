@@ -101,6 +101,11 @@ export default {
             icon: "mdi-gesture-double-tap",
             title: "Действия",
             to: "action",
+          },            
+          {
+            icon: "mdi-shore",
+            title: "Брёвна",
+            to: "timber",
           },          
         ],
       },

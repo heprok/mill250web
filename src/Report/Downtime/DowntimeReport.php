@@ -32,27 +32,43 @@ final class DowntimeReport extends AbstractReport
         return "Отчёт по простоям";
     }
 
+    protected function getColumnTotal(): array
+    {
+        return [
+            $this->labels[5]
+        ];
+    }
+
+    protected function getTextSubTotal(): string
+    {
+        return 'Длительность простоя за день{' . (string)(count($this->getLabels()) - count($this->getColumnTotal())) . '}%0{1}';
+    }
+
+    protected function getTextTotal(): string
+    {
+        return 'Общая продолжительность{' . (string)(count($this->getLabels()) - count($this->getColumnTotal())) . '}%0{1}';
+    }
+
     protected function updateDataset(): bool
     {
         $downtimes = $this->downtimeRepository->findByPeriod($this->getPeriod());
-        if(!$downtimes)
+        if (!$downtimes)
             die('В данный период нет простоев');
         $dataset = new PdfDataset($this->getLabels());
-        
+
         $buff['day'] = '';
-        foreach ($downtimes as $key => $downtime){
-            
+        foreach ($downtimes as $key => $downtime) {
+
             $cause = $downtime->getCause()->getName();
             $place = $downtime->getPlace()->getName();
-            
+
             $startTime = $downtime->getDrec();
             $endTime = $downtime->getFinish();
 
             $duration  = $endTime->diff($startTime, true);
-            
-            if($buff['day'] != $startTime->format('d') && $key != 0)
-            {
-                $dataset->addSubTotal(['Длит-ность'], 'Длительность простоя за день{' . (string)(count($this->getLabels()) - 1). '}%0{1}' );
+
+            if ($buff['day'] != $startTime->format('d') && $key != 0) {
+                $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal());
                 $buff['day'] = $startTime->format('d');
             }
 
@@ -64,14 +80,12 @@ final class DowntimeReport extends AbstractReport
                 $endTime->format(self::FORMAT_DATE_TIME),
                 $duration
             ]);
-
         }
-        $dataset->addSubTotal(['Длит-ность'], 'Длительность простоя за день{' . (string)(count($this->getLabels()) - 1) . '}%0{1}' );
-        $dataset->addTotal(['Длит-ность'], 'Общая продолжительность{' . (string)(count($this->getLabels()) - 1) . '}%0{1}' );
-        
+        $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal());
+        $dataset->addTotal($this->getColumnTotal(), $this->getTextTotal());
 
         $this->addDataset($dataset);
-        
+
         return true;
     }
 }

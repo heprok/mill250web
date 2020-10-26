@@ -33,9 +33,9 @@ class Shift
 
     /**
      * @ORM\Id
-     * @ORM\Column(name="start", type="string")
+     * @ORM\Column(name="start", type="string",
+     *      options={"comment":"Время начала смены"})
      * @ApiProperty(identifier=true)
-     *      options={"comment":"Время начала смены", "default":NOW()}})
      * @Groups({"shift:read"})
      * @ApiFilter(DateFilter::class)
      */
@@ -49,7 +49,7 @@ class Shift
     private $number;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime", nullable=true,
      *      options={"comment":"Окончание смены"})
      * @Groups({"shift:read"})
      */
@@ -157,7 +157,7 @@ class Shift
         $entityManager = $event->getEntityManager();
         $connection = $entityManager->getConnection();
         $platform = $connection->getDatabasePlatform();
-        $this->start = \DateTime::createFromFormat($platform->getDateTimeFormatString(), $this->startTimestampKey);
+        $this->start = \DateTime::createFromFormat($platform->getDateTimeTzFormatString(), $this->startTimestampKey);
     }
 
     public function getPeople(): ?People

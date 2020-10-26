@@ -58,6 +58,11 @@ export default new Router({
           name: 'Действия оператора ',
           path: 'report/action',
           component: () => import('@/views/dashboard/pages/report/event/Action'),
+        },           
+        {
+          name: 'Брёвна',
+          path: 'report/timber',
+          component: () => import('@/views/dashboard/pages/report/Timber'),
         },          
       ],
     },

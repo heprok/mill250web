@@ -15,7 +15,7 @@ abstract class AbstractReport
     const FORMAT_DATE_TIME = 'Y.m.d H:i:s';
 
     private array $datasets = [];
-    private array $labels = [];
+    protected array $labels = [];
     protected DatePeriod $period;
 
     abstract public function getNameReport(): string;

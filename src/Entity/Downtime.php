@@ -31,9 +31,9 @@ class Downtime
 
     /**
      * @ORM\Id
-     * @ORM\Column(name="drec", type="string")
+     * @ORM\Column(name="drec", type="string",
+     *      options={"comment":"Время начала простоя"})
      * @ApiProperty(identifier=true)
-     * options={"comment":"Время начала простоя", "default":NOW()}})
      * @Groups({"downtime:read"})
      */
     private $drecTimestampKey;
@@ -41,7 +41,6 @@ class Downtime
     /**
      * @ORM\ManyToOne(targetEntity=DowntimeCause::class, cascade={"persist", "refresh"})
      * @ORM\JoinColumn(onDelete="SET NULL")
-     * options={"comment":"Причина простоя"}
      * @Groups({"downtime:read"})
      */
     private $cause;
@@ -49,14 +48,13 @@ class Downtime
     /**
      * @ORM\ManyToOne(targetEntity=DowntimePlace::class, cascade={"persist", "refresh"})
      * @ORM\JoinColumn(onDelete="SET NULL")
-     * options={"comment":"Место простоя"}
      * @Groups({"downtime:read"})
      */
     private $place;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
-     * options={"comment":"Время окончания простоя"}
+     * @ORM\Column(type="datetime", nullable=true,
+     *      options={"comment":"Время окончания простоя"})
      * @Groups({"downtime:read"})
      */
     private $finish;
@@ -143,6 +141,6 @@ class Downtime
         $entityManager = $event->getEntityManager();
         $connection = $entityManager->getConnection();
         $platform = $connection->getDatabasePlatform();
-        $this->drec = \DateTime::createFromFormat($platform->getDateTimeFormatString(), $this->drecTimestampKey);
+        $this->drec = \DateTime::createFromFormat($platform->getDateTimeTzFormatString(), $this->drecTimestampKey);
     }
 }

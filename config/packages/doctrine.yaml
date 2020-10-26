@@ -23,3 +23,7 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+        dql:
+            numeric_functions:
+                standard_length: App\Doctrine\Functions\StandardLength
+                volume_timber: App\Doctrine\Functions\VolumeTimber
