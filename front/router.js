@@ -63,6 +63,11 @@ export default new Router({
           name: 'Брёвна',
           path: 'report/timber',
           component: () => import('@/views/dashboard/pages/report/Timber'),
+        },            
+        {
+          name: 'Брёвна',
+          path: 'report/boardfrompostav',
+          component: () => import('@/views/dashboard/pages/report/BoardPostav'),
         },          
       ],
     },

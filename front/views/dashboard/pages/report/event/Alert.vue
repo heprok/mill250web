@@ -10,12 +10,6 @@
 
 <script>
 export default {
-  name: "report_event_alert_dashboard",
-
-  data() {
-    return {};
-  },
-  mounted() {},
-  methods: {},
+  name: "report_event_alert_dashboard"
 };
 </script>
