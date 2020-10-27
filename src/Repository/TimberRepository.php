@@ -27,36 +27,59 @@ class TimberRepository extends ServiceEntityRepository
      * @param DatePeriod $period
      * @return QueryBuilder
      */
-    private function getQueryFromPeriod(DatePeriod $period):QueryBuilder
+    private function getBaseQueryFromPeriod(DatePeriod $period):QueryBuilder
     {
         return $this->createQueryBuilder('t')
-            ->andWhere('t.drecTimestampKey BETWEEN :start AND :end')
-            ->setParameter('start', $period->getStartDate()->format(DATE_ATOM))
-            ->setParameter('end', $period->getEndDate()->format(DATE_ATOM))
-            ->orderBy('t.drecTimestampKey', 'ASC');
+            ->andWhere('t.drec BETWEEN :start AND :end')
+            ->setParameter('start', $period->getStartDate()->format(DATE_RFC3339_EXTENDED))
+            ->setParameter('end', $period->getEndDate()->format(DATE_RFC3339_EXTENDED))
+            ->leftJoin('t.species', 's');
+            // ->orderBy('t.drec', 'ASC');
     }
-
+    
     public function findVolumeTimberByPeriod(DatePeriod $period)
     {
-        $qb = $this->createQueryBuilder('t');
+        $qb = $this->getBaseQueryFromPeriod($period);
         return $qb
             ->select(
-                        's.name',
+                        's.name as name_species',
                         't.diam',
-                        'standard_length(t.length) as length',
+                        'standard_length(t.length) as st_length',
                         'count(1) as count_timber',
                         'sum(volume_timber (t.length, t.diam)) AS volume_boards'
                     )
-            ->leftJoin('t.species', 's')
-            ->andWhere('t.drec BETWEEN :start AND :end')
-            ->groupBy('s.name', 't.diam', 'length' )
-            ->setParameter('start', $period->start->format(DATE_RFC3339_EXTENDED))
-            ->setParameter('end', $period->end->format(DATE_RFC3339_EXTENDED))
-            ->orderBy('s.name, t.diam, length')
+            ->addGroupBy('name_species', 't.diam', 'st_length' )
+            ->addOrderBy('name_species, t.diam, st_length')
+            ->getQuery()
+            ->getResult();
+    }    
+    
+    public function findVolumeTimberFromPostavByPeriod(DatePeriod $period)
+    {
+        $qb = $this->getBaseQueryFromPeriod($period);
+        return $qb
+            ->select(
+                        "CASE WHEN get_json_filed_by_key(p.postav, 'name' ) = '' THEN
+                            get_json_filed_by_key(p.postav, 'name')
+                        ELSE
+                            p.comm
+                        END AS name_postav",
+                        // "p.postav AS name_postav",
+                        "get_json_filed_by_key(p.postav, 'top' ) AS diam_postav",
+                        's.name as name_species',
+                        'standard_length (t.length) AS st_length',
+                        'unnest(t.boards) AS cut',
+                        'count(1) AS count_timber',
+                        'volume_boards (unnest(t.boards), t.length) AS volume_boards'
+                    )
+            ->leftJoin('t.postav', 'p')
+            ->addGroupBy('name_postav', 'diam_postav', 'name_species', 'cut', 'st_length', 'volume_boards' )
+            ->addOrderBy('diam_postav, st_length, name_species')
             ->getQuery()
             ->getResult();
     }
 
+    
     // /**
     //  * @return Timber[] Returns an array of Timber objects
     //  */

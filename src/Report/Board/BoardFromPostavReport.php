@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Report\Timber;
+namespace App\Report\Board;
 
 use App\Dataset\PdfDataset;
 use App\Report\AbstractReport;
 use App\Repository\TimberRepository;
 use DatePeriod;
 
-final class TimberReport extends AbstractReport
+final class BoardFromPostavReport extends AbstractReport
 {
     private TimberRepository $repository;
 
@@ -18,10 +18,12 @@ final class TimberReport extends AbstractReport
         $this->period = $period;
         $this->repository = $repository;
         $this->setLabels([
-            'Порода',
+            'Постав',
             'Диаметр, см',
+            'Порода',
+            'Сечение, мм',
             'Длина, м',
-            'Количество, шт',
+            'Кол-во, шт',
             'Объём, м3',
         ]);
     }
@@ -29,8 +31,8 @@ final class TimberReport extends AbstractReport
     protected function getColumnTotal(): array
     {
         return [
-            $this->labels[3],
-            $this->labels[4]
+            $this->labels[5],
+            $this->labels[6]
         ];
     }
 
@@ -46,37 +48,42 @@ final class TimberReport extends AbstractReport
 
     public function getNameReport(): string
     {
-        return "Отчёт по брёвнам";
+        return "Отчёт из постава по доскам";
     }
 
     protected function updateDataset(): bool
     {
 
-        $timbers = $this->repository->findVolumeTimberByPeriod($this->getPeriod());
+        $timbers = $this->repository->findVolumeTimberFromPostavByPeriod($this->getPeriod());
         if (!$timbers)
             die('В данный период нет брёвен');
         $dataset = new PdfDataset($this->getLabels());
 
-        $buff['diam'] = -1;
+        $buff['diam_postav'] = -1;
         $buff['name_species'] = '';
-
+        $buff['name_postav'] = '';
         foreach ($timbers as $key => $row) {
-
-            $name_species = $row['name_species'];
-            $diam = $row['diam'];
+            $name_postav = $row['name_postav'];
+            $diam_postav = $row['diam_postav'];
+            $name_species = $row['name_species']; 
             $st_length = $row['st_length'];
+            $cut = $row['cut'];
             $count_timber = $row['count_timber'];
             $volume_boards = (float)$row['volume_boards'];
 
-            if (($buff['diam'] != $diam || $buff['name_species'] != $name_species) && $key != 0) {
+            if (( $buff['diam_postav']  != $diam_postav || $buff['name_postav'] != $name_postav || $buff['name_species'] != $name_species) && $key != 0) {
                 $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal($buff['name_species'], $buff['diam']));
             }
 
             $buff['name_species'] = $name_species;
-            $buff['diam'] = $diam;
+            $buff['name_postav'] = $name_postav;
+            $buff['diam'] = $diam_postav;
+
             $dataset->addRow([
-                $name_species,
-                $diam,
+                $name_postav,
+                $diam_postav,
+                $name_species, //мм в м
+                $cut,
                 $st_length / 1000, //мм в м
                 $count_timber,
                 $volume_boards

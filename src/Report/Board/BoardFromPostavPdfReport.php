@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Report\Timber;
+namespace App\Report\Board;
 
 use App\Report\AbstractPdf;
 use App\Report\AbstractReport;
 
-final class TimberPdfReport extends AbstractPdf
+final class BoardFromPostavPdfReport extends AbstractPdf
 {
     public function __construct(AbstractReport $report)
     {
@@ -17,22 +17,22 @@ final class TimberPdfReport extends AbstractPdf
 
     protected function getPointFontHeader(): int
     {
-        return 10;
+        return 6;
     }
 
     protected function getColumnInPrecent(): array
     {
-        return [30, 20, 15, 20, 20];
-    }
-
-    protected function getHeightCell():int
-    {
-        return 10;
+        return [20, 20, 10, 10, 10, 10, 20];
     }
 
     protected function getPointFontText(): int
     {
-        return 10;
+        return 8;
+    }
+    
+    protected function getHeightCell():int
+    {
+        return 5;
     }
 
     public function render()

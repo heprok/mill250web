@@ -14,9 +14,9 @@ final class DowntimePdfReport extends AbstractPdf
     // const POINT_FONT_HEADER = 10;
     // const POINT_FONT_TEXT = 10;
 
-    public function __construct(AbstractReport $actionOperatorEventReport)
+    public function __construct(AbstractReport $report)
     {
-        $this->setReport($actionOperatorEventReport);
+        $this->setReport($report);
         parent::__constructor();
     }
 
@@ -26,6 +26,11 @@ final class DowntimePdfReport extends AbstractPdf
     }
 
     protected function getPointFontText(): int
+    {
+        return 10;
+    }
+    
+    protected function getHeightCell():int
     {
         return 10;
     }
