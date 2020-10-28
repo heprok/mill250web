@@ -54,22 +54,22 @@ class TimberRepository extends ServiceEntityRepository
             ->getResult();
     }    
     
-    public function findVolumeTimberFromPostavByPeriod(DatePeriod $period)
+    public function findVolumeBoardFromPostavByPeriod(DatePeriod $period)
     {
         $qb = $this->getBaseQueryFromPeriod($period);
         return $qb
             ->select(
                         "CASE WHEN get_json_filed_by_key(p.postav, 'name' ) = '' THEN
-                            get_json_filed_by_key(p.postav, 'name')
-                        ELSE
                             p.comm
+                        ELSE
+                            get_json_filed_by_key(p.postav, 'name')
                         END AS name_postav",
                         // "p.postav AS name_postav",
                         "get_json_filed_by_key(p.postav, 'top' ) AS diam_postav",
                         's.name as name_species',
                         'standard_length (t.length) AS st_length',
                         'unnest(t.boards) AS cut',
-                        'count(1) AS count_timber',
+                        'count(1) AS count_board',
                         'volume_boards (unnest(t.boards), t.length) AS volume_boards'
                     )
             ->leftJoin('t.postav', 'p')

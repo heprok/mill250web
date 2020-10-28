@@ -24,7 +24,7 @@ final class BoardFromPostavReport extends AbstractReport
             'Сечение, мм',
             'Длина, м',
             'Кол-во, шт',
-            'Объём, м3',
+            'Объём, м3'
         ]);
     }
 
@@ -54,7 +54,7 @@ final class BoardFromPostavReport extends AbstractReport
     protected function updateDataset(): bool
     {
 
-        $timbers = $this->repository->findVolumeTimberFromPostavByPeriod($this->getPeriod());
+        $timbers = $this->repository->findVolumeBoardFromPostavByPeriod($this->getPeriod());
         if (!$timbers)
             die('В данный период нет брёвен');
         $dataset = new PdfDataset($this->getLabels());
@@ -68,28 +68,29 @@ final class BoardFromPostavReport extends AbstractReport
             $name_species = $row['name_species']; 
             $st_length = $row['st_length'];
             $cut = $row['cut'];
-            $count_timber = $row['count_timber'];
+            $count_board = $row['count_board'];
             $volume_boards = (float)$row['volume_boards'];
 
             if (( $buff['diam_postav']  != $diam_postav || $buff['name_postav'] != $name_postav || $buff['name_species'] != $name_species) && $key != 0) {
-                $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal($buff['name_species'], $buff['diam']));
+                $buff['name_species'] = $name_species;
+                $buff['name_postav'] = $name_postav;
+                $buff['diam_postav'] = $diam_postav;
+                $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal($buff['name_species'], $buff['diam_postav']));
             }
-
-            $buff['name_species'] = $name_species;
-            $buff['name_postav'] = $name_postav;
-            $buff['diam'] = $diam_postav;
+            
 
             $dataset->addRow([
                 $name_postav,
                 $diam_postav,
                 $name_species, //мм в м
-                $cut,
+                str_replace(['(', ')', ','], ['', '', '×'], $cut),
                 $st_length / 1000, //мм в м
-                $count_timber,
+                $count_board,
                 $volume_boards
             ]);
         }
-        $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal($buff['name_species'], $buff['diam']));
+
+        $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal($buff['name_species'], $buff['diam_postav']));
         $dataset->addTotal($this->getColumnTotal(), $this->getTextTotal());
 
 

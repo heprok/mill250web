@@ -33,7 +33,7 @@ abstract class AbstractPdf extends TCPDF
      */
 
     abstract protected function getPointFontText(): int;
-
+    abstract protected function getAlignForColumns():array;
     /**
      * Кегль для шапки
      * @return integer
@@ -161,6 +161,7 @@ abstract class AbstractPdf extends TCPDF
         $count_dataset = count($data);
         $count_labels = count($this->report->getLabels());
         $puntColumns = $this->getPuntForColumns();
+        $alignForColmns = $this->getAlignForColumns();
         // Colors, line width and bold font
         $this->SetFillColor(self::COLOR_GRAY);
         $this->SetTextColor(0);
@@ -186,9 +187,9 @@ abstract class AbstractPdf extends TCPDF
                 if (!in_array($key, $keys_sub_total)) {
                     for ($j = 0; $j < $count_labels; $j++) {
                         if ($row[$j] instanceof DateInterval) {
-                            $this->Cell($puntColumns[$j], $this->getHeightCell(), $row[$j]->format(self::TIME_FORMAT_FOR_INTERVAL), 1, 0, 'C', 0);
+                            $this->Cell($puntColumns[$j], $this->getHeightCell(), $row[$j]->format(self::TIME_FORMAT_FOR_INTERVAL), 1, 0, $alignForColmns[$j], 0);
                         } else {
-                            $this->Cell($puntColumns[$j], $this->getHeightCell(), $row[$j], 1, 0, 'C', 0);
+                            $this->Cell($puntColumns[$j], $this->getHeightCell(), $row[$j], 1, 0, $alignForColmns[$j], 0);
                         }
                     }
                     $this->Ln();
@@ -205,7 +206,7 @@ abstract class AbstractPdf extends TCPDF
                             // $buff['currentColumn'] += $widthColumn;
                             $buff['currentColumn'] += $rowspan;
                         } else {
-                            $this->Cell($this->getPuntForColumns()[$buff['currentColumn'] + $rowspan - 1], $this->getHeightCell(), $text, 1, 0, 'C', 1);
+                            $this->Cell($puntColumns[$buff['currentColumn'] + $rowspan - 1], $this->getHeightCell(), $text, 1, 0, $alignForColmns[$buff['currentColumn'] + $rowspan - 1], 1);
                             $buff['currentColumn'] += $rowspan;
                         }
                     }

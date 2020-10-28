@@ -35,6 +35,11 @@ final class DowntimePdfReport extends AbstractPdf
         return 10;
     }
 
+    protected function getAlignForColumns():array
+    {
+        return ['L', 'C', 'C', 'L', 'C', 'C', 'R'];
+    }
+    
     protected function getColumnInPrecent(): array
     {
         return [5, 15, 15, 25, 25, 15];

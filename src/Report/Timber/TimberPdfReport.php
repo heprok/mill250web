@@ -25,6 +25,11 @@ final class TimberPdfReport extends AbstractPdf
         return [30, 20, 15, 20, 20];
     }
 
+    protected function getAlignForColumns():array
+    {
+        return ['L', 'C', 'C', 'L', 'C', 'C', 'R'];
+    }
+    
     protected function getHeightCell():int
     {
         return 10;
