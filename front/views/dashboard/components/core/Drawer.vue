@@ -108,6 +108,11 @@ export default {
             to: "timber",
           },            
           {
+            icon: "mdi-shore",
+            title: "Брёвна из постава",
+            to: "timberfrompostav",
+          },            
+          {
             icon: "mdi-filter-variant",
             title: "Доски из постава",
             to: "boardfrompostav",
