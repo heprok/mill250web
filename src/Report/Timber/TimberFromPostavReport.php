@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Report\Board;
+namespace App\Report\Timber;
 
 use App\Dataset\PdfDataset;
 use App\Report\AbstractReport;
 use App\Repository\TimberRepository;
 use DatePeriod;
+use DateTime;
 
-final class BoardFromPostavReport extends AbstractReport
+final class TimberFromPostavReport extends AbstractReport
 {
     private TimberRepository $repository;
 
@@ -19,10 +20,11 @@ final class BoardFromPostavReport extends AbstractReport
         $this->repository = $repository;
         $this->setLabels([
             'Постав',
-            'Ø, см',
+            'Ø постава, см',
             'Порода',
-            'Сечение, мм',
-            'Длина, м',
+            'Ø бревна, см',
+            'Начало',
+            'Окончание',
             'Кол-во, шт',
             'Объём, м³'
         ]);
@@ -31,8 +33,8 @@ final class BoardFromPostavReport extends AbstractReport
     protected function getColumnTotal(): array
     {
         return [
-            $this->labels[5],
-            $this->labels[6]
+            $this->labels[6],
+            $this->labels[7]
         ];
     }
 
@@ -48,12 +50,13 @@ final class BoardFromPostavReport extends AbstractReport
 
     public function getNameReport(): string
     {
-        return "Отчёт из постава по доскам";
+        return "Отчёт из постава по брёвнам";
     }
 
     protected function updateDataset(): bool
     {
-        $timbers = $this->repository->findVolumeBoardFromPostavByPeriod($this->getPeriod());
+
+        $timbers = $this->repository->findVolumeTimberFromPostavByPeriod($this->getPeriod());
         if (!$timbers)
             die('В данный период нет брёвен');
         $dataset = new PdfDataset($this->getLabels());
@@ -61,14 +64,16 @@ final class BoardFromPostavReport extends AbstractReport
         $buff['diam_postav'] = -1;
         $buff['name_species'] = '';
         $buff['name_postav'] = '';
+
         foreach ($timbers as $key => $row) {
             $name_postav = $row['name_postav'];
             $diam_postav = $row['diam_postav'];
             $name_species = $row['name_species']; 
-            $st_length = $row['st_length'];
-            $cut = $row['cut'];
-            $count_board = $row['count_board'];
-            $volume_boards = (float)$row['volume_boards'];
+            $diam_timber = $row['diam_timber'];
+            $count_timber = $row['count_timber'];
+            $volume_timber = (float)$row['volume_timber'];
+            $date_start_postav = DateTime::createFromFormat(self::FORMAT_DATE_FROM_DB, $row['start_date']);
+            $date_end_postav = DateTime::createFromFormat(self::FORMAT_DATE_FROM_DB, $row['end_date']);
 
             if (( $buff['diam_postav']  != $diam_postav || $buff['name_postav'] != $name_postav || $buff['name_species'] != $name_species) && $key != 0) {
                 $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal($buff['name_postav'], $buff['diam_postav']));
@@ -76,20 +81,22 @@ final class BoardFromPostavReport extends AbstractReport
             $buff['name_species'] = $name_species;
             $buff['name_postav'] = $name_postav;
             $buff['diam_postav'] = $diam_postav;
-            
+
             $dataset->addRow([
                 $name_postav,
                 $diam_postav,
                 $name_species, //мм в м
-                str_replace(['(', ')', ','], ['', '', '×'], $cut),
-                $st_length / 1000, //мм в м
-                $count_board,
-                $volume_boards
+                $diam_timber,
+                $date_start_postav->format(self::FORMAT_DATE_TIME),
+                $date_end_postav->format(self::FORMAT_DATE_TIME),
+                $count_timber,
+                $volume_timber
             ]);
         }
 
         $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal($buff['name_postav'], $buff['diam_postav']));
         $dataset->addTotal($this->getColumnTotal(), $this->getTextTotal());
+
 
         $this->addDataset($dataset);
 

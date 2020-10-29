@@ -15,10 +15,11 @@ abstract class AbstractPdf extends TCPDF
     const DATE_FORMAT = 'Y.m.d H:i:s';
     const TIME_FORMAT_FOR_INTERVAL = '%H:%I:%S';
     const DATE_FORMAT_FOR_DOWNLOAD = 'Y-m-d H:i';
-    const REG_EXP_FOR_TOTAL = '/([а-яА-Яёa-zA-Z\s\d\(\)\.\:\,]+){(\d)}/um';
+    const REG_EXP_FOR_TOTAL = '/([а-яА-Я\_\№ё\-a-zA-Z\s\d\(\)\.\:\,]+){(\d)}/um';
     const MARGIN_LEFT = 20;
     const MARGIN_TOP = 20;
     const WIDTH_LOGO = 14;
+    const PRECISION_FOR_FLOAT = 3;
 
     /**
      * Задаёт размеры для столбца, указывать в процентах
@@ -76,10 +77,24 @@ abstract class AbstractPdf extends TCPDF
 
         foreach ($this->getColumnInPrecent() as $widthColumn) {
             $widthColumnsInPunt[] = ($this->getPageWidth() - self::MARGIN_LEFT - self::MARGIN_LEFT) * $widthColumn / 100;
+            // dump($widthColumn / 100);
+            // dump(($this->getPageWidth() - self::MARGIN_LEFT - self::MARGIN_LEFT) * $widthColumn / 100);
         }
-
+        // dd($widthColumnsInPunt);
         return $widthColumnsInPunt;
     }
+
+
+    protected function getWidthColumnForSpan(int $rowspan): int
+    {
+        $puntColumns = $this->getPuntForColumns();
+        $result = 0;
+        for ($i = 0; $i < $rowspan; $i++) {
+            $result += $puntColumns[$i];
+        }
+        return $result;
+    }
+
 
     public function render()
     {
@@ -139,16 +154,6 @@ abstract class AbstractPdf extends TCPDF
         return $this->report->getNameReportTranslit() . '_' . $this->report->getPeriod()->getStartDate()->format(self::DATE_FORMAT_FOR_DOWNLOAD) . '.pdf';
     }
 
-    protected function getWidthColumnForSpan(int $rowspan): int
-    {
-        $puntColumns = $this->getPuntForColumns();
-        $result = 0;
-        for ($i = 0; $i < $rowspan; $i++) {
-            $result += $puntColumns[$i];
-        }
-        return $result;
-    }
-
     /**
      * Рисует данные в таблице
      *
@@ -179,7 +184,7 @@ abstract class AbstractPdf extends TCPDF
         $this->SetTextColor(0);
         $this->SetFont('', '', $this->getPointFontText());
         // Data
-        $fill = 0;
+        // $fill = 0;
         for ($i = 0; $i < $count_dataset; $i++) {
             $keys_sub_total = $data[$i]->getKeysSubTotal();
             $data = $data[$i]->getData();
@@ -188,6 +193,8 @@ abstract class AbstractPdf extends TCPDF
                     for ($j = 0; $j < $count_labels; $j++) {
                         if ($row[$j] instanceof DateInterval) {
                             $this->Cell($puntColumns[$j], $this->getHeightCell(), $row[$j]->format(self::TIME_FORMAT_FOR_INTERVAL), 1, 0, $alignForColmns[$j], 0);
+                        } elseif(is_float($row[$j])){
+                            $this->Cell($puntColumns[$j], $this->getHeightCell(), number_format($row[$j], self::PRECISION_FOR_FLOAT), 1, 0, $alignForColmns[$j], 0);
                         } else {
                             $this->Cell($puntColumns[$j], $this->getHeightCell(), $row[$j], 1, 0, $alignForColmns[$j], 0);
                         }
@@ -201,7 +208,7 @@ abstract class AbstractPdf extends TCPDF
                         $rowspan = $match[2];
                         $text = $match[1];
                         if ($rowspan >= 2) {
-                            $widthColumn = $this->getWidthColumnForSpan((int)$rowspan);
+                            $widthColumn = $this->getWidthColumnForSpan($rowspan);
                             $this->Cell($widthColumn, $this->getHeightCell(), $text, 1, 0, 'R', 1);
                             // $buff['currentColumn'] += $widthColumn;
                             $buff['currentColumn'] += $rowspan;
@@ -213,9 +220,9 @@ abstract class AbstractPdf extends TCPDF
                     $this->Ln();
                 }
             }
-            $this->setPage(1);
-            $this->SetY(self::MARGIN_LEFT + 10);
+            // $this->setPage(1);
+            // $this->SetY(self::MARGIN_LEFT + 10);
         }
-        $this->Cell(array_sum($puntColumns), 0, '', 'T');
+        // $this->Cell(array_sum($puntColumns), 0, '', 'T');
     }
 }

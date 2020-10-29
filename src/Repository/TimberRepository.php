@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Timber;
 use DatePeriod;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -48,8 +49,8 @@ class TimberRepository extends ServiceEntityRepository
                         'count(1) as count_timber',
                         'sum(volume_timber (t.length, t.diam)) AS volume_boards'
                     )
-            ->addGroupBy('name_species', 't.diam', 'st_length' )
             ->addOrderBy('name_species, t.diam, st_length')
+            ->addGroupBy('name_species', 't.diam', 'st_length' )
             ->getQuery()
             ->getResult();
     }    
@@ -79,6 +80,63 @@ class TimberRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findVolumeTimberFromPostavByPeriod(DatePeriod $period)
+    {
+        $sql = 
+        "SELECT
+            max(CASE WHEN p.postav->>'name' = '' THEN
+                p.comm
+            ELSE
+                p.postav->>'name'
+            END) AS name_postav,
+            p.postav->>'top' AS diam_postav,
+            s.name AS name_species,
+            diam as diam_timber,
+            max(o.min_date) AS start_date,
+            max(o.max_date) AS end_date,
+            count(1) AS count_timber,
+            sum(mill.volume_timber (length, diam)) AS volume_timber
+        FROM
+            mill.timber t
+            LEFT JOIN mill.postav AS p ON (t.postav_id = p.id)
+            LEFT JOIN dic.species AS s ON (t.species_id = s.id)
+        LEFT JOIN (
+            SELECT
+                COALESCE(postav_id, - 1) AS postav_id,
+                COALESCE(species_id, '_-') AS species_id,
+                min(t.drec) AS min_date,
+                max(t.drec) AS max_date
+            FROM
+                mill.timber t
+            WHERE 
+                t.drec BETWEEN :start AND :end
+            GROUP BY
+                t.postav_id,
+                t.species_id
+            ) AS o 
+            ON COALESCE(t.postav_id, - 1) = o.postav_id
+            AND COALESCE(t.species_id, '_-') = o.species_id
+        WHERE 
+            t.drec BETWEEN :start AND :end
+        GROUP BY
+            t.postav_id,
+            diam_postav,
+            name_species,
+            diam_timber
+        ORDER BY
+            t.postav_id,
+            diam_postav,
+            name_species,
+            diam_timber
+        ";        
+        $params = [
+            'start' => $period->getStartDate()->format(DATE_RFC3339_EXTENDED),
+            'end' => $period->getEndDate()->format(DATE_RFC3339_EXTENDED),
+        ];
+        $query = $this->getEntityManager()->getConnection()->prepare($sql);
+        $query->execute($params);        
+        return $query->fetchAllAssociative();
+    }
     
     // /**
     //  * @return Timber[] Returns an array of Timber objects

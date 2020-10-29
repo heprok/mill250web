@@ -19,10 +19,10 @@ final class TimberReport extends AbstractReport
         $this->repository = $repository;
         $this->setLabels([
             'Порода',
-            'Диаметр, см',
+            'Ø, см',
             'Длина, м',
-            'Количество, шт',
-            'Объём, м3',
+            'Кол-во, шт',
+            'Объём, м³',
         ]);
     }
 

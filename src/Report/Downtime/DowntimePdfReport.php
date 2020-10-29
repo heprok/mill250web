@@ -22,27 +22,28 @@ final class DowntimePdfReport extends AbstractPdf
 
     protected function getPointFontHeader(): int
     {
-        return 10;
+        return 8;
     }
 
     protected function getPointFontText(): int
     {
-        return 10;
+        return 8;
     }
     
     protected function getHeightCell():int
     {
-        return 10;
+        return 6;
     }
 
     protected function getAlignForColumns():array
     {
-        return ['L', 'C', 'C', 'L', 'C', 'C', 'R'];
+        return ['C', 'C', 'C', 'C', 'C', 'C'];
     }
-    
+
     protected function getColumnInPrecent(): array
     {
-        return [5, 15, 15, 25, 25, 15];
+        // return [5, 15, 15, 25, 25, 15];
+        return [6, 30, 14, 20, 20, 15];
     }
 
     public function render()
