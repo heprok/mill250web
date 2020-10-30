@@ -24,7 +24,7 @@ abstract class AbstractPdf extends TCPDF
     /**
      * Задаёт размеры для столбца, указывать в процентах
      * В сумме должно быть 100
-     * @return array
+     * @return int[]
      */
     abstract protected function getColumnInPrecent(): array;
     abstract protected function getHeightCell():int;
@@ -213,10 +213,12 @@ abstract class AbstractPdf extends TCPDF
                             // $buff['currentColumn'] += $widthColumn;
                             $buff['currentColumn'] += $rowspan;
                         } else {
+                            dump(is_float($text));
                             $this->Cell($puntColumns[$buff['currentColumn'] + $rowspan - 1], $this->getHeightCell(), $text, 1, 0, $alignForColmns[$buff['currentColumn'] + $rowspan - 1], 1);
                             $buff['currentColumn'] += $rowspan;
                         }
                     }
+                    
                     $this->Ln();
                 }
             }

@@ -99,7 +99,7 @@ export default {
           },
           {
             icon: "mdi-gesture-double-tap",
-            title: "Действия",
+            title: "Действия оператора",
             to: "action",
           },            
           {
@@ -113,7 +113,7 @@ export default {
             to: "timberfrompostav",
           },            
           {
-            icon: "mdi-filter-variant",
+            icon: "mdi-view-stream",
             title: "Доски из постава",
             to: "boardfrompostav",
           },          
@@ -148,6 +148,11 @@ export default {
             icon: "mdi-gesture-double-tap",
             title: "Действия оператора",
             to: "action",
+          },          
+          {
+            icon: "mdi-format-line-spacing",
+            title: "Стандартные длины",
+            to: "standartlength",
           },
         ],
       },

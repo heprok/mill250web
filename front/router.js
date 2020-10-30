@@ -37,6 +37,11 @@ export default new Router({
           name: 'Ошибки',
           path: 'manual/error',
           component: () => import('@/views/dashboard/pages/manual/Error'),
+        },         
+        {
+          name: 'Стандартные длины',
+          path: 'manual/standartlength',
+          component: () => import('@/views/dashboard/pages/manual/StandartLength'),
         },        
         {
           name: 'Действия оператора',
