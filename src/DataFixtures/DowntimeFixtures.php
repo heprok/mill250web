@@ -14,7 +14,7 @@ class DowntimeFixtures extends Fixture
 {
     const COUNT_CAUSE = 10;
     const COUNT_PLACE = 10;
-    const COUNT_DOWNTIME = 100;
+    const COUNT_DOWNTIME = 1000;
 
     public function load(ObjectManager $manager)
     {

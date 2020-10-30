@@ -11,7 +11,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class EventFixtures extends Fixture
 {
-    const COUNT_EVENT = 50;
+    const COUNT_EVENT = 1000;
 
     public function load(ObjectManager $manager)
     {
