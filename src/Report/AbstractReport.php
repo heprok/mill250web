@@ -13,14 +13,15 @@ abstract class AbstractReport
 {
     const DECIMAL_FORMAT = 4;
     const FORMAT_DATE_TIME = 'Y.m.d H:i:s';
-
+    const FORMAT_DATE_FROM_DB = 'Y-m-d H:i:s';
+    
     private array $datasets = [];
     protected array $labels = [];
     protected DatePeriod $period;
 
     abstract public function getNameReport(): string;
     abstract protected function updateDataset(): bool;
-
+    
     public function addDataset(AbstractDataset $dataset): self
     {
         $this->datasets[] = $dataset;

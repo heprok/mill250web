@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Timber;
 use DatePeriod;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -27,36 +28,116 @@ class TimberRepository extends ServiceEntityRepository
      * @param DatePeriod $period
      * @return QueryBuilder
      */
-    private function getQueryFromPeriod(DatePeriod $period):QueryBuilder
+    private function getBaseQueryFromPeriod(DatePeriod $period):QueryBuilder
     {
         return $this->createQueryBuilder('t')
-            ->andWhere('t.drecTimestampKey BETWEEN :start AND :end')
-            ->setParameter('start', $period->getStartDate()->format(DATE_ATOM))
-            ->setParameter('end', $period->getEndDate()->format(DATE_ATOM))
-            ->orderBy('t.drecTimestampKey', 'ASC');
+            ->andWhere('t.drec BETWEEN :start AND :end')
+            ->setParameter('start', $period->getStartDate()->format(DATE_RFC3339_EXTENDED))
+            ->setParameter('end', $period->getEndDate()->format(DATE_RFC3339_EXTENDED))
+            ->leftJoin('t.species', 's');
+            // ->orderBy('t.drec', 'ASC');
     }
-
+    
     public function findVolumeTimberByPeriod(DatePeriod $period)
     {
-        $qb = $this->createQueryBuilder('t');
+        $qb = $this->getBaseQueryFromPeriod($period);
         return $qb
             ->select(
-                        's.name',
+                        's.name as name_species',
                         't.diam',
-                        'standard_length(t.length) as length',
+                        'standard_length(t.length) as st_length',
                         'count(1) as count_timber',
                         'sum(volume_timber (t.length, t.diam)) AS volume_boards'
                     )
-            ->leftJoin('t.species', 's')
-            ->andWhere('t.drec BETWEEN :start AND :end')
-            ->groupBy('s.name', 't.diam', 'length' )
-            ->setParameter('start', $period->start->format(DATE_RFC3339_EXTENDED))
-            ->setParameter('end', $period->end->format(DATE_RFC3339_EXTENDED))
-            ->orderBy('s.name, t.diam, length')
+            ->addOrderBy('name_species, t.diam, st_length')
+            ->addGroupBy('name_species', 't.diam', 'st_length' )
+            ->getQuery()
+            ->getResult();
+    }    
+    
+    public function findVolumeBoardFromPostavByPeriod(DatePeriod $period)
+    {
+        $qb = $this->getBaseQueryFromPeriod($period);
+        return $qb
+            ->select(
+                        "CASE WHEN get_json_filed_by_key(p.postav, 'name' ) = '' THEN
+                            p.comm
+                        ELSE
+                            get_json_filed_by_key(p.postav, 'name')
+                        END AS name_postav",
+                        // "p.postav AS name_postav",
+                        "get_json_filed_by_key(p.postav, 'top' ) AS diam_postav",
+                        's.name as name_species',
+                        'standard_length (t.length) AS st_length',
+                        'unnest(t.boards) AS cut',
+                        'count(1) AS count_board',
+                        'volume_boards (unnest(t.boards), t.length) AS volume_boards'
+                    )
+            ->leftJoin('t.postav', 'p')
+            ->addGroupBy('name_postav', 'diam_postav', 'name_species', 'cut', 'st_length', 'volume_boards' )
+            ->addOrderBy('diam_postav, st_length, name_species')
             ->getQuery()
             ->getResult();
     }
 
+    public function findVolumeTimberFromPostavByPeriod(DatePeriod $period)
+    {
+        $sql = 
+        "SELECT
+            max(CASE WHEN p.postav->>'name' = '' THEN
+                p.comm
+            ELSE
+                p.postav->>'name'
+            END) AS name_postav,
+            p.postav->>'top' AS diam_postav,
+            s.name AS name_species,
+            diam as diam_timber,
+            max(o.min_date) AS start_date,
+            max(o.max_date) AS end_date,
+            count(1) AS count_timber,
+            sum(mill.volume_timber (length, diam)) AS volume_timber
+        FROM
+            mill.timber t
+            LEFT JOIN mill.postav AS p ON (t.postav_id = p.id)
+            LEFT JOIN dic.species AS s ON (t.species_id = s.id)
+        LEFT JOIN (
+            SELECT
+                COALESCE(postav_id, - 1) AS postav_id,
+                COALESCE(species_id, '_-') AS species_id,
+                min(t.drec) AS min_date,
+                max(t.drec) AS max_date
+            FROM
+                mill.timber t
+            WHERE 
+                t.drec BETWEEN :start AND :end
+            GROUP BY
+                t.postav_id,
+                t.species_id
+            ) AS o 
+            ON COALESCE(t.postav_id, - 1) = o.postav_id
+            AND COALESCE(t.species_id, '_-') = o.species_id
+        WHERE 
+            t.drec BETWEEN :start AND :end
+        GROUP BY
+            t.postav_id,
+            diam_postav,
+            name_species,
+            diam_timber
+        ORDER BY
+            t.postav_id,
+            diam_postav,
+            name_species,
+            diam_timber
+        ";        
+        $params = [
+            'start' => $period->getStartDate()->format(DATE_RFC3339_EXTENDED),
+            'end' => $period->getEndDate()->format(DATE_RFC3339_EXTENDED),
+        ];
+        $query = $this->getEntityManager()->getConnection()->prepare($sql);
+        $query->execute($params);        
+        return $query->fetchAllAssociative();
+    }
+    
     // /**
     //  * @return Timber[] Returns an array of Timber objects
     //  */

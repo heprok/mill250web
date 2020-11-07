@@ -99,13 +99,23 @@ export default {
           },
           {
             icon: "mdi-gesture-double-tap",
-            title: "Действия",
+            title: "Действия оператора",
             to: "action",
           },            
           {
             icon: "mdi-shore",
             title: "Брёвна",
             to: "timber",
+          },            
+          {
+            icon: "mdi-shore",
+            title: "Брёвна из постава",
+            to: "timberfrompostav",
+          },            
+          {
+            icon: "mdi-view-stream",
+            title: "Доски из постава",
+            to: "boardfrompostav",
           },          
         ],
       },
@@ -138,6 +148,11 @@ export default {
             icon: "mdi-gesture-double-tap",
             title: "Действия оператора",
             to: "action",
+          },          
+          {
+            icon: "mdi-format-line-spacing",
+            title: "Стандартные длины",
+            to: "standartlength",
           },
         ],
       },

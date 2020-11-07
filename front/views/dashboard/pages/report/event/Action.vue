@@ -11,12 +11,6 @@
 
 <script>
 export default {
-  name: "report_event_action_dashboard",
-
-  data() {
-    return {};
-  },
-  mounted() {},
-  methods: {},
+  name: "report_event_action_dashboard"
 };
 </script>

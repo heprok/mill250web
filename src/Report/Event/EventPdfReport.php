@@ -29,6 +29,16 @@ final class EventPdfReport extends AbstractPdf
         return 10;
     }
 
+    protected function getAlignForColumns():array
+    {
+        return ['L', 'C', 'C', 'L', 'C', 'C', 'R'];
+    }
+
+    protected function getHeightCell():int
+    {
+        return 10;
+    }
+
     protected function getColumnInPrecent(): array
     {
         return [50, 15, 15, 25];

@@ -15,6 +15,7 @@
 
 <script>
 export default {
+<<<<<<< HEAD
   name: "report_downtimes_dashboard",
 
   data() {
@@ -30,5 +31,8 @@ export default {
   },
   mounted() {},
   methods: {},
+=======
+  name: "report_downtimes_dashboard"
+>>>>>>> 6d890012dbaf7e0d3859c9943c0172cd20449b07
 };
 </script>

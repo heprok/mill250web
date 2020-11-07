@@ -10,12 +10,6 @@
 
 <script>
 export default {
-  name: "report_timber_dashboard",
-
-  data() {
-    return {};
-  },
-  mounted() {},
-  methods: {},
+  name: "report_timber_dashboard"
 };
 </script>

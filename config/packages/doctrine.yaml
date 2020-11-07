@@ -27,3 +27,6 @@ doctrine:
             numeric_functions:
                 standard_length: App\Doctrine\Functions\StandardLength
                 volume_timber: App\Doctrine\Functions\VolumeTimber
+                unnest: App\Doctrine\Functions\Unnest
+                volume_boards: App\Doctrine\Functions\VolumeBoard
+                get_json_filed_by_key: App\Doctrine\Functions\GetJsonFieldByKey

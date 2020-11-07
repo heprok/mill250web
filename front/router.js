@@ -37,6 +37,11 @@ export default new Router({
           name: 'Ошибки',
           path: 'manual/error',
           component: () => import('@/views/dashboard/pages/manual/Error'),
+        },         
+        {
+          name: 'Стандартные длины',
+          path: 'manual/standartlength',
+          component: () => import('@/views/dashboard/pages/manual/StandartLength'),
         },        
         {
           name: 'Действия оператора',
@@ -63,6 +68,16 @@ export default new Router({
           name: 'Брёвна',
           path: 'report/timber',
           component: () => import('@/views/dashboard/pages/report/Timber'),
+        },            
+        {
+          name: 'Доски из постава',
+          path: 'report/boardfrompostav',
+          component: () => import('@/views/dashboard/pages/report/BoardPostav'),
+        },            
+        {
+          name: 'Брёвна из постава',
+          path: 'report/timberfrompostav',
+          component: () => import('@/views/dashboard/pages/report/TimberPostav'),
         },          
       ],
     },

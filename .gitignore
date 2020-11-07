@@ -10,6 +10,7 @@
 /vendor/
 /project.code-workspace
 /.vscode
+/front/dist/
 ###< symfony/framework-bundle ###
 
 ###> symfony/webpack-encore-bundle ###

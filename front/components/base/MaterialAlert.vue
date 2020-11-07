@@ -1,9 +1,9 @@
 <template>
   <v-alert
     v-bind="$attrs"
+    v-on="$listeners"
     class="v-alert--material"
     dark
-    v-on="$listeners"
   >
     <template
       v-if="$attrs.icon"

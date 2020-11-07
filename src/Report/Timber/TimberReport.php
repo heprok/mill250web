@@ -19,10 +19,10 @@ final class TimberReport extends AbstractReport
         $this->repository = $repository;
         $this->setLabels([
             'Порода',
-            'Диаметр, см',
+            'Ø, см',
             'Длина, м',
-            'Количество, шт',
-            'Объём, м3',
+            'Кол-во, шт',
+            'Объём, м³',
         ]);
     }
 
@@ -62,12 +62,11 @@ final class TimberReport extends AbstractReport
 
         foreach ($timbers as $key => $row) {
 
-            $name_species = $row['name'];
+            $name_species = $row['name_species'];
             $diam = $row['diam'];
-            $length = $row['length'];
+            $st_length = $row['st_length'];
             $count_timber = $row['count_timber'];
             $volume_boards = (float)$row['volume_boards'];
-
 
             if (($buff['diam'] != $diam || $buff['name_species'] != $name_species) && $key != 0) {
                 $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal($buff['name_species'], $buff['diam']));
@@ -78,7 +77,7 @@ final class TimberReport extends AbstractReport
             $dataset->addRow([
                 $name_species,
                 $diam,
-                $length / 1000, //мм в м
+                $st_length / 1000, //мм в м
                 $count_timber,
                 $volume_boards
             ]);

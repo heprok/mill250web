@@ -7,7 +7,7 @@ namespace App\Report\Timber;
 use App\Report\AbstractPdf;
 use App\Report\AbstractReport;
 
-final class TimberPdfReport extends AbstractPdf
+final class TimberFromPostavPdfReport extends AbstractPdf
 {
     public function __construct(AbstractReport $report)
     {
@@ -17,27 +17,27 @@ final class TimberPdfReport extends AbstractPdf
 
     protected function getPointFontHeader(): int
     {
-        return 10;
+        return 6;
     }
 
     protected function getColumnInPrecent(): array
     {
-        return [30, 20, 20, 15, 15];
+        return [16, 14, 10, 10, 20, 20, 10, 10];
     }
-
+    
     protected function getAlignForColumns():array
     {
-        return ['C', 'C', 'C', 'C', 'R'];
-    }
-
-    protected function getHeightCell():int
-    {
-        return 8;
+        return ['C', 'C', 'C', 'C', 'C', 'C', 'R', 'R'];
     }
 
     protected function getPointFontText(): int
     {
-        return 10;
+        return 8;
+    }
+    
+    protected function getHeightCell():int
+    {
+        return 5;
     }
 
     public function render()

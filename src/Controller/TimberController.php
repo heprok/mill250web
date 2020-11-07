@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Report\Timber\TimberFromPostavPdfReport;
+use App\Report\Timber\TimberFromPostavReport;
 use App\Report\Timber\TimberPdfReport;
 use App\Report\Timber\TimberReport;
 use App\Repository\TimberRepository;
@@ -29,6 +31,20 @@ class TimberController extends AbstractController
         $report = new TimberReport($period, $repository);
         $report->init();
         $pdf = new TimberPdfReport($report);
+        $pdf->render();
+    }    
+    
+    /**
+     * @Route("_postav/{start}...{end}/pdf", name="from_postav_show_pdf")
+     */
+    public function showFromPostavPdf(string $start, string $end, TimberRepository $repository)
+    {   
+        $startDate = new DateTime($start);
+        $endDate = new DateTime($end);
+        $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate); 
+        $report = new TimberFromPostavReport($period, $repository);
+        $report->init();
+        $pdf = new TimberFromPostavPdfReport($report);
         $pdf->render();
     }
 }
