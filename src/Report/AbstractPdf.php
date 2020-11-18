@@ -15,7 +15,7 @@ abstract class AbstractPdf extends TCPDF
     const DATE_FORMAT = 'Y.m.d H:i:s';
     const TIME_FORMAT_FOR_INTERVAL = '%H:%I:%S';
     const DATE_FORMAT_FOR_DOWNLOAD = 'Y-m-d H:i';
-    const REG_EXP_FOR_TOTAL = '/([а-яА-Я\_\№ё\-a-zA-Z\s\d\(\)\.\:\,]+){(\d)}/um';
+    const REG_EXP_FOR_TOTAL = '/([а-яА-Я\_\№ё\-a-zA-Z\s\d\(\)\.\:\,×]+){(\d)}/um';
     const MARGIN_LEFT = 20;
     const MARGIN_TOP = 20;
     const WIDTH_LOGO = 14;

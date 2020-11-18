@@ -127,7 +127,6 @@ final class PdfDataset extends AbstractDataset
                 }
             }
         }
-
         $totalStr = $this->getPrepareTemplate($nameColumns, $templateRow, $total);
 
         $this->pushTotalStr($totalStr);

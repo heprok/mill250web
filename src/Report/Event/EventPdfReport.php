@@ -9,9 +9,6 @@ use App\Report\AbstractReport;
 
 final class EventPdfReport extends AbstractPdf
 {
-    const COLOR_GRAY = 238;
-    const POINT_FONT_HEADER = 10;
-    const POINT_FONT_TEXT = 10;
 
     public function __construct(AbstractReport $eventReport)
     {

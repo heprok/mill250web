@@ -74,6 +74,7 @@ final class TimberReport extends AbstractReport
 
             $buff['name_species'] = $name_species;
             $buff['diam'] = $diam;
+            
             $dataset->addRow([
                 $name_species,
                 $diam,
