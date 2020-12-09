@@ -102,7 +102,6 @@ class People
     public function getFio(): ?string
     {
         $fio = $this->fam . ' ' . mb_substr($this->nam, 0, 1) . '.' . mb_substr($this->pat, 0, 1) . '.';
-        dump($fio);
         return $fio;
     }
 }

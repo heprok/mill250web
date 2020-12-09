@@ -53,6 +53,7 @@ final class TimberReport extends AbstractReport
     {
 
         $timbers = $this->repository->findVolumeTimberByPeriod($this->getPeriod());
+        
         if (!$timbers)
             die('В данный период нет брёвен');
         $dataset = new PdfDataset($this->getLabels());
