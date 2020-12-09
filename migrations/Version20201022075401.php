@@ -12,22 +12,23 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20201022075401 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return '';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(
             'CREATE TABLE mill.length (
-                value SMALLINT NOT NULL, 
-                PRIMARY KEY(value))'
+                standard INT NOT NULL,
+                minimum INT NOT NULL,
+                maximum INT NOT NULL,
+                PRIMARY KEY(standard))'
         );
 
         $this->addSql('COMMENT ON TABLE mill.length IS \'Справочник длин\'');
-        $this->addSql('COMMENT ON COLUMN mill.length.value IS \'Длина\'');
 
         $this->addSql(
             'CREATE TABLE mill.quality_list (
@@ -37,7 +38,7 @@ final class Version20201022075401 extends AbstractMigration
                 PRIMARY KEY(id))'
         );
         $this->addSql('CREATE SEQUENCE mill.quality_list_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        
+
         $this->addSql('COMMENT ON TABLE mill.quality_list IS \'Списки качеств\'');
         $this->addSql('COMMENT ON COLUMN mill.quality_list.name IS \'Название списка\'');
         $this->addSql('COMMENT ON COLUMN mill.quality_list.def IS \'ID качества по-умолчанию\'');
@@ -60,7 +61,8 @@ final class Version20201022075401 extends AbstractMigration
                 min SMALLINT NOT NULL,
                 max SMALLINT NOT NULL,
                 CHECK ( min <= max ), 
-                PRIMARY KEY(nom))');
+                PRIMARY KEY(nom))'
+        );
 
         $this->addSql('COMMENT ON TABLE mill.width IS \'Справочник ширин\'');
         $this->addSql('COMMENT ON COLUMN mill.width.nom IS \'Номинальная ширина\'');
@@ -68,7 +70,7 @@ final class Version20201022075401 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN mill.width.max IS \'Максимальная ширина\'');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SCHEMA public');
