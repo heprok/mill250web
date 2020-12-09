@@ -16,17 +16,17 @@ class ShiftFixtures extends Fixture
     {
         $repositoryPeople = $manager->getRepository(People::class);
         $peoples = $repositoryPeople->findAll();
+        $randomDatesTimestamp = AppFixtures::getRandomDatetime(self::COUNT_SHIFT);
         
         for ($i=0; $i < self::COUNT_SHIFT; $i++) { 
             $shift = new Shift();
-            $randomDateTimestamp = AppFixtures::randomDate();
 
             $startTime = new DateTime();
-            $startTime->setTimestamp($randomDateTimestamp);
+            $startTime->setTimestamp($randomDatesTimestamp[$i]);
             $shift->setStart($startTime);
 
             $stopTime = new DateTime();
-            $stopTime->setTimestamp($randomDateTimestamp + 8 * 60 * 60);
+            $stopTime->setTimestamp($randomDatesTimestamp[$i] + 8 * 60 * 60);
             $shift->setStop($stopTime);
 
             $shift->setNumber(rand(1, 2));

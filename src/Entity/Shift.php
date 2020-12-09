@@ -157,7 +157,7 @@ class Shift
         $entityManager = $event->getEntityManager();
         $connection = $entityManager->getConnection();
         $platform = $connection->getDatabasePlatform();
-        $this->start = \DateTime::createFromFormat($platform->getDateTimeTzFormatString(), $this->startTimestampKey);
+        $this->start = \DateTime::createFromFormat($platform->getDateTimeFormatString(), $this->startTimestampKey);
     }
 
     public function getPeople(): ?People
