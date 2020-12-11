@@ -62,7 +62,7 @@ final class BoardFromPostavReport extends AbstractReport
         $buff['name_species'] = '';
         $buff['name_postav'] = '';
         foreach ($timbers as $key => $row) {
-            $name_postav = $row['name_postav'];
+            $name_postav = $row['name_postav'] ?? 'Без имени';
             $diam_postav = $row['diam_postav'];
             $name_species = $row['name_species']; 
             $st_length = $row['st_length'];
