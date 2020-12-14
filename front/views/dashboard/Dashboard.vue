@@ -5,10 +5,10 @@
         <info-card
           color="info"
           icon="mdi-twitter"
-          title="Followers"
-          value="+245"
+          title="Текущая смена"
           sub-icon="mdi-clock"
           sub-text="Just Updated"
+          urlApi="/api/infoCard"
         />
       </v-col>
 

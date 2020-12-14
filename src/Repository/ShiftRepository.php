@@ -19,6 +19,14 @@ class ShiftRepository extends ServiceEntityRepository
         parent::__construct($registry, Shift::class);
     }
 
+    public function getCurrentShift()
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.stop is null')
+            ->orderBy('s.startTimestampKey', 'DESC')
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
     // /**
     //  * @return Shift[] Returns an array of Shift objects
     //  */
