@@ -13,10 +13,14 @@ use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-#Route("report/downtimes", name:"report_downtimes_")
+/**
+ * @Route("report/downtimes", name="report_downtimes_")
+ */
 class DowntimeController extends AbstractController
 {
-    #Route("/{start}...{end}/pdf", name:"show_pdf")
+    /**
+     * @Route("/{start}...{end}/pdf", name="show_pdf")
+     */
     public function showPdf(string $start, string $end, DowntimeRepository $downtimeRepository)
     {   
         $startDate = new DateTime($start);

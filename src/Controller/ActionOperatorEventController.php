@@ -13,10 +13,14 @@ use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route("report/event/action_operator", name:"report_event_action_operator_")]
+/**
+ * @Route("report/event/action_operator", name="report_event_action_operator_")
+ */
 class ActionOperatorEventController extends AbstractController
 {
-    #[Route("/{start}...{end}/pdf", name:"show_pdf")]
+    /**
+     * @Route("/{start}...{end}/pdf", name="show_pdf")
+     */
     public function showPdf(string $start, string $end, EventRepository $eventRepository)
     {   
         $startDate = new DateTime($start);

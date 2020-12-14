@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Report\Event\ActionOperatorEventPdfReport;
@@ -12,8 +14,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AppController extends AbstractController
 {
-    #[Route("/", name:"app")]
-     
+    /**
+     * @Route("/", name="app")
+     */
     public function index()
     {
         return $this->render('app/index.html.twig', [
@@ -21,7 +24,9 @@ class AppController extends AbstractController
         ]);
     }
 
-    #[Route("/api/infoCard", name:"currentShift")]
+    /**
+     * @Route("/api/infoCard", name="currentShift")
+     */
     public function getCurrentShift(ShiftRepository $shiftRepository)
     {
         $currentShift = $shiftRepository->getCurrentShift();

@@ -13,10 +13,14 @@ use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route("report/board", name:"report_board_")]
+/**
+ * @Route("report/board", name="report_board_")
+ */
 class BoardController extends AbstractController
 {
-    #[Route("_postav/{start}...{end}/pdf", name:"from_postav_show_pdf")]
+    /**
+     * @Route("_postav/{start}...{end}/pdf", name="from_postav_show_pdf")
+     */
     public function showPdf(string $start, string $end, TimberRepository $repository)
     {   
         $startDate = new DateTime($start);
