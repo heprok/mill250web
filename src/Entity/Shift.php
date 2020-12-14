@@ -88,7 +88,7 @@ class Shift
     {
         if (isset($this->stop))
             return $this->stop->format(self::DATE_FOR_FRONT_TIME);
-        else{
+        else {
             return 'В работе';
         }
     }
@@ -157,7 +157,8 @@ class Shift
         $entityManager = $event->getEntityManager();
         $connection = $entityManager->getConnection();
         $platform = $connection->getDatabasePlatform();
-        $this->start = \DateTime::createFromFormat($platform->getDateTimeFormatString(), $this->startTimestampKey);
+        $this->start = \DateTime::createFromFormat($platform->getDateTimeTzFormatString(), $this->startTimestampKey) ?:
+            \DateTime::createFromFormat($platform->getDateTimeFormatString(), $this->startTimestampKey);
     }
 
     public function getPeople(): ?People

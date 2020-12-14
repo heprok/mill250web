@@ -136,6 +136,7 @@ class Event
         $entityManager = $event->getEntityManager();
         $connection = $entityManager->getConnection();
         $platform = $connection->getDatabasePlatform();
-        $this->drec = \DateTime::createFromFormat($platform->getDateTimeTzFormatString(), $this->drecTimestampKey);
+        $this->drec = DateTime::createFromFormat($platform->getDateTimeTzFormatString(), $this->drecTimestampKey) ?: 
+            \DateTime::createFromFormat($platform->getDateTimeFormatString(), $this->drecTimestampKey);
     }
 }
