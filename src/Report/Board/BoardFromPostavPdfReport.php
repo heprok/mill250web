@@ -12,7 +12,7 @@ final class BoardFromPostavPdfReport extends AbstractPdf
     public function __construct(AbstractReport $report)
     {
         $this->setReport($report);
-        parent::__constructor();
+        parent::__constructor('L');
     }
 
     protected function getPointFontHeader(): int
@@ -22,7 +22,7 @@ final class BoardFromPostavPdfReport extends AbstractPdf
 
     protected function getColumnInPrecent(): array
     {
-        return [20, 10, 20, 10, 10, 10, 20];
+        return [20, 10, 18, 11, 15, 15, 10];
     }
     
     protected function getAlignForColumns():array

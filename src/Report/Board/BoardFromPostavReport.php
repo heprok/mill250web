@@ -57,7 +57,6 @@ final class BoardFromPostavReport extends AbstractReport
         if (!$timbers)
             die('В данный период нет брёвен');
         $dataset = new PdfDataset($this->getLabels());
-
         $buff['diam_postav'] = -1;
         $buff['name_species'] = '';
         $buff['name_postav'] = '';

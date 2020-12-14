@@ -13,9 +13,7 @@
     <v-stepper-items>
       <v-stepper-content step="1">
         <v-row justify="space-around">
-          <v-btn color="primary" x-large @click="selectShift">
-            За смену
-          </v-btn>
+          <v-btn color="primary" x-large @click="selectShift"> За смену </v-btn>
           <v-btn color="primary" x-large @click="selectPeriod">
             За период
           </v-btn>
@@ -136,8 +134,8 @@ export default {
   props: {
     urlReport: {
       type: String,
-      require: true
-    }
+      require: true,
+    },
   },
   computed: {
     today() {
@@ -186,12 +184,13 @@ export default {
       let stop = "";
       if (this.isTypeReportIsShift) {
         start = this.selectedShift[0].start;
-        stop = this.selectedShift[0].stop;
+        stop =
+          this.selectedShift[0].stop ?? new Date().toISOString().substr(0, 19);
       } else {
-        start = this.dates[0];
-        stop = this.dates[1];
+        start = this.dates[0] + "T00:00";
+        stop = this.dates[1] + "T23:59";
       }
-      window.open(this.urlReport + "/" + start + "..." + stop + '/pdf');
+      window.open(this.urlReport + "/" + start + "..." + stop + "/pdf");
     },
     selectShift() {
       this.isTypeReportIsShift = true;

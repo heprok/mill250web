@@ -12,7 +12,7 @@ final class TimberFromPostavPdfReport extends AbstractPdf
     public function __construct(AbstractReport $report)
     {
         $this->setReport($report);
-        parent::__constructor();
+        parent::__constructor('L');
     }
 
     protected function getPointFontHeader(): int
@@ -22,7 +22,7 @@ final class TimberFromPostavPdfReport extends AbstractPdf
 
     protected function getColumnInPrecent(): array
     {
-        return [16, 14, 10, 10, 20, 20, 10, 10];
+        return [23, 10, 15, 8, 15, 15, 8, 8];
     }
     
     protected function getAlignForColumns():array
