@@ -4,22 +4,19 @@
       <v-col cols="12" sm="6" lg="3">
         <info-card
           color="info"
-          icon="mdi-twitter"
+          icon="mdi-account-hard-hat"
+          sub-icon="mdi-tag"
           title="Текущая смена"
-          sub-icon="mdi-clock"
-          sub-text="Just Updated"
-          urlApi="/api/infoCard"
+          urlApi="/api/infocard/currentShift"
         />
       </v-col>
 
       <v-col cols="12" sm="6" lg="3">
-        <base-material-stats-card
-          color="primary"
+        <info-card
+          color="info"
           icon="mdi-poll"
-          title="Website Visits"
-          value="75.521"
+          title="Объем досок за смену"
           sub-icon="mdi-tag"
-          sub-text="Tracked from Google Analytics"
         />
       </v-col>
 

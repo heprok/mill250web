@@ -19,6 +19,10 @@ class ShiftRepository extends ServiceEntityRepository
         parent::__construct($registry, Shift::class);
     }
 
+    /**
+     *
+     * @return Shift
+     */
     public function getCurrentShift()
     {
         return $this->createQueryBuilder('s')

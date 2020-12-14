@@ -3,6 +3,7 @@
     v-bind="$attrs"
     v-on="$listeners"
     :smallValue="value"
+    :sub-text="subtitle"
   >
   </base-material-stats-card>
 </template>
@@ -15,7 +16,8 @@ export default {
 
   data() {
     return {
-      value: ''
+      value: '',
+      subtitle: ''
     };
   },
   watch: {  
@@ -34,8 +36,10 @@ export default {
   methods: {
     async update() {
       let request = await Axios.get(this.urlApi);
-      console.log(request.data);
-      this.value = request.data.value;
+      let data = request.data;
+      this.value = data.value;
+      this.subtitle = data.subtitle;
+      return request;
     }
   }
 };
