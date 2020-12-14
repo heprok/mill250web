@@ -53,7 +53,7 @@ final class BoardFromPostavReport extends AbstractReport
 
     protected function updateDataset(): bool
     {
-        $timbers = $this->repository->findVolumeBoardFromPostavByPeriod($this->getPeriod());
+        $timbers = $this->repository->getReportVolumeBoardFromPostavByPeriod($this->getPeriod());
         if (!$timbers)
             die('В данный период нет брёвен');
         $dataset = new PdfDataset($this->getLabels());

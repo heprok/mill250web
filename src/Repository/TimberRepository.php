@@ -38,7 +38,36 @@ class TimberRepository extends ServiceEntityRepository
             // ->orderBy('t.drec', 'ASC');
     }
     
-    public function findVolumeTimberByPeriod(DatePeriod $period)
+    public function getCountTimberByPyeriod(DatePeriod $period)
+    {
+        $qb = $this->getBaseQueryFromPeriod($period);
+        return $qb
+            ->select('count(1) as count_timber')
+            ->getQuery()
+            ->getResult()[0]['count_timber']
+            ;
+    }
+    public function getVolumeBoardsByPeriod(DatePeriod $period)
+    {
+        $sql = 
+        "SELECT
+            sum(mill.volume_boards (bo, length)) AS volume_boards
+        FROM
+            mill.timber
+        CROSS JOIN unnest(boards) as bo
+        WHERE 
+            drec BETWEEN :start AND :end
+        ";        
+        $params = [
+            'start' => $period->getStartDate()->format(DATE_RFC3339_EXTENDED),
+            'end' => $period->getEndDate()->format(DATE_RFC3339_EXTENDED),
+        ];
+        $query = $this->getEntityManager()->getConnection()->prepare($sql);
+        $query->execute($params);        
+        return $query->fetchAllAssociative()[0]['volume_boards'];
+    }
+
+    public function getReportVolumeTimberByPeriod(DatePeriod $period)
     {
         $qb = $this->getBaseQueryFromPeriod($period);
         return $qb
@@ -55,7 +84,7 @@ class TimberRepository extends ServiceEntityRepository
             ->getResult();
     }    
     
-    public function findVolumeBoardFromPostavByPeriod(DatePeriod $period)
+    public function getReportVolumeBoardFromPostavByPeriod(DatePeriod $period)
     {
         $qb = $this->getBaseQueryFromPeriod($period);
         return $qb
@@ -80,7 +109,7 @@ class TimberRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findVolumeTimberFromPostavByPeriod(DatePeriod $period)
+    public function getReportVolumeTimberFromPostavByPeriod(DatePeriod $period)
     {
         $sql = 
         "SELECT

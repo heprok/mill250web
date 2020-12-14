@@ -52,7 +52,7 @@ final class TimberReport extends AbstractReport
     protected function updateDataset(): bool
     {
 
-        $timbers = $this->repository->findVolumeTimberByPeriod($this->getPeriod());
+        $timbers = $this->repository->getReportVolumeTimberByPeriod($this->getPeriod());
         
         if (!$timbers)
             die('В данный период нет брёвен');

@@ -20,7 +20,6 @@ class ShiftRepository extends ServiceEntityRepository
     }
 
     /**
-     *
      * @return Shift
      */
     public function getCurrentShift()

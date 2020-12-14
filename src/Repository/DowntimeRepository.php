@@ -37,6 +37,17 @@ class DowntimeRepository extends ServiceEntityRepository
             ->orderBy('d.drecTimestampKey', 'ASC');
     }
 
+    /**
+     * @return Downtime
+     */
+    public function getLastDowntime()
+    {
+        return $this->createQueryBuilder('d')
+            ->orderBy('d.drecTimestampKey', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
     
     /**
      * @return Downtime[] Returns an array of Downtime objects

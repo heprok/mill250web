@@ -56,7 +56,7 @@ final class TimberFromPostavReport extends AbstractReport
     protected function updateDataset(): bool
     {
 
-        $timbers = $this->repository->findVolumeTimberFromPostavByPeriod($this->getPeriod());
+        $timbers = $this->repository->getReportVolumeTimberFromPostavByPeriod($this->getPeriod());
         if (!$timbers)
             die('В данный период нет брёвен');
         $dataset = new PdfDataset($this->getLabels());

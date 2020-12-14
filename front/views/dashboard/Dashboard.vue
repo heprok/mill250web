@@ -16,29 +16,27 @@
           color="info"
           icon="mdi-poll"
           title="Объем досок за смену"
-          sub-icon="mdi-tag"
+          urlApi="/api/infocard/volumeBoardsCurrentShift"
         />
       </v-col>
 
       <v-col cols="12" sm="6" lg="3">
-        <base-material-stats-card
-          color="success"
-          icon="mdi-store"
-          title="Revenue"
-          value="$ 34,245"
-          sub-icon="mdi-calendar"
-          sub-text="Last 24 Hours"
+        <info-card
+          color="info"
+          icon="mdi-poll"
+          title="Кол-во брёвен за смену"
+          urlApi="/api/infocard/countTimberCurrentShift"
         />
       </v-col>
 
+
       <v-col cols="12" sm="6" lg="3">
-        <base-material-stats-card
+        <info-card
           color="orange"
           icon="mdi-sofa"
-          title="Bookings"
-          value="184"
-          sub-icon="mdi-alert"
-          sub-icon-color="red"
+          title="Последний простой"
+          urlApi="/api/infocard/lastDowntime"
+          sub-icon="mdi-clock"
           sub-text="Get More Space..."
         />
       </v-col>
