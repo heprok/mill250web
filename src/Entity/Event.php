@@ -23,7 +23,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
  */
 class Event
 {
-    const DATE_FORMAT_DB = 'Y-m-d\TH:i:sP';
+    const DATE_FORMAT_DB = 'Y-m-d H:i:s.u';
 
     private DateTime $drec;
     
@@ -137,6 +137,7 @@ class Event
         $connection = $entityManager->getConnection();
         $platform = $connection->getDatabasePlatform();
         $this->drec = DateTime::createFromFormat($platform->getDateTimeTzFormatString(), $this->drecTimestampKey) ?: 
-            \DateTime::createFromFormat($platform->getDateTimeFormatString(), $this->drecTimestampKey);
+            \DateTime::createFromFormat($platform->getDateTimeFormatString(), $this->drecTimestampKey) ?: 
+                \DateTime::createFromFormat(self::DATE_FORMAT_DB, $this->drecTimestampKey);
     }
 }

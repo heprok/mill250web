@@ -18,22 +18,22 @@ final class EventPdfReport extends AbstractPdf
 
     protected function getPointFontHeader(): int
     {
-        return 10;
+        return 8;
     }
 
     protected function getPointFontText(): int
     {
-        return 10;
+        return 8;
     }
 
     protected function getAlignForColumns():array
     {
-        return ['L', 'C', 'C', 'L', 'C', 'C', 'R'];
+        return ['L', 'C', 'C', 'C'];
     }
 
     protected function getHeightCell():int
     {
-        return 10;
+        return 8;
     }
 
     protected function getColumnInPrecent(): array

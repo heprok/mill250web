@@ -35,7 +35,6 @@ abstract class AbstractEventReport extends AbstractReport
     protected function updateDataset(): bool
     {
         $events = $this->eventRepository->findByTypeAndSourceFromPeriod($this->getPeriod(), $this->getTypeId(), $this->getSourceId());
-        
         $dataset = new PdfDataset($this->getLabels());
 
         foreach ($events as $event){

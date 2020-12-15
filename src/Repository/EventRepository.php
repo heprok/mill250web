@@ -54,11 +54,9 @@ class EventRepository extends ServiceEntityRepository
      * @param string[] $source
      * @return Event[]
      */
-    public function findByTypeAndSourceFromPeriod(DatePeriod $period, array $type, array $source):array
+    public function findByTypeAndSourceFromPeriod(DatePeriod $period, array $type, array $source)
     {
-        $type = implode(',', $type);
-        $source = implode(',', $source);
-        return $this->getQueryFromPeriod($period)
+       return $qb = $this->getQueryFromPeriod($period)
             ->andWhere('e.type IN( :type )')
             ->andWhere('e.source IN( :source )')
             ->setParameter('type', $type)
@@ -66,5 +64,6 @@ class EventRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+        return $qb;
     }
 }
