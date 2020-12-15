@@ -23,7 +23,7 @@ final class DowntimePdfReport extends AbstractPdf
 
     protected function getColumnInPrecent(): array
     {
-        return [5, 15, 15, 25, 25, 20];
+        return [5, 15, 15, 24, 24, 20];
     }
 
     protected function getAlignForColumns(): array

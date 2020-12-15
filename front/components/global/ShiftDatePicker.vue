@@ -158,8 +158,8 @@ export default {
       console.log(this.textInterval);
     },
     async date(value) {
-      let start = value + "T00:00";
-      let end = value + "T23:59";
+      let start = value + "T00:00:00";
+      let end = value + "T23:59:59";
 
       let config = {
         params: {
@@ -187,8 +187,8 @@ export default {
         stop =
           this.selectedShift[0].stop ?? new Date().toISOString().substr(0, 19);
       } else {
-        start = this.dates[0] + "T00:00";
-        stop = this.dates[1] + "T23:59";
+        start = this.dates[0] + "T00:00:00";
+        stop = this.dates[1] + "T23:59:59";
       }
       window.open(this.urlReport + "/" + start + "..." + stop + "/pdf");
     },
