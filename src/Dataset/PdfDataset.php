@@ -7,10 +7,11 @@ namespace App\Dataset;
 use DateInterval;
 use DateTime;
 use Exception;
+use Symfony\Component\Validator\Constraints\Date;
 
 final class PdfDataset extends AbstractDataset
 {
-    
+
     private array $nameColumns;
     private array $keysSubTotal = [];
 
@@ -112,16 +113,15 @@ final class PdfDataset extends AbstractDataset
 
         $total = [];
         foreach ($this->data as $key => $value) {
-            
+
             foreach ($keysColumn as $column => $key) {
                 if (is_string($value[$key])) {
                     continue;
                 }
-                if($value[$key] instanceof DateInterval)
-                {
+                if ($value[$key] instanceof DateInterval) {
                     $total[$column] = $total[$column] ?? new DateTime("00:00");
                     $total[$column]->add($value[$key]);
-                }else{
+                } else {
                     $total[$column] = $total[$column] ?? 0;
                     $total[$column] += $value[$key];
                 }
@@ -164,9 +164,8 @@ final class PdfDataset extends AbstractDataset
             if (is_string($value[$key])) {
                 continue;
             }
-            if($value[$key] instanceof DateInterval)
-            {
-                $total[$column] = $total[$column] ?? new DateTime("00:00");
+            if ($value[$key] instanceof DateInterval) {
+                $total[$column] = $total[$column] ?? new DateTime('00:00');
                 $total[$column]->add($value[$key]);
                 continue;
             }
@@ -205,14 +204,19 @@ final class PdfDataset extends AbstractDataset
         foreach ($nameColumns as $key => $value) {
             $pattern[] = "/%$key/";
             // dd(preg_match("/%$key/", $templateRow));
-            if($total[$value] instanceof DateTime)
-            {
-                $replacements[] = $total[$value]->format(self::TIME_FORMAT);
+            if ($total[$value] instanceof DateTime) {
+                $nowTime = new DateTime('00:00');
+                $duration = $nowTime->diff($total[$value]);
+                if ($duration->m > 0)
+                    $replacements[] = $duration->format(self::DURATION_MOUNT_DAY_TIME_FROMAT);
+                elseif ($duration->d > 0)
+                    $replacements[] = $duration->format(self::DURATION_DAY_TIME_FROMAT);
+                else
+                    $replacements = $duration->format(self::DURATION_TIME_FROMAT);
                 continue;
             }
             $replacements[] = $total[$value];
         }
-        // dd($pattern, $replacements);
         $str = preg_replace($pattern, $replacements, $templateRow);
         return $str;
     }

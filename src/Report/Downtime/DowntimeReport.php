@@ -59,8 +59,8 @@ final class DowntimeReport extends AbstractReport
         $buff['day'] = '';
         foreach ($downtimes as $key => $downtime) {
 
-            $cause = $downtime->getCause()->getName();
-            $place = $downtime->getPlace()->getName();
+            $cause = $downtime->getCause();
+            $place = $downtime->getPlace();
 
             $startTime = $downtime->getDrec();
             $endTime = $downtime->getFinish();

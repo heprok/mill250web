@@ -41,8 +41,8 @@ abstract class AbstractEventReport extends AbstractReport
         foreach ($events as $event){
             
             $text = $event->getText();
-            $source = $event->getSource()->getName();
-            $type = $event->getType()->getName();
+            $source = $event->getSource();
+            $type = $event->getType();
             
             $time = $event->getDrec()->format(parent::FORMAT_DATE_TIME);
 
