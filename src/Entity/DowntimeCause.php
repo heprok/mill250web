@@ -47,9 +47,14 @@ class DowntimeCause
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function __toString()
     {
-        return $this->name;
+        return $this->getName();
+    }
+
+    public function getName(): string
+    {
+        return $this->name ?? '';
     }
 
     public function setName(string $name): self

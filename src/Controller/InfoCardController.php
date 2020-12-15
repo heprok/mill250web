@@ -29,14 +29,14 @@ class InfoCardController extends AbstractController
     public function getCurrentShift(ShiftRepository $shiftRepository)
     {
         $currentShift = $shiftRepository->getCurrentShift();
-        if(!$currentShift)
-            return $this->json('', 404);
+        if (!$currentShift)
+            return $this->json(['value' => 'Не начата', 'color' => 'error'], 404);
 
         return $this->json([
             'value' => $currentShift->getPeople()->getFio(),
-            'subtitle' => 'Смена № ' . $currentShift->getNumber()
-            ]);
-        
+            'subtitle' => 'Смена № ' . $currentShift->getNumber(),
+            'color' => 'info'
+        ]);
     }
 
     /**
@@ -45,17 +45,17 @@ class InfoCardController extends AbstractController
     public function getVolumeBoards(ShiftRepository $shiftRepository, TimberRepository $timberRepository)
     {
         $currentShift = $shiftRepository->getCurrentShift();
-        if(!$currentShift)
-            return $this->json('', 404);
+        if (!$currentShift)
+            return $this->json(['value' => 0, 'color' => 'error'], 404);
 
         $startDate = new DateTime($currentShift->getStart());
         $endDate = new DateTime();
-        $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate); 
+        $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
         $volumeBoards = number_format((float)$timberRepository->getVolumeBoardsByPeriod($period), 3, ',') . ' м3';
         return $this->json([
             'value' => $volumeBoards,
-            ]);
-        
+            'color' => 'info'
+        ]);
     }
 
     /**
@@ -64,16 +64,17 @@ class InfoCardController extends AbstractController
     public function getCountTimber(ShiftRepository $shiftRepository, TimberRepository $timberRepository)
     {
         $currentShift = $shiftRepository->getCurrentShift();
-        if(!$currentShift)
-            return $this->json('', 404);
+        if (!$currentShift)
+            return $this->json(['value' => 0, 'color' => 'error'], 404);
 
         $startDate = new DateTime($currentShift->getStart());
         $endDate = new DateTime();
-        $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate); 
+        $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
         $countTimber = $timberRepository->getCountTimberByPyeriod($period) . ' шт.';
         return $this->json([
             'value' => $countTimber,
-            ]);
+            'color' => 'info'
+        ]);
     }
 
     /**
@@ -82,19 +83,19 @@ class InfoCardController extends AbstractController
     public function getLastDowntime(DowntimeRepository $downtimeRepository)
     {
         $lastDowntime = $downtimeRepository->getlastDowntime();
-        if(!$lastDowntime)
-            return $this->json('', 404);
+        if (!$lastDowntime)
+            return $this->json(['value' => '', 'color' => 'error'], 404);
 
         $cause = $lastDowntime->getCause();
-        $place = $lastDowntime->getPlace();
 
         $startTime = $lastDowntime->getDrec();
         $endTime = $lastDowntime->getFinish();
         $nowTime = new DateTime();
-        $duration = $endTime ? $endTime->diff($startTime, true)->format('%H:%I:%S') : 'Продолжается(' . $nowTime->diff($startTime, true)->format('%H:%I:%S') . ')';
+        $duration = $endTime ? $endTime->diff($startTime, true)->format('%d день %H:%I:%S') : 'Продолжается(' . $nowTime->diff($startTime, true)->format('%d день %H:%I:%S') . ')';
         return $this->json([
-            'value' => $cause->getName(),
-            'subtitle' => $duration 
-            ]);
+            'value' => $cause ?? '',
+            'subtitle' => $duration . '. C ' . $startTime->format(Shift::DATE_FOR_FRONT_TIME . '(d.m)') . ' по ' . $endTime->format(Shift::DATE_FOR_FRONT_TIME . '(d.m)') ,
+            'color' => 'orange',
+        ]);
     }
 }
