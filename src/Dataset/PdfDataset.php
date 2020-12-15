@@ -94,7 +94,7 @@ final class PdfDataset extends AbstractDataset
         return true;
     }
 
-    private function getKeysOnColumn(array $nameColumns)
+    private function getKeysOnColumn(array $nameColumns):array
     {
         $result = [];
         foreach ($nameColumns as $column) {

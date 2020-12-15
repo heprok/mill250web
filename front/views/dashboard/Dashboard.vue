@@ -44,6 +44,7 @@
 
         <base-material-chart-card
           color="#000"
+          data="[2, 3, 4]"
           hover-reveal
           type="Line"
           url="api/dashboard/report/volumeboard/chart"
