@@ -63,19 +63,19 @@ final class BoardFromPostavReport extends AbstractReport
         foreach ($timbers as $key => $row) {
             $name_postav = $row['name_postav'] ?? 'Без имени';
             $diam_postav = $row['diam_postav'];
-            $name_species = $row['name_species']; 
+            $name_species = $row['name_species'];
             $st_length = $row['st_length'];
             $cut = $row['cut'];
             $count_board = $row['count_board'];
-            $volume_boards = (float)$row['volume_boards'];
+            $volume_boards = (float)$row['volume_boards'] * $count_board;
 
-            if (( $buff['diam_postav']  != $diam_postav || $buff['name_postav'] != $name_postav || $buff['name_species'] != $name_species) && $key != 0) {
+            if (($buff['diam_postav']  != $diam_postav || $buff['name_postav'] != $name_postav || $buff['name_species'] != $name_species) && $key != 0) {
                 $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal($buff['name_postav'], $buff['diam_postav']));
             }
             $buff['name_species'] = $name_species;
             $buff['name_postav'] = $name_postav;
             $buff['diam_postav'] = $diam_postav;
-            
+
             $dataset->addRow([
                 $name_postav,
                 $diam_postav,
