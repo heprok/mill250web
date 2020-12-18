@@ -52,7 +52,7 @@ class InfoCardController extends AbstractController
         $startDate = new DateTime($currentShift->getStart());
         $endDate = new DateTime();
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-        $volumeBoards = number_format((float)$timberRepository->getVolumeBoardsByPeriod($period), 3, ',') . ' м3';
+        $volumeBoards = number_format((float)$timberRepository->getVolumeBoardsByPeriod($period), 3) . ' м3';
         return $this->json([
             'value' => $volumeBoards,
             'color' => 'info'

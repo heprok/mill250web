@@ -17,5 +17,7 @@
 /node_modules/
 /public/build/
 npm-debug.log
+deploy.sh
+webmill.7z
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
