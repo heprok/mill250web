@@ -8,6 +8,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use App\Filter\DateFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Repository\DowntimeRepository;
+use DateInterval;
 use DatePeriod;
 use DateTime;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -147,9 +148,18 @@ class Downtime
     public function getDurationTime(): ?string
     {
         if (isset($this->finish))
-            return $this->finish->diff($this->drec)->format(BaseEntity::TIME_FORMAT_FOR_INTERVAL);
+            return $this->finish->diff($this->drec)->format(BaseEntity::INTERVAL_TIME_FROMAT);
         else {
             return 'Продолжается';
+        }
+    }
+
+    public function getDurationInterval(): ?DateInterval
+    {
+        if (isset($this->finish))
+            return $this->finish->diff($this->drec);
+        else {
+            return null;
         }
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\BaseEntity;
 use App\Entity\Downtime;
 use App\Repository\ShiftRepository;
 use App\Entity\Shift;
@@ -82,7 +83,7 @@ class InfoCardController extends AbstractController
      */
     public function getLastDowntime(DowntimeRepository $downtimeRepository)
     {
-        $lastDowntime = $downtimeRepository->getlastDowntime();
+        $lastDowntime = $downtimeRepository->getLastDowntime();
         if (!$lastDowntime)
             return $this->json(['value' => '', 'color' => 'error'], 404);
 
@@ -93,9 +94,51 @@ class InfoCardController extends AbstractController
         $nowTime = new DateTime();
         $duration = $endTime ? $endTime->diff($startTime, true)->format('%d день %H:%I:%S') : 'Продолжается(' . $nowTime->diff($startTime, true)->format('%d день %H:%I:%S') . ')';
         return $this->json([
-            'value' => $cause ?? '',
-            'subtitle' => $duration . '. C ' . $startTime->format(Shift::DATE_FOR_FRONT_TIME . '(d.m)') . ' по ' . $endTime->format(Shift::DATE_FOR_FRONT_TIME . '(d.m)') ,
+            'value' => $cause->getName() ?? '',
+            'subtitle' => $duration . '. C ' . $startTime->format(BaseEntity::TIME_FOR_FRONT . '(d.m)') . ' по ' . $endTime->format(BaseEntity::DATETIME_FOR_FRONT . '(d.m)'),
             'color' => 'orange',
+        ]);
+    }
+
+    /**
+     * @Route("/total/{duration}", requirements={"duration"="today|week"}, name="totalTimeDowntime")
+     */
+    public function getTotalTimeDowntime(DowntimeRepository $downtimeRepository, string $duration)
+    {
+        switch ($duration) {
+            case 'today':
+                $startTime = new DateTime();
+                $startTime->setTime(0, 0, 0);
+                $period = new DatePeriod($startTime, new DateInterval('P1D'), new DateTime());
+                break;
+            case 'week':
+                $startTime = new DateTime('-7 day');
+                $startTime->setTime(0, 0, 0);
+                $period = new DatePeriod($startTime, new DateInterval('P1D'), new DateTime());
+                break;
+        }
+        $downtmies = $downtimeRepository->findByPeriod($period);
+        if (!$downtmies)
+            return $this->json(['value' => '', 'color' => 'error'], 404);
+
+        $durationTime = new DateTime('00:00');
+        foreach ($downtmies as $downtime) {
+            if($downtime->getFinish())
+                $durationTime->add($downtime->getDurationInterval());
+        }
+        $durationTime = date_diff(new DateTime('00:00'), $durationTime,  true);
+
+        if ($durationTime->m > 0)
+            $durationTime = $durationTime->format(BaseEntity::INTERVAL_MOUNT_DAY_TIME_FROMAT);
+        elseif ($durationTime->d > 0)
+            $durationTime = $durationTime->format(BaseEntity::INTERVAL_DAY_TIME_FROMAT);
+        else
+            $durationTime = $durationTime->format(BaseEntity::INTERVAL_TIME_FROMAT);
+
+        return $this->json([
+            'value' => $durationTime ?? '',
+            // 'subtitle' => $duration . '. C ' . $startTime->format(BaseEntity::TIME_FOR_FRONT . '(d.m)') . ' по ' . $endTime->format(BaseEntity::DATETIME_FOR_FRONT . '(d.m)'),
+            'color' => 'primary',
         ]);
     }
 }

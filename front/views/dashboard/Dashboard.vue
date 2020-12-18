@@ -37,7 +37,6 @@
           title="Последний простой"
           urlApi="/api/infocard/lastDowntime"
           sub-icon="mdi-clock"
-          sub-text="Get More Space..."
         />
       </v-col>
       <v-col cols="6" lg="6" sm="12">

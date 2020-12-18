@@ -212,7 +212,7 @@ final class PdfDataset extends AbstractDataset
                 elseif ($duration->d > 0)
                     $replacements[] = $duration->format(self::DURATION_DAY_TIME_FROMAT);
                 else
-                    $replacements = $duration->format(self::DURATION_TIME_FROMAT);
+                    $replacements[] = $duration->format(self::DURATION_TIME_FROMAT);
                 continue;
             }
             $replacements[] = $total[$value];

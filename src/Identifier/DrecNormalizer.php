@@ -3,6 +3,7 @@
 namespace App\Identifier;
 
 use ApiPlatform\Core\Exception\InvalidIdentifierException;
+use App\Entity\BaseEntity;
 use App\Entity\Downtime;
 use DateTime;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -11,7 +12,7 @@ final class DrecNormalizer implements DenormalizerInterface
 {
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        return date(Downtime::DATE_FORMAT_DB, $data);
+        return date(BaseEntity::DATE_FORMAT_DB, $data);
         // try {
         // return Uuid::fromString($data);
         // } catch (InvalidUuidStringException $e) {
