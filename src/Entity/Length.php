@@ -8,6 +8,7 @@ use App\Repository\LengthRepository;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=LengthRepository::class)
@@ -17,7 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      collectionOperations={"get", "post"},
  *      itemOperations={"get", "put", "delete"},
  *      normalizationContext={"groups"={"length:read"}},
- *      denormalizationContext={"groups"={"length:write"}}
+ *      denormalizationContext={"groups"={"length:write"}, "disable_type_enforcement"=true}
  * )
  */
 class Length

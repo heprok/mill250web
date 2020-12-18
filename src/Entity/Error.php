@@ -15,7 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * options={"comment":"Ошибки"})
  * @ApiResource(
  *      collectionOperations={"get"},
- *      itemOperations={"get"},
+ *      itemOperations={"get", "put"},
  *      normalizationContext={"groups"={"error:read"}},
  *      denormalizationContext={"groups"={"error:write"}}
  * )

@@ -16,18 +16,15 @@
 </template>
 
 <script>
-
-
-
 export default {
   name: "manual_action_dashboard",
-  
+
   data() {
     return {
       headers: [
-        { text: "Код", value: "id" },
+        { text: "Код", value: "id", edited: false },
         { text: "Название", value: "name" },
-        { text: "Действия", value: "actions" },
+        { text: "Действия", value: "actions", edited: false },
       ],
     };
   },
