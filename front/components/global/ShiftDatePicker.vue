@@ -155,7 +155,7 @@ export default {
         (this.dates[0] || "[дата не выбрана]") +
         " до " +
         (this.dates[1] || "[дата не выбрана]");
-      console.log(this.textInterval);
+      // console.log(this.textInterval);
     },
     async date(value) {
       let start = value + "T00:00:00";

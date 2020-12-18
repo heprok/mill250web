@@ -70,7 +70,7 @@ class Event
      */
     public function getStart(): ?string
     {
-        return $this->drec->format(self::DATE_FORMAT_DB);
+        return $this->drec->format(BaseEntity::DATE_FORMAT_DB);
     }
 
     public function setDrec(\DateTimeInterface $drec): self
@@ -138,6 +138,6 @@ class Event
         $platform = $connection->getDatabasePlatform();
         $this->drec = DateTime::createFromFormat($platform->getDateTimeTzFormatString(), $this->drecTimestampKey) ?: 
             \DateTime::createFromFormat($platform->getDateTimeFormatString(), $this->drecTimestampKey) ?: 
-                \DateTime::createFromFormat(self::DATE_FORMAT_DB, $this->drecTimestampKey);
+                \DateTime::createFromFormat(BaseEntity::DATE_FORMAT_DB, $this->drecTimestampKey);
     }
 }

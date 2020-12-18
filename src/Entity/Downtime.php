@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use App\Filter\DateFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Repository\DowntimeRepository;
 use DatePeriod;
@@ -18,14 +20,14 @@ use Doctrine\ORM\Mapping as ORM;
  *      normalizationContext={"groups"={"downtime:read"}},
  *      denormalizationContext={"groups"={"downtime:write"}}
  * )
+ * @ApiFilter(DateFilter::class, properties={"drecTimestampKey"})
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Entity(repositoryClass=DowntimeRepository::class)
- * @ORM\Table(name="mill.downtime")
- * options={"comment":"Простои"})
+ * @ORM\Table(name="mill.downtime",
+ *      options={"comment":"Простои"})
  */
 class Downtime
 {
-    const DATE_FORMAT_DB = 'Y-m-d\TH:i:sP';
 
     private DateTime $drec;
 
@@ -69,7 +71,7 @@ class Downtime
      */
     public function getStart(): ?string
     {
-        return $this->drec->format(self::DATE_FORMAT_DB);
+        return $this->drec->format(BaseEntity::DATE_FORMAT_DB);
     }
 
     public function getDrec(): DateTime
@@ -120,6 +122,36 @@ class Downtime
         return $this;
     }
 
+    /**
+     * @Groups({"downtime:read"})
+     */
+    public function getStartTime(): ?string
+    {
+        return $this->drec->format(BaseEntity::TIME_FOR_FRONT);
+    }
+    /**
+     * @Groups({"downtime:read"})
+     */
+    public function getEndTime(): ?string
+    {
+        if (isset($this->finish))
+            return $this->finish->format(BaseEntity::TIME_FOR_FRONT);
+        else {
+            return 'Продолжается';
+        }
+    }
+
+    /**
+     * @Groups({"downtime:read"})
+     */
+    public function getDurationTime(): ?string
+    {
+        if (isset($this->finish))
+            return $this->finish->diff($this->drec)->format(BaseEntity::TIME_FORMAT_FOR_INTERVAL);
+        else {
+            return 'Продолжается';
+        }
+    }
 
     /**
      * @ORM\PrePersist
@@ -141,8 +173,7 @@ class Downtime
         $entityManager = $event->getEntityManager();
         $connection = $entityManager->getConnection();
         $platform = $connection->getDatabasePlatform();
-        $this->drec = DateTime::createFromFormat($platform->getDateTimeTzFormatString(), $this->drecTimestampKey) ?: 
-                    \DateTime::createFromFormat($platform->getDateTimeFormatString(), $this->drecTimestampKey);
-
+        $this->drec = DateTime::createFromFormat($platform->getDateTimeTzFormatString(), $this->drecTimestampKey) ?:
+            \DateTime::createFromFormat($platform->getDateTimeFormatString(), $this->drecTimestampKey);
     }
 }

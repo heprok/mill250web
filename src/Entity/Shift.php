@@ -25,10 +25,6 @@ use ApiPlatform\Core\Annotation\ApiFilter;
  */
 class Shift
 {
-    const DATE_FORMAT_DB = 'Y-m-d\TH:i:sP';
-    const DATE_FOR_FRONT = 'd.m.Y H:i:s';
-    const DATE_FOR_FRONT_TIME = 'H:i:s';
-
     private $start;
 
     /**
@@ -72,14 +68,14 @@ class Shift
      */
     public function getStart(): ?string
     {
-        return $this->start->format(self::DATE_FORMAT_DB);
+        return $this->start->format(BaseEntity::DATE_FORMAT_DB);
     }
     /**
      * @Groups({"shift:read"})
      */
     public function getStartTime(): ?string
     {
-        return $this->start->format(self::DATE_FOR_FRONT_TIME);
+        return $this->start->format(BaseEntity::TIME_FOR_FRONT);
     }
     /**
      * @Groups({"shift:read"})
@@ -87,7 +83,7 @@ class Shift
     public function getEndTime(): ?string
     {
         if (isset($this->stop))
-            return $this->stop->format(self::DATE_FOR_FRONT_TIME);
+            return $this->stop->format(BaseEntity::TIME_FOR_FRONT);
         else {
             return 'В работе';
         }
@@ -95,13 +91,13 @@ class Shift
 
     public function getStartShift(): ?string
     {
-        return $this->start->format(self::DATE_FOR_FRONT);
+        return $this->start->format(BaseEntity::DATETIME_FOR_FRONT);
     }
 
     public function getStopShift(): ?string
     {
         if ($this->stop)
-            return $this->stop->format(self::DATE_FOR_FRONT);
+            return $this->stop->format(BaseEntity::DATETIME_FOR_FRONT);
         else
             return 'В работе';
     }

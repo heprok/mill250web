@@ -194,6 +194,7 @@
 <script>
 import Axios from "axios";
 import crypto from "crypto";
+import { defaults } from 'chart.js';
 
 export default {
   name: "CRUDTable",
@@ -249,6 +250,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    query: {
+      type: Object,
+      default: {}
+    }
   },
   mounted() {
     this.update();
@@ -330,7 +335,11 @@ export default {
     },
     async updateItems() {
       this.items = [];
-      const request = await Axios.get(this.urlApi);
+      let config = {
+        params: this.query
+      };
+    console.log(config, this.urlApi);
+      const request = await Axios.get(this.urlApi, config);
       this.items = request.data["hydra:member"];
       return request;
     },
