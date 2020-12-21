@@ -65,7 +65,7 @@ final class DowntimeReport extends AbstractReport
             $startTime = $downtime->getDrec();
             $endTime = $downtime->getFinish();
 
-            $duration  = $endTime->diff($startTime, true);
+            $duration  = $endTime ? $endTime->diff($startTime, true) : 'Продолжается';
 
             if ($buff['day'] != $startTime->format('d') && $key != 0) {
                 $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal());
@@ -77,7 +77,7 @@ final class DowntimeReport extends AbstractReport
                 $cause,
                 $place,
                 $startTime->format(self::FORMAT_DATE_TIME),
-                $endTime->format(self::FORMAT_DATE_TIME),
+                $endTime ? $endTime->format(self::FORMAT_DATE_TIME) : 'Продолжается',
                 $duration
             ]);
         }

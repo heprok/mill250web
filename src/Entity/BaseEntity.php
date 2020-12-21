@@ -7,6 +7,7 @@ namespace App\Entity;
 class BaseEntity
 {
     public const DATE_FORMAT_DB = 'Y-m-d\TH:i:sP';
+    public const DATE_SECOND_FORMAT_DB = 'Y-m-d H:i:s.u';
     public const DATETIME_FOR_FRONT = 'd.m.Y H:i:s';
     public const TIME_FOR_FRONT = 'H:i:s';
     public const INTERVAL_TIME_FROMAT = '%H:%I:%S';
