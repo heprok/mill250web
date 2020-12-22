@@ -92,12 +92,41 @@ class InfoCardController extends AbstractController
         $startTime = $lastDowntime->getDrec();
         $endTime = $lastDowntime->getFinish();
         $nowTime = new DateTime();
+
         $duration = $endTime ? $endTime->diff($startTime, true)->format('%d день %H:%I:%S') : 'Продолжается(' . $nowTime->diff($startTime, true)->format('%d день %H:%I:%S') . ')';
         return $this->json([
-            'value' => $cause->getName() ?? '',
-            'subtitle' => $duration . '. C ' . $startTime->format(BaseEntity::TIME_FOR_FRONT . '(d.m)') . ' по ' . $endTime->format(BaseEntity::DATETIME_FOR_FRONT . '(d.m)'),
+            'value' => $cause ? $cause->getName() : '',
+            'subtitle' => $duration . '. C ' . $startTime->format(BaseEntity::TIME_FOR_FRONT . '(d.m)') . ' по ' . ($endTime ? $endTime->format(BaseEntity::DATETIME_FOR_FRONT . '(d.m)') : 'Н.В.'),
             'color' => 'orange',
         ]);
+    }
+
+    /**
+     * @Route("/summaryDay/{start}...{end}", name="summaryDay")
+     */
+    public function getSummaryDay(string $start, string $end, ShiftRepository $shiftRepository, DowntimeRepository $downtimeRepository, TimberRepository $timberRepository)
+    {
+        $startDate = new DateTime($start);
+        $endDate = new DateTime($end);
+        $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
+
+        $shifts = $shiftRepository->findByPeriod($period);
+        if (!$shifts)
+            return $this->json('Нет смен за заданный день', 404);
+        $result['summary'] = ['volumeBoards' => 0, 'downtime' => new DateTime('00:00')];
+        foreach ($shifts as $key => $shift) {
+            $result['shifts'][$key]['name'] = 'Смена №' . $shift->getNumber();
+
+            $result['shifts'][$key]['volumeBoards'] = (float)$timberRepository->getVolumeBoardsByPeriod($shift->getPeriod());
+            $result['shifts'][$key]['downtime'] = $downtimeRepository->getTotalDowntimeByPeriod($shift->getPeriod());
+        }
+        foreach ($result['shifts'] as $shift) {
+            $result['summary']['volumeBoards'] += $shift['volumeBoards'];
+            $result['summary']['downtime']->add(BaseEntity::stringToInterval($shift['downtime']));
+        }
+
+        $result['summary']['downtime'] = BaseEntity::intervalToString(date_diff(new DateTime('00:00'), $result['summary']['downtime']));
+        return $this->json($result);
     }
 
     /**
@@ -117,23 +146,10 @@ class InfoCardController extends AbstractController
                 $period = new DatePeriod($startTime, new DateInterval('P1D'), new DateTime());
                 break;
         }
-        $downtmies = $downtimeRepository->findByPeriod($period);
-        if (!$downtmies)
+        $durationTime = $downtimeRepository->getTotalDowntimeByPeriod($period);
+
+        if (!$durationTime)
             return $this->json(['value' => '', 'color' => 'error'], 404);
-
-        $durationTime = new DateTime('00:00');
-        foreach ($downtmies as $downtime) {
-            if($downtime->getFinish())
-                $durationTime->add($downtime->getDurationInterval());
-        }
-        $durationTime = date_diff(new DateTime('00:00'), $durationTime,  true);
-
-        if ($durationTime->m > 0)
-            $durationTime = $durationTime->format(BaseEntity::INTERVAL_MOUNT_DAY_TIME_FROMAT);
-        elseif ($durationTime->d > 0)
-            $durationTime = $durationTime->format(BaseEntity::INTERVAL_DAY_TIME_FROMAT);
-        else
-            $durationTime = $durationTime->format(BaseEntity::INTERVAL_TIME_FROMAT);
 
         return $this->json([
             'value' => $durationTime ?? '',

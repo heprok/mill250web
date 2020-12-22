@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\BaseEntity;
 use App\Entity\Downtime;
+use App\Entity\Shift;
 use DatePeriod;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,14 +24,13 @@ class DowntimeRepository extends ServiceEntityRepository
         parent::__construct($registry, Downtime::class);
     }
 
-
     /**
      * Подготавливает запрос для периода
      *
      * @param DatePeriod $period
      * @return QueryBuilder
      */
-    private function getQueryFromPeriod(DatePeriod $period):QueryBuilder
+    private function getQueryFromPeriod(DatePeriod $period): QueryBuilder
     {
         return $this->createQueryBuilder('d')
             ->andWhere('d.drecTimestampKey BETWEEN :start AND :end')
@@ -48,16 +50,39 @@ class DowntimeRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
-    
+
     /**
      * @return Downtime[] Returns an array of Downtime objects
      */
-    public function findByPeriod( DatePeriod $period)
+    public function getDowntimesByShift(Shift $shift)
+    {
+        return $this->findByPeriod($shift->getPeriod);
+    }
+
+    public function getTotalDowntimeByPeriod(DatePeriod $period): ?string
+    {
+        $downtmies = $this->findByPeriod($period);
+        if (!$downtmies)
+            return null;
+
+        $durationTime = new DateTime('00:00');
+        foreach ($downtmies as $downtime) {
+            if ($downtime->getFinish())
+                $durationTime->add($downtime->getDurationInterval());
+        }
+        $durationTime = date_diff(new DateTime('00:00'), $durationTime,  true);
+
+        return BaseEntity::intervalToString($durationTime);
+    }
+
+    /**
+     * @return Downtime[] Returns an array of Downtime objects
+     */
+    public function findByPeriod(DatePeriod $period)
     {
         return $this->getQueryFromPeriod($period)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 
     /*

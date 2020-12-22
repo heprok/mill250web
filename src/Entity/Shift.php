@@ -10,6 +10,9 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use App\Filter\DateFilter;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 
 /**
  * @ApiResource(
@@ -82,11 +85,7 @@ class Shift
      */
     public function getEndTime(): ?string
     {
-        if (isset($this->stop))
-            return $this->stop->format(BaseEntity::TIME_FOR_FRONT);
-        else {
-            return 'В работе';
-        }
+        return $this->stop ? $this->stop->format(BaseEntity::TIME_FOR_FRONT) : 'В работе';
     }
 
     public function getStartShift(): ?string
@@ -96,10 +95,7 @@ class Shift
 
     public function getStopShift(): ?string
     {
-        if ($this->stop)
-            return $this->stop->format(BaseEntity::DATETIME_FOR_FRONT);
-        else
-            return 'В работе';
+        return $this->stop ? $this->stop->format(BaseEntity::DATETIME_FOR_FRONT) : 'В работе';
     }
 
     public function setStart(\DateTimeInterface $start): self
@@ -131,6 +127,14 @@ class Shift
         $this->stop = $stop;
 
         return $this;
+    }
+
+    public function getPeriod(): DatePeriod
+    {
+        // $endDate = $this->stop ? $this->stop : new DateTime();
+        $period = new DatePeriod($this->start, new DateInterval('P1D'), $this->stop ?? new DateTime()); 
+        
+        return $period;
     }
 
     /**

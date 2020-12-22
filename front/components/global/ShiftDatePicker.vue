@@ -185,7 +185,7 @@ export default {
       if (this.isTypeReportIsShift) {
         start = this.selectedShift[0].start;
         stop =
-          this.selectedShift[0].stop ?? new Date().toISOString().substr(0, 19);
+          this.selectedShift[0].stop ?? new Date().toLocaleString();
       } else {
         start = this.dates[0] + "T00:00:00";
         stop = this.dates[1] + "T23:59:59";

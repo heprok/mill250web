@@ -39,9 +39,11 @@
           sub-icon="mdi-clock"
         />
       </v-col>
+    </v-row>
+    <!-- <v-row>
       <v-col cols="6" lg="6" sm="12">
 
-        <base-material-chart-card
+          <base-material-chart-card
           color="#000"
           data="[2, 3, 4]"
           hover-reveal
@@ -81,19 +83,11 @@
               mdi-clock-outline
             </v-icon>
             <span class="caption grey--text font-weight-light">updated 10 minutes ago</span>
-          </template>-->
+          </template>
         </base-material-chart-card>
       </v-col>
 
       <v-col cols="6" lg="6" sm="12">
-        <!-- <base-material-chart-card
-          :data="diffboardontimber.data"
-          :options="diffboardontimber.options"
-          color="#000"
-          hover-reveal
-          type="Bar"
-          url="api/dashboard/report/diffboardontimber/chart"
-        >-->
         <base-material-chart-card
           color="#000"
           hover-reveal
@@ -125,20 +119,9 @@
           <h4
             class="card-title font-weight-light mt-2 ml-2"
           >Соотношение между выпеленных досок с сравнением с бревном</h4>
-          <!-- 
-          <p class="d-inline-flex font-weight-light ml-2 mt-1">
-            <v-icon color="green" small>mdi-arrow-up</v-icon>
-            <span class="green--text">55%</span>&nbsp;
-            За последние 30 дней
-          </p>-->
-
-          <!-- <template v-slot:actions>
-            <v-icon class="mr-1" small>mdi-clock-outline</v-icon>
-            <span class="caption grey--text font-weight-light">updated 4 minutes ago</span>
-          </template>-->
         </base-material-chart-card>
       </v-col>
-    </v-row>
+    </v-row> -->
   </v-container>
 </template>
 
