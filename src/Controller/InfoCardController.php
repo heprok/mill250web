@@ -113,6 +113,7 @@ class InfoCardController extends AbstractController
         $shifts = $shiftRepository->findByPeriod($period);
         if (!$shifts)
             return $this->json('Нет смен за заданный день', 404);
+
         $result['summary'] = ['volumeBoards' => 0, 'downtime' => new DateTime('00:00')];
         foreach ($shifts as $key => $shift) {
             $result['shifts'][$key]['name'] = 'Смена №' . $shift->getNumber();
@@ -122,6 +123,7 @@ class InfoCardController extends AbstractController
         }
         foreach ($result['shifts'] as $shift) {
             $result['summary']['volumeBoards'] += $shift['volumeBoards'];
+
             $result['summary']['downtime']->add(BaseEntity::stringToInterval($shift['downtime']));
         }
 

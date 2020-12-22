@@ -17,7 +17,7 @@ class BaseEntity
     public const INTERVAL_MOUNT_DAY_TIME_FROMAT = '%m м. ' . self::INTERVAL_DAY_TIME_FROMAT;
 
 
-    static public function stringToInterval(string $duration): DateInterval
+    static public function stringToInterval(?string $duration): DateInterval
     {
         $reg = "/(?'month'\d*?) *м*\.* *(?'day'\d)* *д*\.* *(?'hours'\d\d)+:(?'minutes'\d\d)+:(?'seconds'\d\d)/u";
         $matches = [];

@@ -63,7 +63,7 @@ class DowntimeRepository extends ServiceEntityRepository
     {
         $downtmies = $this->findByPeriod($period);
         if (!$downtmies)
-            return null;
+            return '00:00:00';
 
         $durationTime = new DateTime('00:00');
         foreach ($downtmies as $downtime) {
@@ -71,7 +71,6 @@ class DowntimeRepository extends ServiceEntityRepository
                 $durationTime->add($downtime->getDurationInterval());
         }
         $durationTime = date_diff(new DateTime('00:00'), $durationTime,  true);
-
         return BaseEntity::intervalToString($durationTime);
     }
 
