@@ -2,6 +2,7 @@
 
 namespace App\Report;
 
+use App\Entity\Shift;
 use DateInterval;
 use DatePeriod;
 use Symfony\Component\Asset\Package;
@@ -19,6 +20,8 @@ abstract class AbstractPdf extends TCPDF
     const MARGIN_LEFT = 20;
     const MARGIN_TOP = 20;
     const WIDTH_LOGO = 14;
+    const WIDTH_LOGO_BIG = 110;
+    const HEIGHT_LOGO_BIG = 50;
     const PRECISION_FOR_FLOAT = 3;
 
     /**
@@ -27,14 +30,14 @@ abstract class AbstractPdf extends TCPDF
      * @return int[]
      */
     abstract protected function getColumnInPrecent(): array;
-    abstract protected function getHeightCell():int;
+    abstract protected function getHeightCell(): int;
     /**
      * Кегль для текста
      * @return integer
      */
 
     abstract protected function getPointFontText(): int;
-    abstract protected function getAlignForColumns():array;
+    abstract protected function getAlignForColumns(): array;
     /**
      * Кегль для шапки
      * @return integer
@@ -52,10 +55,21 @@ abstract class AbstractPdf extends TCPDF
         $this->SetAutoPageBreak(true, 20);
 
         $datasets = $this->report->getDatasets();
-
+        
+        $this->startPageGroup();
+        $this->setPrintFooter(false);
+        $this->setPrintHeader(false);
         $this->AddPage();
         $this->SetFont('dejavusans', '', 11);
         $this->SetXY(self::MARGIN_LEFT, self::MARGIN_TOP);
+        $this->paintTitlePage();
+        $this->endPage();
+        
+        
+        $this->startPageGroup();
+        $this->setPrintFooter(true);
+        $this->setPrintHeader(true);
+        $this->AddPage();
         $this->paintTable($this->report->getLabels(), $datasets);
     }
 
@@ -91,7 +105,7 @@ abstract class AbstractPdf extends TCPDF
 
     public function render()
     {
-        return $this->Output($this->getNameFile(), );
+        return $this->Output($this->getNameFile(),);
     }
 
     public function header()
@@ -186,7 +200,7 @@ abstract class AbstractPdf extends TCPDF
                     for ($j = 0; $j < $count_labels; $j++) {
                         if ($row[$j] instanceof DateInterval) {
                             $this->Cell($puntColumns[$j], $this->getHeightCell(), $row[$j]->format(self::TIME_FORMAT_FOR_INTERVAL), 1, 0, $alignForColmns[$j], 0);
-                        } elseif(is_float($row[$j])){
+                        } elseif (is_float($row[$j])) {
                             $this->Cell($puntColumns[$j], $this->getHeightCell(), number_format($row[$j], self::PRECISION_FOR_FLOAT), 1, 0, $alignForColmns[$j], 0);
                         } else {
                             $this->Cell($puntColumns[$j], $this->getHeightCell(), $row[$j], 1, 0, $alignForColmns[$j], 0);
@@ -206,12 +220,12 @@ abstract class AbstractPdf extends TCPDF
                             // $buff['currentColumn'] += $widthColumn;
                             $buff['currentColumn'] += $rowspan;
                         } else {
-                            $text = strripos($text, '.') ? number_format($text, self::PRECISION_FOR_FLOAT) : $text;                             
+                            $text = strripos($text, '.') ? number_format($text, self::PRECISION_FOR_FLOAT) : $text;
                             $this->Cell($puntColumns[$buff['currentColumn'] + $rowspan - 1], $this->getHeightCell(), $text, 1, 0, $alignForColmns[$buff['currentColumn'] + $rowspan - 1], 1);
                             $buff['currentColumn'] += $rowspan;
                         }
                     }
-                    
+
                     $this->Ln();
                 }
             }
@@ -219,5 +233,56 @@ abstract class AbstractPdf extends TCPDF
             // $this->SetY(self::MARGIN_LEFT + 10);
         }
         // $this->Cell(array_sum($puntColumns), 0, '', 'T');
+    }
+
+    protected function paintTitlePage()
+    {
+        // $this->setFont('', '', 16)
+        
+        $widthPage = $this->getPageWidth();
+        $heightPage = $this->getPageHeight();
+        $nameReport = $this->report->getNameReport();
+        $shift = $this->report->getShift();
+        $textShift = $this->report->getShift() ? 'Оператор: ' . $this->report->getShift()->getPeople()->getFullFio() : '';
+        $period = $this->report->getPeriod();
+        $textPeriod = $period->start->format(self::DATE_FORMAT) . ' по ' . $period->end->format(self::DATE_FORMAT);
+        $this->SetXY($widthPage / 2 - self::MARGIN_LEFT, $heightPage / 2 - self::MARGIN_TOP);
+
+        $package = new Package(new EmptyVersionStrategy());
+        $image_file = $package->getUrl('build/images/logotypeBig.svg');
+        $this->ImageSVG($image_file, $widthPage / 2 - self::MARGIN_LEFT * 2 - self::WIDTH_LOGO, $heightPage / 2 - self::HEIGHT_LOGO_BIG - self::MARGIN_TOP , self::WIDTH_LOGO_BIG, 50, 'www.techno-les.com', 'L', false, 0, 0);
+
+        $html = <<<EOD
+        <div style="text-align: center;">
+        <h1> $nameReport за</h1>
+        <h3>$textPeriod</h3>
+        <h3> $textShift </h3>
+        <br>
+        <br>
+        <table style=" border: 1 solid #000;border-collapse: collapse" border="1" >
+            <tbody>
+                <tr>
+                    <th>Хар-ка</th>
+                    <th>Значение</th>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Объем досок</td>
+                    <td style="text-align: center;">в разработке</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Объем брёвен</td>
+                    <td style="text-align: center;">в разработке</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Длительность простоя</td>
+                    <td style="text-align: center;">в разработке</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+EOD;
+
+        // Print text using writeHTMLCell()
+        $this->writeHTMLCell(0, 0, self::MARGIN_LEFT, '', $html, 0, 0, false, true, 'С');
     }
 }

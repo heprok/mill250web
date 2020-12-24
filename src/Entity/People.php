@@ -104,4 +104,9 @@ class People
         $fio = $this->fam . ' ' . mb_substr($this->nam, 0, 1) . '.' . mb_substr($this->pat, 0, 1) . '.';
         return $fio;
     }
+
+    public function getFullFio(): ?string
+    {
+        return $this->fam . ' ' . ($this->nam ?? '') . ' ' . ($this->pat ?? '');
+    }
 }
