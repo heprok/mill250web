@@ -37,7 +37,10 @@
               <base-material-card
                 color="success"
                 icon="mdi-account-group"
-                :title="'Смены на ' + new Date(date).toLocaleDateString() || 'выберите день...'"
+                :title="
+                  'Смены на ' + new Date(date).toLocaleDateString() ||
+                  'выберите день...'
+                "
                 class="px-5 py-3"
               >
                 <v-spacer></v-spacer>
@@ -184,13 +187,14 @@ export default {
       let stop = "";
       if (this.isTypeReportIsShift) {
         start = this.selectedShift[0].start;
-        stop =
-          this.selectedShift[0].stop ?? new Date().toLocaleString();
+        // stop =
+        // this.selectedShift[0].stop ?? new Date().toLocaleString();
+        window.open(this.urlReport + "/shift/" + start + "/pdf");
       } else {
         start = this.dates[0] + "T00:00:00";
         stop = this.dates[1] + "T23:59:59";
+        window.open(this.urlReport + "/" + start + "..." + stop + "/pdf");
       }
-      window.open(this.urlReport + "/" + start + "..." + stop + "/pdf");
     },
     selectShift() {
       this.isTypeReportIsShift = true;
