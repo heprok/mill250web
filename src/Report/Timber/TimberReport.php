@@ -64,7 +64,7 @@ final class TimberReport extends AbstractReport
         foreach ($timbers as $key => $row) {
 
             $name_species = $row['name_species'];
-            $diam = $row['diam'];
+            $diam = (int)$row['diam'];
             $st_length = $row['st_length'];
             $count_timber = $row['count_timber'];
             $volume_boards = (float)$row['volume_boards'];
@@ -86,7 +86,7 @@ final class TimberReport extends AbstractReport
         }
         $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal($buff['name_species'], $buff['diam']));
         $dataset->addTotal($this->getColumnTotal(), $this->getTextTotal());
-
+        
 
         $this->addDataset($dataset);
 

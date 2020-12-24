@@ -12,9 +12,9 @@ abstract class AbstractPdf extends TCPDF
 {
     protected AbstractReport $report;
     const COLOR_GRAY = 238;
-    const DATE_FORMAT = 'Y.m.d H:i:s';
+    const DATE_FORMAT = 'd.m.Y H:i:s';
     const TIME_FORMAT_FOR_INTERVAL = '%H:%I:%S';
-    const DATE_FORMAT_FOR_DOWNLOAD = 'Y-m-d H:i';
+    const DATE_FORMAT_FOR_DOWNLOAD = 'd-m-Y H:i';
     const REG_EXP_FOR_TOTAL = '/([а-яА-Я\_\№ё\-a-zA-Z\s\d\(\)\.\:\,\×\⨯]+){(\d)}/um';
     const MARGIN_LEFT = 20;
     const MARGIN_TOP = 20;
@@ -212,7 +212,7 @@ abstract class AbstractPdf extends TCPDF
                             // $buff['currentColumn'] += $widthColumn;
                             $buff['currentColumn'] += $rowspan;
                         } else {
-                            // dump(is_float($text));
+                            $text = strripos($text, '.') ? number_format($text, self::PRECISION_FOR_FLOAT) : $text;                             
                             $this->Cell($puntColumns[$buff['currentColumn'] + $rowspan - 1], $this->getHeightCell(), $text, 1, 0, $alignForColmns[$buff['currentColumn'] + $rowspan - 1], 1);
                             $buff['currentColumn'] += $rowspan;
                         }

@@ -37,7 +37,7 @@
               <base-material-card
                 color="success"
                 icon="mdi-account-group"
-                :title="'Смены на ' + date || 'выберите день...'"
+                :title="'Смены на ' + new Date(date).toLocaleDateString() || 'выберите день...'"
                 class="px-5 py-3"
               >
                 <v-spacer></v-spacer>

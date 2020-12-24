@@ -92,8 +92,8 @@ class InfoCardController extends AbstractController
         $startTime = $lastDowntime->getDrec();
         $endTime = $lastDowntime->getFinish();
         $nowTime = new DateTime();
-
-        $duration = $endTime ? $endTime->diff($startTime, true)->format('%d день %H:%I:%S') : 'Продолжается(' . $nowTime->diff($startTime, true)->format('%d день %H:%I:%S') . ')';
+        // BaseEntity::intervalToString()
+        $duration = $endTime ? BaseEntity::intervalToString($endTime->diff($startTime, true)) : 'Продолжается(' . $nowTime->diff($startTime, true)->format('%d день %H:%I:%S') . ')';
         return $this->json([
             'value' => $cause ? $cause->getName() : '',
             'subtitle' => $duration . '. C ' . $startTime->format(BaseEntity::TIME_FOR_FRONT . '(d.m)') . ' по ' . ($endTime ? $endTime->format(BaseEntity::DATETIME_FOR_FRONT . '(d.m)') : 'Н.В.'),

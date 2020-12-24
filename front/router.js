@@ -13,7 +13,7 @@ export default new Router({
       children: [
         // Dashboard
         {
-          name: 'Dashboard',
+          name: 'Информационная панель',
           path: '',
           component: () => import('@/views/dashboard/Dashboard'),
         },

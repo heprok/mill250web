@@ -15,7 +15,7 @@
     <base-material-card
       :loading="loading"
       :color="colorCard"
-      :title="'Кратакая сводка за ' + date"
+      :title="'Краткая сводка за ' + new Date(date).toLocaleDateString()"
     >
       <v-card-text>
         <v-row>

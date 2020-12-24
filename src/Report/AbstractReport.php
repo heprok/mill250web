@@ -12,7 +12,7 @@ use Transliterator;
 abstract class AbstractReport
 {
     const DECIMAL_FORMAT = 4;
-    const FORMAT_DATE_TIME = 'Y.m.d H:i:s';
+    const FORMAT_DATE_TIME = 'd.m.Y H:i:s';
     const FORMAT_DATE_FROM_DB = 'Y-m-d H:i:s';
     
     private array $datasets = [];
