@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Report\Event;
 
 use App\Dataset\PdfDataset;
+use App\Entity\Shift;
 use App\Report\AbstractReport;
 use App\Repository\EventRepository;
 use DatePeriod;
@@ -13,9 +14,8 @@ abstract class AbstractEventReport extends AbstractReport
 {
     private EventRepository $eventRepository;
 
-    public function __construct(DatePeriod $period, EventRepository $eventRepository)
+    public function __construct(DatePeriod $period, EventRepository $eventRepository, Shift $shift = null)
     {
-        $this->period = $period;
         $this->eventRepository = $eventRepository;
         $this->setLabels([
             'Событие',
@@ -23,6 +23,7 @@ abstract class AbstractEventReport extends AbstractReport
             'Тип',
             'Время'
         ]);
+        parent::__construct($period, $shift);
     }
 
     abstract protected function getSourceId():array;

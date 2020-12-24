@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Report\Downtime;
 
 use App\Dataset\PdfDataset;
+use App\Entity\Shift;
 use App\Report\AbstractReport;
 use App\Repository\DowntimeRepository;
 use DatePeriod;
@@ -13,9 +14,8 @@ final class DowntimeReport extends AbstractReport
 {
     private DowntimeRepository $downtimeRepository;
 
-    public function __construct(DatePeriod $period, DowntimeRepository $downtimeRepository)
+    public function __construct(DatePeriod $period, DowntimeRepository $downtimeRepository, Shift $shift = null)
     {
-        $this->period = $period;
         $this->downtimeRepository = $downtimeRepository;
         $this->setLabels([
             '№',
@@ -24,7 +24,8 @@ final class DowntimeReport extends AbstractReport
             'Начало',
             'Окончание',
             'Длит-ность',
-        ]);
+            ]);
+        parent::__construct($period, $shift);
     }
 
     public function getNameReport(): string

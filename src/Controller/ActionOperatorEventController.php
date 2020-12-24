@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Report\AbstractReport;
 use App\Report\Event\ActionOperatorEventReport;
 use App\Report\Event\EventPdfReport;
 use App\Repository\EventRepository;
+use App\Repository\ShiftRepository;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -19,16 +21,31 @@ use Symfony\Component\Routing\Annotation\Route;
 class ActionOperatorEventController extends AbstractController
 {
     /**
-     * @Route("/{start}...{end}/pdf", name="show_pdf")
+     * @Route("/{start}...{end}/pdf", name="for_period_show_pdf")
      */
-    public function showPdf(string $start, string $end, EventRepository $eventRepository)
-    {   
+    public function showReportForPeriodPdf(string $start, string $end, EventRepository $repository)
+    {
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
-        $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate); 
-        $report = new ActionOperatorEventReport($period, $eventRepository);
+        $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
+        $report = new ActionOperatorEventReport($period, $repository);
+        $this->showPdf($report);
+    }
+
+    /**
+     * @Route("/shift/{start}/pdf", name="for_shift_show_pdf")
+     */
+    public function showReportForShiftPdf(string $start, EventRepository $repository, ShiftRepository $shiftRepository)
+    {
+        $shift = $shiftRepository->find($start);
+        $report = new ActionOperatorEventReport($shift->getPeriod(), $repository, $shift);
+        $this->showPdf($report);
+    }
+
+    private function showPdf(AbstractReport $report)
+    {
         $report->init();
         $pdf = new EventPdfReport($report);
-        return $pdf->render();
+        $pdf->render();
     }
 }

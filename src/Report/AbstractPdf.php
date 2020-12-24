@@ -44,15 +44,9 @@ abstract class AbstractPdf extends TCPDF
 
 
     public function __constructor(
-        string $orientation = 'P',
-        string $unit = 'mm',
-        string $format = 'A4',
-        bool $unicode = true,
-        string $encoding = 'UTF-8',
-        bool $diskcache = false,
-        bool $pdfa = false
+        string $orientation = 'P'
     ) {
-        parent::__construct($orientation, $unit, $format, $unicode, $encoding, $diskcache, $pdfa);
+        parent::__construct($orientation);
         $this->SetCreator('TechoLesCom');
         $this->SetMargins(self::MARGIN_LEFT, self::MARGIN_TOP);
         $this->SetAutoPageBreak(true, 20);

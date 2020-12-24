@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Report\Board;
 
 use App\Dataset\PdfDataset;
+use App\Entity\Shift;
 use App\Report\AbstractReport;
 use App\Repository\TimberRepository;
 use DatePeriod;
@@ -13,9 +14,8 @@ final class BoardFromPostavReport extends AbstractReport
 {
     private TimberRepository $repository;
 
-    public function __construct(DatePeriod $period, TimberRepository $repository)
+    public function __construct(DatePeriod $period, TimberRepository $repository, Shift $shift = null)
     {
-        $this->period = $period;
         $this->repository = $repository;
         $this->setLabels([
             'Постав',
@@ -26,6 +26,7 @@ final class BoardFromPostavReport extends AbstractReport
             'Кол-во, шт',
             'Объём, м³'
         ]);
+        parent::__construct($period, $shift);
     }
 
     protected function getColumnTotal(): array

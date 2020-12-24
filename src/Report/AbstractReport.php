@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Report;
 
 use App\Dataset\AbstractDataset;
+use App\Entity\Shift;
 use DatePeriod;
 use Exception;
 use Transliterator;
@@ -18,10 +19,17 @@ abstract class AbstractReport
     private array $datasets = [];
     protected array $labels = [];
     protected DatePeriod $period;
+    protected ?Shift $shift;
 
     abstract public function getNameReport(): string;
     abstract protected function updateDataset(): bool;
     
+    public function __construct(DatePeriod $period, Shift $shift = null)
+    {
+        $this->period = $period;
+        $this->shift = $shift;
+    }
+
     public function addDataset(AbstractDataset $dataset): self
     {
         $this->datasets[] = $dataset;
@@ -41,6 +49,10 @@ abstract class AbstractReport
         return true;
     }
 
+    public function getShift(): ?Shift
+    {
+        return $this->shift;
+    }
     /**
      * @return AbstractDataset[] Returns an array of AbstractDataset objects
      */
