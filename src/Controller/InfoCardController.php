@@ -49,10 +49,7 @@ class InfoCardController extends AbstractController
         if (!$currentShift)
             return $this->json(['value' => 0, 'color' => 'error'], 404);
 
-        $startDate = new DateTime($currentShift->getStart());
-        $endDate = new DateTime();
-        $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-        $volumeBoards = number_format((float)$timberRepository->getVolumeBoardsByPeriod($period), 3) . ' м3';
+        $volumeBoards = number_format($timberRepository->getVolumeBoardsByPeriod($currentShift->getPeriod()), BaseEntity::PRECISION_FOR_FLOAT) . ' м3';
         return $this->json([
             'value' => $volumeBoards,
             'color' => 'info'
@@ -60,20 +57,51 @@ class InfoCardController extends AbstractController
     }
 
     /**
-     * @Route("/countTimberCurrentShift", name="countTimberCurrentShift")
+     * @Route("/countTimber/{duration}", requirements={"duration"="today|currentShift"}, name="countTimber")
      */
-    public function getCountTimber(ShiftRepository $shiftRepository, TimberRepository $timberRepository)
+    public function getCountTimber(string $duration, ShiftRepository $shiftRepository, TimberRepository $timberRepository)
     {
-        $currentShift = $shiftRepository->getCurrentShift();
-        if (!$currentShift)
-            return $this->json(['value' => 0, 'color' => 'error'], 404);
+        switch ($duration) {
+            case 'today':
+                $period = BaseEntity::getPeriodToday();
+                break;
 
-        $startDate = new DateTime($currentShift->getStart());
-        $endDate = new DateTime();
-        $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-        $countTimber = $timberRepository->getCountTimberByPyeriod($period) . ' шт.';
+            case 'currentShift':
+                $currentShift = $shiftRepository->getCurrentShift();
+                if (!$currentShift)
+                    return $this->json(['value' => 0, 'color' => 'error'], 404);
+                $period = $currentShift->getPeriod();
+                break;
+        }
+
+        $countTimber = $timberRepository->getCountTimberByPeriod($period) . ' шт.';
         return $this->json([
             'value' => $countTimber,
+            'color' => 'info'
+        ]);
+    }
+
+    /**
+     * @Route("/volumeTimber/{duration}", requirements={"duration"="today|currentShift"}, name="volumeTimber")
+     */
+    public function getVolumeTimber(string $duration, ShiftRepository $shiftRepository, TimberRepository $timberRepository)
+    {
+        switch ($duration) {
+            case 'today':
+                $period = BaseEntity::getPeriodToday();
+                break;
+
+            case 'currentShift':
+                $currentShift = $shiftRepository->getCurrentShift();
+                if (!$currentShift)
+                    return $this->json(['value' => 0, 'color' => 'error'], 404);
+                $period = $currentShift->getPeriod();
+                break;
+        }
+
+        $volumeTimber = number_format($timberRepository->getVolumeTimberByPeriod($period), BaseEntity::PRECISION_FOR_FLOAT) . ' м3';
+        return $this->json([
+            'value' => $volumeTimber,
             'color' => 'info'
         ]);
     }
@@ -93,7 +121,7 @@ class InfoCardController extends AbstractController
         $endTime = $lastDowntime->getFinish();
         $nowTime = new DateTime();
         // BaseEntity::intervalToString()
-        $duration = $endTime ? BaseEntity::intervalToString($endTime->diff($startTime, true)) : 'Продолжается(' . $nowTime->diff($startTime, true)->format('%d день %H:%I:%S') . ')';
+        $duration = $endTime ? BaseEntity::intervalToString($endTime->diff($startTime, true)) : 'Продолжается(' . BaseEntity::intervalToString($nowTime->diff($startTime, true)) . ')';
         return $this->json([
             'value' => $cause ? $cause->getName() : '',
             'subtitle' => $duration . '. C ' . $startTime->format(BaseEntity::TIME_FOR_FRONT . '(d.m)') . ' по ' . ($endTime ? $endTime->format(BaseEntity::DATETIME_FOR_FRONT . '(d.m)') : 'Н.В.'),
@@ -118,7 +146,7 @@ class InfoCardController extends AbstractController
         foreach ($shifts as $key => $shift) {
             $result['shifts'][$key]['name'] = 'Смена №' . $shift->getNumber();
 
-            $result['shifts'][$key]['volumeBoards'] = (float)$timberRepository->getVolumeBoardsByPeriod($shift->getPeriod());
+            $result['shifts'][$key]['volumeBoards'] = $timberRepository->getVolumeBoardsByPeriod($shift->getPeriod());
             $result['shifts'][$key]['downtime'] = $downtimeRepository->getTotalDowntimeByPeriod($shift->getPeriod());
         }
         foreach ($result['shifts'] as $shift) {
@@ -138,9 +166,7 @@ class InfoCardController extends AbstractController
     {
         switch ($duration) {
             case 'today':
-                $startTime = new DateTime();
-                $startTime->setTime(0, 0, 0);
-                $period = new DatePeriod($startTime, new DateInterval('P1D'), new DateTime());
+                $period = BaseEntity::getPeriodToday();
                 break;
             case 'week':
                 $startTime = new DateTime('-7 day');

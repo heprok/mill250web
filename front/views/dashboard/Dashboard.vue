@@ -25,10 +25,9 @@
           color="info"
           icon="mdi-poll"
           title="Кол-во брёвен за смену"
-          urlApi="/api/infocard/countTimberCurrentShift"
+          urlApi="/api/infocard/countTimber/currentShift"
         />
       </v-col>
-
 
       <v-col cols="12" sm="6" lg="3">
         <info-card
@@ -126,7 +125,6 @@
 </template>
 
 <script>
-
 // import LineChart from '../../components/base/chart/report/dashboard/VolumeBoardChart.js';
 // import LineChartCard from '../../components/base/ChartJsCard.vue';
 export default {
@@ -136,8 +134,7 @@ export default {
       loader: false,
     };
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     complete(index) {
       this.list[index] = !this.list[index];

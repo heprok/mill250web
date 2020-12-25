@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use DateInterval;
+use DatePeriod;
+use DateTime;
 
 class BaseEntity
 {
@@ -15,6 +17,7 @@ class BaseEntity
     public const INTERVAL_TIME_FROMAT = '%H:%I:%S';
     public const INTERVAL_DAY_TIME_FROMAT = '%d д. ' . self::INTERVAL_TIME_FROMAT;
     public const INTERVAL_MOUNT_DAY_TIME_FROMAT = '%m м. ' . self::INTERVAL_DAY_TIME_FROMAT;
+    public const PRECISION_FOR_FLOAT = 3;
 
 
     static public function stringToInterval(?string $duration): DateInterval
@@ -46,5 +49,13 @@ class BaseEntity
             $dateInterval = $dateInterval->format(BaseEntity::INTERVAL_TIME_FROMAT);
 
         return $dateInterval;
+    }
+
+    static public function getPeriodToday(): DatePeriod
+    {
+        $startTime = new DateTime();
+        $startTime->setTime(0, 0, 0);
+        $period = new DatePeriod($startTime, new DateInterval('P1D'), new DateTime());
+        return $period;
     }
 }

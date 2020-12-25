@@ -28,42 +28,51 @@ class TimberRepository extends ServiceEntityRepository
      * @param DatePeriod $period
      * @return QueryBuilder
      */
-    private function getBaseQueryFromPeriod(DatePeriod $period):QueryBuilder
+    private function getBaseQueryFromPeriod(DatePeriod $period): QueryBuilder
     {
         return $this->createQueryBuilder('t')
             ->andWhere('t.drec BETWEEN :start AND :end')
             ->setParameter('start', $period->getStartDate()->format(DATE_RFC3339_EXTENDED))
             ->setParameter('end', $period->getEndDate()->format(DATE_RFC3339_EXTENDED))
             ->leftJoin('t.species', 's');
-            // ->orderBy('t.drec', 'ASC');
+        // ->orderBy('t.drec', 'ASC');
     }
-    
-    public function getCountTimberByPyeriod(DatePeriod $period)
+
+    public function getCountTimberByPeriod(DatePeriod $period): int
     {
         $qb = $this->getBaseQueryFromPeriod($period);
         return $qb
             ->select('count(1) as count_timber')
             ->getQuery()
-            ->getResult()[0]['count_timber']
-            ;
+            ->getResult()[0]['count_timber'];
     }
-    public function getVolumeBoardsByPeriod(DatePeriod $period)
+
+    public function getVolumeTimberByPeriod(DatePeriod $period): float
     {
-        $sql = 
-        "SELECT
+        $qb = $this->getBaseQueryFromPeriod($period);
+        return $qb
+            ->select('sum(volume_timber(t.length, t.diam)) as volume_timber')
+            ->getQuery()
+            ->getResult()[0]['volume_timber'];
+    }
+
+    public function getVolumeBoardsByPeriod(DatePeriod $period): float
+    {
+        $sql =
+            "SELECT
             sum(mill.volume_boards (bo, length)) AS volume_boards
         FROM
             mill.timber
         CROSS JOIN unnest(boards) as bo
         WHERE 
             drec BETWEEN :start AND :end
-        ";        
+        ";
         $params = [
             'start' => $period->getStartDate()->format(DATE_RFC3339_EXTENDED),
             'end' => $period->getEndDate()->format(DATE_RFC3339_EXTENDED),
         ];
         $query = $this->getEntityManager()->getConnection()->prepare($sql);
-        $query->execute($params);        
+        $query->execute($params);
         return $query->fetchAllAssociative()[0]['volume_boards'];
     }
 
@@ -72,38 +81,38 @@ class TimberRepository extends ServiceEntityRepository
         $qb = $this->getBaseQueryFromPeriod($period);
         return $qb
             ->select(
-                        's.name as name_species',
-                        't.diam',
-                        'standard_length(t.length) as st_length',
-                        'count(1) as count_timber',
-                        'sum(volume_timber (t.length, t.diam)) AS volume_boards'
-                    )
+                's.name as name_species',
+                't.diam',
+                'standard_length(t.length) as st_length',
+                'count(1) as count_timber',
+                'sum(volume_timber (t.length, t.diam)) AS volume_boards'
+            )
             ->addOrderBy('name_species, t.diam, st_length')
-            ->addGroupBy('name_species', 't.diam', 'st_length' )
+            ->addGroupBy('name_species', 't.diam', 'st_length')
             ->getQuery()
             ->getResult();
-    }    
-    
+    }
+
     public function getReportVolumeBoardFromPostavByPeriod(DatePeriod $period)
     {
         $qb = $this->getBaseQueryFromPeriod($period);
         return $qb
             ->select(
-                        "CASE WHEN get_json_filed_by_key(p.postav, 'name' ) = '' THEN
+                "CASE WHEN get_json_filed_by_key(p.postav, 'name' ) = '' THEN
                             p.comm
                         ELSE
                             get_json_filed_by_key(p.postav, 'name')
                         END AS name_postav",
-                        // "p.postav AS name_postav",
-                        "get_json_filed_by_key(p.postav, 'top' ) AS diam_postav",
-                        's.name as name_species',
-                        'standard_length (t.length) AS st_length',
-                        'unnest(t.boards) AS cut',
-                        'count(1) AS count_board',
-                        'volume_boards (unnest(t.boards), t.length) AS volume_boards'
-                    )
+                // "p.postav AS name_postav",
+                "get_json_filed_by_key(p.postav, 'top' ) AS diam_postav",
+                's.name as name_species',
+                'standard_length (t.length) AS st_length',
+                'unnest(t.boards) AS cut',
+                'count(1) AS count_board',
+                'volume_boards (unnest(t.boards), t.length) AS volume_boards'
+            )
             ->leftJoin('t.postav', 'p')
-            ->addGroupBy('name_postav', 'diam_postav', 'name_species', 'cut', 'st_length', 'volume_boards' )
+            ->addGroupBy('name_postav', 'diam_postav', 'name_species', 'cut', 'st_length', 'volume_boards')
             ->addOrderBy('diam_postav, st_length, name_species')
             ->getQuery()
             ->getResult();
@@ -111,8 +120,8 @@ class TimberRepository extends ServiceEntityRepository
 
     public function getReportVolumeTimberFromPostavByPeriod(DatePeriod $period)
     {
-        $sql = 
-        "SELECT
+        $sql =
+            "SELECT
             max(CASE WHEN p.postav->>'name' = '' THEN
                 p.comm
             ELSE
@@ -157,16 +166,16 @@ class TimberRepository extends ServiceEntityRepository
             diam_postav,
             name_species,
             diam_timber
-        ";        
+        ";
         $params = [
             'start' => $period->getStartDate()->format(DATE_RFC3339_EXTENDED),
             'end' => $period->getEndDate()->format(DATE_RFC3339_EXTENDED),
         ];
         $query = $this->getEntityManager()->getConnection()->prepare($sql);
-        $query->execute($params);        
+        $query->execute($params);
         return $query->fetchAllAssociative();
     }
-    
+
     // /**
     //  * @return Timber[] Returns an array of Timber objects
     //  */
