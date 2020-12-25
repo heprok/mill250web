@@ -7,6 +7,9 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Filter\DateFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
@@ -18,6 +21,8 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
  *      normalizationContext={"groups"={"event:read"}},
  *      denormalizationContext={"groups"={"event:write"}}
  * )
+ * @ApiFilter(SearchFilter::class, properties={"type": "partial", "source": "partial"})
+ * @ApiFilter(DateFilter::class, properties={"drecTimestampKey"})
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="mill.event")
  */
@@ -64,12 +69,21 @@ class Event
     {
         return $this->drec;
     }
+
     /**
      * @Groups({"event:read"})
      */
     public function getStart(): ?string
     {
-        return $this->drec->format(BaseEntity::DATE_FORMAT_DB);
+        return $this->drec->format(BaseEntity::DATETIME_FOR_FRONT);
+    }
+
+    /**
+     * @Groups({"event:read"})
+     */
+    public function getStartTime(): ?string
+    {
+        return $this->drec->format(BaseEntity::TIME_FOR_FRONT);
     }
 
     public function setDrec(\DateTimeInterface $drec): self

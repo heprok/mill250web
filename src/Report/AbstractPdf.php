@@ -220,7 +220,9 @@ abstract class AbstractPdf extends TCPDF
                             // $buff['currentColumn'] += $widthColumn;
                             $buff['currentColumn'] += $rowspan;
                         } else {
-                            $text = strripos($text, '.') ? number_format($text, self::PRECISION_FOR_FLOAT) : $text;
+                            //Если выводится интвервал ( 1 д. 03:00:00 ), то пропускается, иначе форматирует float до PRECISION_FOR_FLOAT
+                            if(!$this->isInterval($text))
+                                $text = strripos($text, '.') ? number_format($text, self::PRECISION_FOR_FLOAT) : $text;
                             $this->Cell($puntColumns[$buff['currentColumn'] + $rowspan - 1], $this->getHeightCell(), $text, 1, 0, $alignForColmns[$buff['currentColumn'] + $rowspan - 1], 1);
                             $buff['currentColumn'] += $rowspan;
                         }
@@ -234,7 +236,13 @@ abstract class AbstractPdf extends TCPDF
         }
         // $this->Cell(array_sum($puntColumns), 0, '', 'T');
     }
-
+    private function isInterval(string $interval) :bool
+    {
+        $isContainDay = (bool)stripos($interval, 'д.');
+        $isContainMounth = (bool)stripos($interval, 'м.');
+        $isContainTime = (bool)stripos($interval, ':');
+        return $isContainDay || $isContainMounth || $isContainTime;
+    }
     protected function paintTitlePage()
     {
         // $this->setFont('', '', 16)

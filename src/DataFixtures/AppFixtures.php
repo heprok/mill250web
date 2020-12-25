@@ -10,15 +10,11 @@ use Doctrine\Persistence\ObjectManager;
 
 class AppFixtures extends Fixture
 {
-    const startDate = '2020-12-14';
-    const endDate =  '2020-12-19';
+    const startDate = '2020-12-20';
+    const endDate =  '2020-12-29';
 
     public function load(ObjectManager $manager)
     {
-        // $product = new Product();
-        // $manager->persist($product);
-
-        $manager->flush();
     }
 
     static public function randomDate(): int
