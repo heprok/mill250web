@@ -33,7 +33,7 @@ class Error
     /**
      * @ORM\Column(type="string", length=128, 
      *      options={"comment":"Текст ошибки"})
-     * @Groups({"error:read"})
+     * @Groups({"error:read", "error:write"})
      */
     private string $text;
 
