@@ -5,7 +5,7 @@
     :title="title"
     class="px-5 py-3"
   >
-    <v-spacer></v-spacer>
+    <v-spacer />
     <v-data-table
       :headers="headers"
       :search="search"
@@ -32,24 +32,27 @@
               <v-col cols="3">
                 <div v-if="isCrud">
                   <v-dialog
+                    v-model="dialogCheckPassword"
                     persistent
                     width="500"
-                    v-model="dialogCheckPassword"
                   >
-                    <base-material-card icon="mdi-key" title="Потвердите права">
-                      <v-card-title> </v-card-title>
+                    <base-material-card
+                      icon="mdi-key"
+                      title="Потвердите права"
+                    >
+                      <v-card-title />
                       <v-card-text>
                         <v-row align-content="center">
                           <v-text-field
+                            v-model="password"
                             label="Пароль"
                             type="password"
-                            v-model="password"
-                          ></v-text-field>
+                          />
                         </v-row>
                       </v-card-text>
                       <v-card-actions>
                         <v-row>
-                          <v-col >
+                          <v-col>
                             <v-btn
                               width="160"
                               color="error"
@@ -62,8 +65,8 @@
                           <v-col class="d-flex justify-end">
                             <v-btn
                               width="160"
-                              @click="confirmDialogCheckPassword"
                               color="primary"
+                              @click="confirmDialogCheckPassword"
                             >
                               Потвердить
                             </v-btn>
@@ -72,8 +75,15 @@
                       </v-card-actions>
                     </base-material-card>
                   </v-dialog>
-                  <v-divider class="mx-1" inset vertical></v-divider>
-                  <v-dialog v-model="dialogAdded" max-width="700px">
+                  <v-divider
+                    class="mx-1"
+                    inset
+                    vertical
+                  />
+                  <v-dialog
+                    v-model="dialogAdded"
+                    max-width="700px"
+                  >
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
                         color="primary"
@@ -103,14 +113,14 @@
                               <v-text-field
                                 v-model="editedItem[header.value]"
                                 :label="header.text"
-                              ></v-text-field>
+                              />
                             </v-col>
                           </v-row>
                         </v-container>
                       </v-card-text>
 
                       <v-card-actions>
-                        <v-spacer></v-spacer>
+                        <v-spacer />
                         <v-btn
                           color="blue darken-1"
                           text
@@ -129,13 +139,16 @@
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
-                  <v-dialog v-model="dialogDelete" max-width="500px">
+                  <v-dialog
+                    v-model="dialogDelete"
+                    max-width="500px"
+                  >
                     <v-card>
                       <v-card-title class="headline">
                         Вы уверены, что хотите удалить?
                       </v-card-title>
                       <v-card-actions>
-                        <v-spacer></v-spacer>
+                        <v-spacer />
                         <v-btn
                           color="blue darken-1"
                           text
@@ -151,7 +164,7 @@
                         >
                           Да
                         </v-btn>
-                        <v-spacer></v-spacer>
+                        <v-spacer />
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
@@ -159,7 +172,7 @@
               </v-col>
             </v-row>
           </v-toolbar-title>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-card-title>
             <v-text-field
               v-model="search"
@@ -167,212 +180,228 @@
               label="Поиск"
               single-line
               hide-details
-            ></v-text-field>
+            />
           </v-card-title>
         </v-toolbar>
       </template>
       <!-- CHECKBOX для boolean for fir and enabled -->
       <template v-slot:item.fir="{ item }">
-        <v-simple-checkbox v-model="item.fir" disabled></v-simple-checkbox>
+        <v-simple-checkbox
+          v-model="item.fir"
+          disabled
+        />
       </template>
       <template v-slot:item.enabled="{ item }">
-        <v-simple-checkbox v-model="item.enabled" disabled></v-simple-checkbox>
+        <v-simple-checkbox
+          v-model="item.enabled"
+          disabled
+        />
       </template>
       <template v-slot:item.actions="{ item }">
-        <v-icon small class="mr-2" @click="editItemAction(item)">
+        <v-icon
+          small
+          class="mr-2"
+          @click="editItemAction(item)"
+        >
           mdi-pencil
         </v-icon>
-        <v-icon small @click="deleteItemAction(item)">mdi-delete</v-icon>
+        <v-icon
+          small
+          @click="deleteItemAction(item)"
+        >
+          mdi-delete
+        </v-icon>
       </template>
       <template v-slot:no-data>
-        <v-btn color="primary" @click="update">Обновить</v-btn>
+        <v-btn
+          color="primary"
+          @click="update"
+        >
+          Обновить
+        </v-btn>
       </template>
     </v-data-table>
   </base-material-card>
 </template>
 
 <script>
-import Axios from "axios";
-import crypto from "crypto";
-import { defaults } from 'chart.js';
+  import Axios from 'axios'
+  import crypto from 'crypto'
+  import { defaults } from 'chart.js'
 
-export default {
-  name: "CRUDTable",
-
-  data() {
-    return {
-      search: "",
-      items: [],
-      loading: false,
-      dialogAdded: false,
-      dialogDelete: false,
-      editedIndex: -1,
-      editedItem: {},
-      defaultItem: {},
-      loadingBtn: false,
-      dialogCheckPassword: false,
-      password: "",
-    };
-  },
-  watch: {
-    dialogAdded(val) {
-      val || this.closeAddedDialog();
-    },
-    dialogDelete(val) {
-      val || this.closeDeleteDialog();
-    },
-  },
-  computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "Добавление" : "Редактирование";
-    },
-  },
-  props: {
-    headers: {
-      type: Array,
-      required: true,
-    },
-    urlApi: {
-      type: String,
-      required: true,
-    },
-    title: {
-      type: String,
-      default: "",
-      required: true,
-    },
-    icon: {
-      type: String,
-      default: "",
-      required: true,
-    },
-    isCrud: {
-      type: Boolean,
-      default: false,
-    },
-    query: {
-      type: Object,
-      default: {}
-    }
-  },
-  mounted() {
-    this.update();
-  },
-  methods: {
-    async update() {
-      this.loading = true;
-      this.loadingBtn = true;
-      await this.updateItems();
-      this.loadingBtn = false;
-      this.loading = false;
+  export default {
+    name: 'CRUDTable',
+    props: {
+      headers: {
+        type: Array,
+        required: true,
+      },
+      urlApi: {
+        type: String,
+        required: true,
+      },
+      title: {
+        type: String,
+        default: '',
+        required: true,
+      },
+      icon: {
+        type: String,
+        default: '',
+        required: true,
+      },
+      isCrud: {
+        type: Boolean,
+        default: false,
+      },
+      query: {
+        type: Object,
+        default: {},
+      },
     },
 
-    editItemAction(item) {
-      this.loadingBtn = false;
-      this.editedIndex = this.items.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialogAdded = true;
-    },
-
-    deleteItemAction(item) {
-      this.loadingBtn = false;
-      this.editedIndex = this.items.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialogDelete = true;
-    },
-
-    async deleteItemConfirm() {
-      this.loadingBtn = true;
-      await this.deleteItem();
-      await this.update();
-      this.loadingBtn = false;
-      this.closeDeleteDialog();
-    },
-
-    closeAddedDialog() {
-      this.dialogAdded = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
-    },
-    closeDialogCheckPassword() {
-      this.dialogCheckPassword = false;
-      this.password = "";
-    },
-    confirmDialogCheckPassword() {
-      if (
-        //TODO удалить 
-        //tls-pass
-        crypto.createHash("sha512").update(this.password).digest("hex") ==
-        "396d55a413d2c368e78ecefd2e818a79b09236e067ddb649a6cd24d85e3a25585bdb2f787c20a78e7b0ec8fc0ba348fc65a2fe85f674eaa67de678c6f8ade11d"
-      ) {
-        this.$store.commit("SET_ADMIN", true);
-        this.closeDialogCheckPassword();
+    data () {
+      return {
+        search: '',
+        items: [],
+        loading: false,
+        dialogAdded: false,
+        dialogDelete: false,
+        editedIndex: -1,
+        editedItem: {},
+        defaultItem: {},
+        loadingBtn: false,
+        dialogCheckPassword: false,
+        password: '',
       }
-      else{
-        // console.log(this.$snotify);
-        this.$snotify.error('Неверный пароль пароль')
-        this.$store.commit("SET_ADMIN", false);
-      }
+    },
+    computed: {
+      formTitle () {
+        return this.editedIndex === -1 ? 'Добавление' : 'Редактирование'
+      },
+    },
+    watch: {
+      dialogAdded (val) {
+        val || this.closeAddedDialog()
+      },
+      dialogDelete (val) {
+        val || this.closeDeleteDialog()
+      },
+    },
+    mounted () {
+      this.update()
+    },
+    methods: {
+      async update () {
+        this.loading = true
+        this.loadingBtn = true
+        await this.updateItems()
+        this.loadingBtn = false
+        this.loading = false
+      },
 
-    },
-    closeDeleteDialog() {
-      this.dialogDelete = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
-    },
+      editItemAction (item) {
+        this.loadingBtn = false
+        this.editedIndex = this.items.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.dialogAdded = true
+      },
 
-    async deleteItem() {
-      let request = await Axios.delete(this.editedItem["@id"]);
-      return request;
-    },
-    async editItem() {
-      let request = await Axios.put(this.editedItem["@id"], this.editedItem);
-      return request;
-    },
-    async updateItems() {
-      this.items = [];
-      let config = {
-        params: this.query
-      };
-    console.log(config, this.urlApi);
-      const request = await Axios.get(this.urlApi, config);
-      this.items = request.data["hydra:member"];
-      return request;
-    },
-    async addItem() {
-      let request = await Axios.post(this.urlApi, this.editedItem);
-      return request;
-    },
+      deleteItemAction (item) {
+        this.loadingBtn = false
+        this.editedIndex = this.items.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.dialogDelete = true
+      },
 
-    checkPassword() {
-      console.log(this.$store.getters.IS_ADMIN);
-      if( this.$store.getters.IS_ADMIN )
-        return true;
+      async deleteItemConfirm () {
+        this.loadingBtn = true
+        await this.deleteItem()
+        await this.update()
+        this.loadingBtn = false
+        this.closeDeleteDialog()
+      },
 
-      this.dialogCheckPassword = true;
-    },
-    async save() {
-      this.loadingBtn = true;
-      if (this.checkPassword()) {
-        if (this.editedIndex > -1) {
-          Object.assign(this.items[this.editedIndex], this.editedItem);
-          await this.editItem();
+      closeAddedDialog () {
+        this.dialogAdded = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
+      closeDialogCheckPassword () {
+        this.dialogCheckPassword = false
+        this.password = ''
+      },
+      confirmDialogCheckPassword () {
+        if (
+          // TODO удалить
+          // tls-pass
+          crypto.createHash('sha512').update(this.password).digest('hex') ==
+          '396d55a413d2c368e78ecefd2e818a79b09236e067ddb649a6cd24d85e3a25585bdb2f787c20a78e7b0ec8fc0ba348fc65a2fe85f674eaa67de678c6f8ade11d'
+        ) {
+          this.$store.commit('SET_ADMIN', true)
+          this.closeDialogCheckPassword()
         } else {
-          await this.addItem();
+          // console.log(this.$snotify);
+          this.$snotify.error('Неверный пароль пароль')
+          this.$store.commit('SET_ADMIN', false)
         }
+      },
+      closeDeleteDialog () {
+        this.dialogDelete = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
 
-        await this.update();
-        this.closeAddedDialog();
-      }
-        this.loadingBtn = false;
-      
+      async deleteItem () {
+        const request = await Axios.delete(this.editedItem['@id'])
+        return request
+      },
+      async editItem () {
+        const request = await Axios.put(this.editedItem['@id'], this.editedItem)
+        return request
+      },
+      async updateItems () {
+        this.items = []
+        const config = {
+          params: this.query,
+        }
+        console.log(config, this.urlApi)
+        const request = await Axios.get(this.urlApi, config)
+        this.items = request.data['hydra:member']
+        return request
+      },
+      async addItem () {
+        const request = await Axios.post(this.urlApi, this.editedItem)
+        return request
+      },
+
+      checkPassword () {
+        console.log(this.$store.getters.IS_ADMIN)
+        if (this.$store.getters.IS_ADMIN) return true
+
+        this.dialogCheckPassword = true
+      },
+      async save () {
+        this.loadingBtn = true
+        if (this.checkPassword()) {
+          if (this.editedIndex > -1) {
+            Object.assign(this.items[this.editedIndex], this.editedItem)
+            await this.editItem()
+          } else {
+            await this.addItem()
+          }
+
+          await this.update()
+          this.closeAddedDialog()
+        }
+        this.loadingBtn = false
+      },
     },
-  },
-};
+  }
 </script>
 
 <style></style>

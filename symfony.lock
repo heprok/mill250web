@@ -116,6 +116,9 @@
     "fig/link-util": {
         "version": "1.1.1"
     },
+    "friendsofphp/proxy-manager-lts": {
+        "version": "v1.0.2"
+    },
     "laminas/laminas-code": {
         "version": "3.5.1"
     },
@@ -142,9 +145,6 @@
     },
     "nikic/php-parser": {
         "version": "v4.10.2"
-    },
-    "ocramius/proxy-manager": {
-        "version": "2.10.0"
     },
     "php": {
         "version": "7.4"
@@ -473,11 +473,11 @@
     "tecnickcom/tcpdf": {
         "version": "6.3.5"
     },
+    "tlc/doctrineextensions": {
+        "version": "dev-master"
+    },
     "twig/twig": {
         "version": "v3.0.5"
-    },
-    "webimpress/safe-writer": {
-        "version": "2.1.0"
     },
     "webmozart/assert": {
         "version": "1.9.1"

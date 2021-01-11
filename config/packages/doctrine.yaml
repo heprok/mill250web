@@ -2,10 +2,10 @@ doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
         types:
-            bnom: App\Doctrine\Type\BnomType
-            bnom[]: App\Doctrine\Type\BnomArrayType
-            bcut: App\Doctrine\Type\BnomArrayType
-            docdatetime: App\Doctrine\Type\DoctrineDateTimeType
+            bnom: DoctrineExtensions\Types\BnomType
+            bnom[]: DoctrineExtensions\Types\BnomArrayType
+            bcut: DoctrineExtensions\Types\BnomArrayType
+            docdatetime: DoctrineExtensions\Types\DoctrineDateTimeType
         mapping_types:
             _bnom: bnom
             bnom[]: array
@@ -25,8 +25,8 @@ doctrine:
                 alias: App
         dql:
             numeric_functions:
-                standard_length: App\Doctrine\Functions\StandardLength
-                volume_timber: App\Doctrine\Functions\VolumeTimber
-                unnest: App\Doctrine\Functions\Unnest
-                volume_boards: App\Doctrine\Functions\VolumeBoard
-                get_json_filed_by_key: App\Doctrine\Functions\GetJsonFieldByKey
+                standard_length: DoctrineExtensions\Query\Postgresql\StandardLength
+                volume_timber: DoctrineExtensions\Query\Postgresql\VolumeTimber
+                unnest: DoctrineExtensions\Query\Postgresql\Unnest
+                volume_boards: DoctrineExtensions\Query\Postgresql\VolumeBoard
+                get_json_filed_by_key: DoctrineExtensions\Query\Postgresql\GetJsonFieldByKey
