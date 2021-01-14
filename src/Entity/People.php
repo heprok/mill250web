@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PeopleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -48,11 +50,18 @@ class People
      */
     private ?string $pat;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Duty::class)
+     * @ORM\JoinTable(name="mill.people_duty")
+     */
+    private $duty;
+
     public function __construct(string $fam, ?string $nam = null, ?string $pat = null)
     {
         $this->fam = $fam;
         $this->nam = $nam;
         $this->pat = $pat;
+        $this->duty = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -108,5 +117,29 @@ class People
     public function getFullFio(): ?string
     {
         return $this->fam . ' ' . ($this->nam ?? '') . ' ' . ($this->pat ?? '');
+    }
+
+    /**
+     * @return Collection|Duty[]
+     */
+    public function getDuty(): Collection
+    {
+        return $this->duty;
+    }
+
+    public function addDuty(Duty $duty): self
+    {
+        if (!$this->duty->contains($duty)) {
+            $this->duty[] = $duty;
+        }
+
+        return $this;
+    }
+
+    public function removeDuty(Duty $duty): self
+    {
+        $this->duty->removeElement($duty);
+
+        return $this;
     }
 }
