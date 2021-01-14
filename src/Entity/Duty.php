@@ -30,7 +30,7 @@ class Duty
 
     /**
      * @ORM\Column(type="string", length=30)
-     * @Groups({"duty:read", "duty:write"})
+     * @Groups({"duty:read", "duty:write", "people:read"})
      */
     private string $name;
 
