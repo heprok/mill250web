@@ -115,6 +115,19 @@ class People
         return $fio;
     }
 
+    /**
+     * @Groups({"people:read", "shift:read"})
+     */
+    public function getDutiesString(): ?string
+    {
+        $duties = [];
+        foreach($this->duty as $duty)
+        {
+            $duties[] = $duty->getName();
+        }
+        return implode(', ', $duties);
+    }
+
     public function getFullFio(): ?string
     {
         return $this->fam . ' ' . ($this->nam ?? '') . ' ' . ($this->pat ?? '');
