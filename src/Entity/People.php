@@ -52,7 +52,7 @@ class People
 
     /**
      * @ORM\ManyToMany(targetEntity=Duty::class)
-     * @ORM\JoinTable(name="mill.people_duty")
+     * @ORM\JoinTable(name="mill.people_to_duty")
      * @Groups({"people:write", "people:read"})
      */
     private $duty;

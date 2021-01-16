@@ -5,7 +5,7 @@
     name: 'InfoCard',
     extends: InfoCard,
     data: () => ({
-      entryPointApi: process.env.VUE_APP_ENTRY_POINT_API,
+      entryPointApi: process.env.VUE_APP_ENTRY_POINT_API || '',
     }),
   }
 </script>

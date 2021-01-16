@@ -45,10 +45,7 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <v-dialog
-            v-model="people.dialogAdded"
-            max-width="700px"
-          >
+          <v-dialog v-model="people.dialogAdded" max-width="700px">
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="primary" large dark icon v-bind="attrs" v-on="on">
                 <v-icon>mdi-plus</v-icon>
@@ -282,7 +279,7 @@ export default {
         params: this.query,
       };
       const request = await Axios.get(
-        this.entryPointApi + this.people.urlApi,
+        process.env.VUE_APP_ENTRY_POINT_API || "" + this.people.urlApi,
         config
       );
       this.people.items = request.data["hydra:member"];
@@ -361,7 +358,10 @@ export default {
       this.loadingBtn = true;
       if (this.checkPassword()) {
         if (this.people.editedIndex > -1) {
-          Object.assign(this.people.items[this.people.editedIndex], this.people.editedItem);
+          Object.assign(
+            this.people.items[this.people.editedIndex],
+            this.people.editedItem
+          );
           await this.editItem();
         } else {
           await this.addItem();
