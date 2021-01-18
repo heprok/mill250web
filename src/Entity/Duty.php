@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\DutyRepository;
@@ -22,11 +24,11 @@ class Duty
 {
     /**
      * @ORM\Id
-     * @ORM\Column(type="string", length=2,
+     * @ORM\Column(type="string", name="id", length=2,
      *      options={"fixed":"true"})
      * @Groups({"duty:read", "duty:write"})
      */
-    private string $id;
+    private string $code;
 
     /**
      * @ORM\Column(type="string", length=30)
@@ -34,15 +36,22 @@ class Duty
      */
     private string $name;
 
-    public function __construct(string $id, string $name)
+    public function __construct(?string $code, string $name)
     {
-        $this->id = $id;
+        $this->code = $code;
         $this->name = $name;
     }
 
-    public function getId(): ?string
+    public function getCode(): ?string
     {
-        return $this->id;
+        return $this->code;
+    }
+
+    public function setCode(string $code): self
+    {
+        $this->code = $code;
+
+        return $this;
     }
 
     public function getName(): ?string

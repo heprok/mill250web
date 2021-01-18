@@ -22,18 +22,18 @@ final class Version20210114104633 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE mill.duty (id CHAR(2) NOT NULL, name VARCHAR(30) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('COMMENT ON TABLE mill.duty IS \'Список должностей\'');
-        $this->addSql('CREATE TABLE mill.people_duty (people_id INT NOT NULL, duty_id CHAR(2) NOT NULL, PRIMARY KEY(people_id, duty_id))');
-        $this->addSql('CREATE INDEX IDX_A779AC293147C936 ON mill.people_duty (people_id)');
-        $this->addSql('CREATE INDEX IDX_A779AC293A1F9EC1 ON mill.people_duty (duty_id)');
-        $this->addSql('ALTER TABLE mill.people_duty ADD CONSTRAINT FK_A779AC293147C936 FOREIGN KEY (people_id) REFERENCES mill.people (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE mill.people_duty ADD CONSTRAINT FK_A779AC293A1F9EC1 FOREIGN KEY (duty_id) REFERENCES mill.duty (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('CREATE TABLE mill.people_to_duty (people_id INT NOT NULL, duty_id CHAR(2) NOT NULL, PRIMARY KEY(people_id, duty_id))');
+        $this->addSql('CREATE INDEX IDX_A779AC293147C936 ON mill.people_to_duty (people_id)');
+        $this->addSql('CREATE INDEX IDX_A779AC293A1F9EC1 ON mill.people_to_duty (duty_id)');
+        $this->addSql('ALTER TABLE mill.people_to_duty ADD CONSTRAINT FK_A779AC293147C936 FOREIGN KEY (people_id) REFERENCES mill.people (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE mill.people_to_duty ADD CONSTRAINT FK_A779AC293A1F9EC1 FOREIGN KEY (duty_id) REFERENCES mill.duty (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SCHEMA public');
-        $this->addSql('ALTER TABLE people_duty DROP CONSTRAINT FK_A779AC293A1F9EC1');
+        $this->addSql('ALTER TABLE people_to_duty DROP CONSTRAINT FK_A779AC293A1F9EC1');
         $this->addSql('CREATE TABLE mill.thickness (nom SMALLINT NOT NULL, min SMALLINT NOT NULL, max SMALLINT NOT NULL, PRIMARY KEY(nom))');
         $this->addSql('COMMENT ON TABLE mill.thickness IS \'Справочник толщин\'');
         $this->addSql('COMMENT ON COLUMN mill.thickness.nom IS \'Номинальная толщина\'');
@@ -69,7 +69,7 @@ final class Version20210114104633 extends AbstractMigration
         $this->addSql('ALTER TABLE mill.board ADD CONSTRAINT fk_4fd10382569eb619 FOREIGN KEY (qual_list_id) REFERENCES mill.quality_list (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE mill.board ADD CONSTRAINT fk_4fd10382b2a1d860 FOREIGN KEY (species_id) REFERENCES dic.species (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('DROP TABLE mill.duty');
-        $this->addSql('DROP TABLE people_duty');
+        $this->addSql('DROP TABLE people_to_duty');
         $this->addSql('ALTER TABLE mill.downtime ALTER drec TYPE TIMESTAMP(0) WITHOUT TIME ZONE');
         $this->addSql('ALTER TABLE mill.downtime ALTER drec SET DEFAULT \'now()\'');
         $this->addSql('COMMENT ON COLUMN mill.downtime.drec IS NULL');

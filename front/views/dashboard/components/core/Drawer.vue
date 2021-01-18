@@ -48,7 +48,7 @@
       <!-- https://github.com/vuetifyjs/vuetify/pull/8574 -->
       <div />
     </v-list>
-
+<!-- 
     <template v-slot:append>
       <base-item
         :item="{
@@ -57,7 +57,7 @@
           to: '/settings',
         }"
       />
-    </template>
+    </template> -->
   </v-navigation-drawer>
 </template>
 
