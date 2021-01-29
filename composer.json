@@ -6,7 +6,7 @@
     "repositories": [
         {
             "type": "path",
-            "url": "~/prj/library/php/DoctrineExtensions"
+            "url": "~/prjTechno/library/php/DoctrineExtensions"
         }
     ],
     "require": {
