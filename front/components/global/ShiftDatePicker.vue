@@ -12,13 +12,16 @@
 
     <v-stepper-items>
       <v-stepper-content step="1">
+        <!-- <v-divider class="my-4"></v-divider> -->
         <v-row justify="space-around">
-          <v-btn color="primary" x-large @click="selectShift"> За смену </v-btn>
-          <v-btn color="primary" x-large @click="selectPeriod">
+          <v-btn color="primary" class="my-4" x-large @click="selectShift">
+            За смену
+          </v-btn>
+          <v-btn color="primary" class="my-4" x-large @click="selectPeriod">
             За период
           </v-btn>
         </v-row>
-        <v-divider class="my-4"></v-divider>
+        <!-- <v-divider class="my-4"></v-divider> -->
       </v-stepper-content>
 
       <v-stepper-content step="2">
@@ -85,13 +88,27 @@
               </v-date-picker>
             </v-col>
             <v-col cols="7">
-              <v-text-field
-                label="Выбран интервал"
-                v-model="textInterval"
-                readonly
-                prepend-icon="mdi-calendar-range"
-              >
-              </v-text-field>
+              <v-row>
+                <v-col cols="!2">
+                  <v-text-field
+                    label="Выбран интервал"
+                    v-model="modelInterval"
+                    readonly
+                    prepend-icon="mdi-calendar-range"
+                  >
+                  </v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-row justify="space-around" align="center">
+                    <v-col>
+                      <menu-time-picker v-model="time.start" />
+                    </v-col>
+                    <v-col>
+                      <menu-time-picker v-model="time.end" />
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
             </v-col>
             <v-col cols="12">
               <v-btn
@@ -112,18 +129,28 @@
 
 <script>
 import Axios from "axios";
+import menuTimePicker from "./MenuTimePicker.vue";
 export default {
+  components: { menuTimePicker },
   name: "shiftDatePicker",
   data() {
     return {
       isTypeReportIsShift: true,
       selectIndex: {},
       selectedShift: [],
-      textInterval: "",
+      modelInterval: "",
       el: 1,
       pickerDate: null,
       date: "",
       dates: [],
+      time: {
+        start: "08:00:00",
+        end: "08:00:00",
+      },
+      menu: {
+        startTime: null,
+        endTime: null,
+      },
       loadingTableShifts: true,
       shifts: [],
       headersTableShift: [
@@ -140,29 +167,27 @@ export default {
       require: true,
     },
   },
-  computed: {
-    today() {
-      return new Date().toISOString().substr(0, 10);
-    },
-  },
+  computed: {},
   watch: {
     dates() {
       // if (this.dates.length == 0) return;
+
       if (this.dates[0] > this.dates[1]) {
         const tmp = this.dates[0];
         this.dates[0] = this.dates[1];
         this.dates[1] = tmp;
       }
-      this.textInterval =
-        "c " +
-        (this.dates[0] || "[дата не выбрана]") +
-        " до " +
-        (this.dates[1] || "[дата не выбрана]");
-      // console.log(this.textInterval);
+      this.modelInterval = this.textInterval;
+    },
+    time: {
+      handler(val) {
+        this.modelInterval = this.textInterval;
+      },
+      deep: true,
     },
     async date(value) {
-      let start = value + "T00:00:00";
-      let end = value + "T23:59:59";
+      let start = value + "T" + this.time.start;
+      let end = value + "T" + this.time.end;
 
       let config = {
         params: {
@@ -181,6 +206,25 @@ export default {
   beforeMount() {
     this.date = this.today;
   },
+  computed: {
+    textInterval() {
+      // if (this.dates.length == 0) return;
+      let result =
+        "c " +
+        (this.dates[0] || "[дата не выбрана]") +
+        " " +
+        this.time.start +
+        " до " +
+        (this.dates[1] || "[дата не выбрана]") +
+        " " +
+        this.time.end;
+
+      return result;
+    },
+    today() {
+      return new Date().toISOString().substr(0, 10);
+    },
+  },
   methods: {
     openReport() {
       let start = "";
@@ -191,8 +235,8 @@ export default {
         // this.selectedShift[0].stop ?? new Date().toLocaleString();
         window.open(this.urlReport + "/shift/" + start + "/pdf");
       } else {
-        start = this.dates[0] + "T00:00:00";
-        stop = this.dates[1] + "T23:59:59";
+        start = this.dates[0] + "T" + this.time.start;
+        stop = this.dates[1] + "T" + this.time.end;
         window.open(this.urlReport + "/" + start + "..." + stop + "/pdf");
       }
     },
