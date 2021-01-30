@@ -47,7 +47,7 @@ class InfoCardController extends AbstractController
     {
         $currentShift = $shiftRepository->getCurrentShift();
         if (!$currentShift)
-            return $this->json(['value' => 0, 'color' => 'error'], 404);
+            return $this->json(['value' => '0', 'color' => 'error'], 404);
 
         $volumeBoards = number_format($timberRepository->getVolumeBoardsByPeriod($currentShift->getPeriod()), BaseEntity::PRECISION_FOR_FLOAT) . ' м3';
         return $this->json([
@@ -69,7 +69,7 @@ class InfoCardController extends AbstractController
             case 'currentShift':
                 $currentShift = $shiftRepository->getCurrentShift();
                 if (!$currentShift)
-                    return $this->json(['value' => 0, 'color' => 'error'], 404);
+                    return $this->json(['value' => '0', 'color' => 'error'], 404);
                 $period = $currentShift->getPeriod();
                 break;
         }
@@ -94,7 +94,7 @@ class InfoCardController extends AbstractController
             case 'currentShift':
                 $currentShift = $shiftRepository->getCurrentShift();
                 if (!$currentShift)
-                    return $this->json(['value' => 0, 'color' => 'error'], 404);
+                    return $this->json(['value' => '0', 'color' => 'error'], 404);
                 $period = $currentShift->getPeriod();
                 break;
         }

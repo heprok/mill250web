@@ -57,6 +57,8 @@
                   v-model="selectedShift"
                   item-key="startTime"
                   show-select
+                  @click:row="clickRowShift"
+                  @dblclick:row="dbClickShift"
                   class="elevation-1"
                 >
                 </v-data-table>
@@ -186,12 +188,11 @@ export default {
       deep: true,
     },
     async date(value) {
-      let start = value + "T" + this.time.start;
-      let end = value + "T" + this.time.end;
+      let periodDay = this.$store.getters.timeForTheDay(value);
 
       let config = {
         params: {
-          startTimestampKey: start + "..." + end,
+          startTimestampKey: periodDay.start + "..." + periodDay.end,
         },
       };
 
@@ -239,6 +240,19 @@ export default {
         stop = this.dates[1] + "T" + this.time.end;
         window.open(this.urlReport + "/" + start + "..." + stop + "/pdf");
       }
+    },
+    clickRowShift(item) {
+      if (this.selectedShift.indexOf(item) == -1) {
+        this.selectedShift = [];
+        this.selectedShift.push(item);
+      } else {
+        this.selectedShift.splice(item);
+      }
+    },
+    dbClickShift(object, item) {
+      this.selectedShift = [];
+      this.selectedShift.push(item.item);
+      this.openReport();
     },
     selectShift() {
       this.isTypeReportIsShift = true;
