@@ -172,7 +172,8 @@ export default {
       return new Date().toISOString().substr(0, 10);
     },
     period() {
-      return this.date + "T00:00:00" + "..." + this.date + "T23:59:59";
+      let periodDay = this.$store.getters.timeForTheDay(this.date);
+      return periodDay.start + "..." + periodDay.end;
     },
   },
 };
