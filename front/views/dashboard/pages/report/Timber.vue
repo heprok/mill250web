@@ -1,36 +1,20 @@
 <template>
   <v-container id="report_timber_dashboard" fluid tag="section">
     <v-row>
-      <v-col cols="12" sm="6" lg="3">
+      <v-col
+        cols="12"
+        sm="6"
+        lg="4"
+        v-for="infoCard in infoCards"
+        :key="infoCard.nameCard"
+      >
         <info-card
-          color="info"
-          icon="mdi-poll"
-          title="Кол-во брёвен за смену"
-          urlApi="/api/infocard/countTimber/currentShift"
-        />
-      </v-col>
-      <v-col cols="12" sm="6" lg="3">
-        <info-card
-          color="info"
-          icon="mdi-poll"
-          title="Кол-во брёвен за сегодня"
-          urlApi="/api/infocard/countTimber/today"
-        />
-      </v-col>
-      <v-col cols="12" sm="6" lg="3">
-        <info-card
-          color="info"
-          icon="mdi-poll"
-          title="Объем брёвен за сегодня"
-          urlApi="/api/infocard/volumeTimber/today"
-        />
-      </v-col>
-      <v-col cols="12" sm="6" lg="3">
-        <info-card
-          color="info"
-          icon="mdi-poll"
-          title="Объем брёвен за смену"
-          urlApi="/api/infocard/volumeTimber/currentShift"
+          :color="infoCard.color"
+          :icon="infoCard.icon"
+          :sub-icon="infoCard.subIcon"
+          :title="infoCard.nameCard"
+          :urlApi="infoCard.urlApi"
+          :durations="infoCard.duration"
         />
       </v-col>
       <v-col cols="12">
@@ -43,5 +27,59 @@
 <script>
 export default {
   name: "report_timber_dashboard",
+  data() {
+    return {
+      infoCards: [
+        {
+          nameCard: "Кол-во брёвен",
+          color: "info",
+          icon: "mdi-poll",
+          urlApi: "/api/infocard/countTimber",
+          duration: [
+            {
+              url: "/currentShift",
+              title: "за смену",
+            },
+            {
+              url: "/today",
+              title: "за сутки",
+            },
+            {
+              url: "/weekly",
+              title: "за 7 дней",
+            },
+            {
+              url: "/mountly",
+              title: "за 30 дней",
+            },
+          ],
+        },
+        {
+          nameCard: "Объем брёвен",
+          color: "info",
+          icon: "mdi-poll",
+          urlApi: "/api/infocard/volumeTimber",
+          duration: [
+            {
+              url: "/currentShift",
+              title: "за смену",
+            },
+            {
+              url: "/today",
+              title: "за сутки",
+            },
+            {
+              url: "/weekly",
+              title: "за 7 дней",
+            },
+            {
+              url: "/mountly",
+              title: "за 30 дней",
+            },
+          ],
+        },
+      ],
+    };
+  },
 };
 </script>

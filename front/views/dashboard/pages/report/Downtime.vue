@@ -1,16 +1,26 @@
 <template>
   <v-container id="report_downtimes_dashboard" fluid tag="section">
     <v-row>
-      <v-col cols="12" sm="6" lg="4">
+      <v-col cols="12" sm="6" lg="4"
+        v-for="infoCard in infoCards"
+        :key="infoCard.nameCard"
+      >
         <info-card
+          :color="infoCard.color"
+          :icon="infoCard.icon"
+          :sub-icon="infoCard.subIcon"
+          :title="infoCard.nameCard"
+          :urlApi="infoCard.urlApi"
+          :durations="infoCard.duration"
+        />
+      </v-col>
+        <!-- <info-card
           color="orange"
           icon="mdi-sofa"
           title="Последний простой"
           urlApi="/api/infocard/lastDowntime"
           sub-icon="mdi-clock"
         />
-      </v-col>
-      <v-col cols="12" sm="6" lg="4">
         <info-card
           color="orange"
           icon="mdi-sofa"
@@ -18,16 +28,13 @@
           urlApi="/api/infocard/total/today"
           sub-icon="mdi-clock"
         />
-      </v-col>
-      <v-col cols="12" sm="6" lg="4">
         <info-card
           color="orange"
           icon="mdi-sofa"
           title="Сумарный простой за неделю"
           urlApi="/api/infocard/total/week"
           sub-icon="mdi-clock"
-        />
-      </v-col>
+        /> -->
       <v-col cols="12">
         <shift-date-picker urlReport="report/downtimes"> </shift-date-picker>
       </v-col>
@@ -49,6 +56,40 @@ export default {
   name: "report_downtimes_dashboard",
   data() {
     return {
+      infoCards: [
+        {
+          urlApi: "/api/infocard/lastDowntime",
+          color: "orange",
+          icon: "mdi-sofa",
+          nameCard: "Последний простой",
+          subIcon: "mdi-clock",
+        },
+        {
+          nameCard: "Сумарный простой за сегодня",
+          color: "orange",
+          icon: "mdi-sofa",
+          urlApi: "/api/infocard/totalDowntime",
+          subIcon: "mdi-clock",
+          duration: [
+            {
+              url: "/currentShift",
+              title: "за смену",
+            },
+            {
+              url: "/today",
+              title: "за сутки",
+            },
+            {
+              url: "/weekly",
+              title: "за 7 дней",
+            },
+            {
+              url: "/mountly",
+              title: "за 30 дней",
+            },
+          ],
+        },
+      ],
       headers: [
         { text: "Причина", value: "cause.name" },
         { text: "Место", value: "place.name" },

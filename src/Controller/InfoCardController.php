@@ -161,7 +161,7 @@ class InfoCardController extends AbstractController
     }
 
     /**
-     * @Route("/total/{duration}", requirements={"duration"="today|currentShift|mountly|weekly"}, name="totalTimeDowntime")
+     * @Route("/totalDowntime/{duration}", requirements={"duration"="today|currentShift|mountly|weekly"}, name="totalTimeDowntime")
      */
     public function getTotalTimeDowntime(DowntimeRepository $downtimeRepository, string $duration, ShiftRepository $shiftRepository)
     {   
