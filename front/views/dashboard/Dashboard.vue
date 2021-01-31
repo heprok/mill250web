@@ -1,17 +1,24 @@
 <template>
   <v-container id="dashboard" fluid tag="section">
     <v-row>
-      <v-col cols="12" sm="6" lg="3">
+      <v-col
+        cols="12"
+        sm="6"
+        lg="3"
+        v-for="infoCard in infoCards"
+        :key="infoCard.nameCard"
+      >
         <info-card
-          color="info"
-          icon="mdi-account-hard-hat"
-          sub-icon="mdi-tag"
-          title="Текущая смена"
-          urlApi="/api/infocard/currentShift"
+          :color="infoCard.color"
+          :icon="infoCard.icon"
+          :sub-icon="infoCard.subIcon"
+          :title="infoCard.nameCard"
+          :urlApi="infoCard.urlApi"
+          :durations="infoCard.duration"
         />
       </v-col>
 
-      <v-col cols="12" sm="6" lg="3">
+      <!-- <v-col cols="12" sm="6" lg="3">
         <info-card
           color="info"
           icon="mdi-poll"
@@ -37,7 +44,7 @@
           urlApi="/api/infocard/lastDowntime"
           sub-icon="mdi-clock"
         />
-      </v-col>
+      </v-col> -->
     </v-row>
     <!-- <v-row>
       <v-col cols="6" lg="6" sm="12">
@@ -132,6 +139,70 @@ export default {
   data() {
     return {
       loader: false,
+      infoCards: [
+        {
+          nameCard: "Текущая смена",
+          color: "info",
+          subIcon: "mdi-tag",
+          icon: "mdi-account-hard-hat",
+          urlApi: "/api/infocard/currentShift",
+        },
+        {
+          nameCard: "Объем досок",
+          color: "info",
+          icon: "mdi-poll",
+          urlApi: "/api/infocard/volumeBoards",
+          duration: [
+            {
+              url: "/currentShift",
+              title: "за смену",
+            },
+            {
+              url: "/today",
+              title: "за сутки",
+            },
+            {
+              url: "/weekly",
+              title: "за 7 дней",
+            },
+            {
+              url: "/mountly",
+              title: "за 30 дней",
+            },
+          ],
+        },
+        {
+          nameCard: "Кол-во брёвен",
+          color: "info",
+          icon: "mdi-poll",
+          urlApi: "/api/infocard/countTimber",
+          duration: [
+            {
+              url: "/currentShift",
+              title: "за смену",
+            },
+            {
+              url: "/today",
+              title: "за сутки",
+            },
+            {
+              url: "/weekly",
+              title: "за 7 дней",
+            },
+            {
+              url: "/mountly",
+              title: "за 30 дней",
+            },
+          ],
+        },
+        {
+          nameCard: "Последний простой",
+          color: "orange",
+          icon: "mdi-account-hard-hat",
+          subIcon: "mdi-clock",
+          urlApi: "/api/infocard/lastDowntime",
+        },
+      ],
     };
   },
   mounted() {},

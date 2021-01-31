@@ -10,7 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class ShiftFixtures extends Fixture
 {
-    const COUNT_SHIFT = 30;
+    const COUNT_SHIFT = 10;
     
     public function load(ObjectManager $manager)
     {

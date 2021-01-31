@@ -68,7 +68,7 @@ final class TimberFromPostavReport extends AbstractReport
 
         foreach ($timbers as $key => $row) {
             $name_postav = $row['name_postav'] ?? 'Без имени';
-            $diam_postav = $row['diam_postav'];
+            $diam_postav = (int)$row['diam_postav'] / 10;
             $name_species = $row['name_species']; 
             $diam_timber = $row['diam_timber'];
             $count_timber = $row['count_timber'];
@@ -86,7 +86,7 @@ final class TimberFromPostavReport extends AbstractReport
             $dataset->addRow([
                 $name_postav,
                 $diam_postav,
-                $name_species, //мм в м
+                $name_species,
                 $diam_timber,
                 $date_start_postav->format(self::FORMAT_DATE_TIME),
                 $date_end_postav->format(self::FORMAT_DATE_TIME),

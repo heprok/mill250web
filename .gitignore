@@ -8,7 +8,7 @@
 /src/.preload.php
 /var/
 /vendor/
-/project.code-workspace
+/*.code-workspace
 /.vscode
 /front/dist/
 ###< symfony/framework-bundle ###

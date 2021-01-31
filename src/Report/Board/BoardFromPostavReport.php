@@ -63,9 +63,9 @@ final class BoardFromPostavReport extends AbstractReport
         $buff['name_postav'] = '';
         foreach ($timbers as $key => $row) {
             $name_postav = $row['name_postav'] ?? 'Без имени';
-            $diam_postav = $row['diam_postav'];
+            $diam_postav = (int)$row['diam_postav'] / 10; //мм->см
             $name_species = $row['name_species'];
-            $st_length = $row['st_length'];
+            $st_length = $row['st_length'] / 1000;
             $cut = $row['cut'];
             $count_board = $row['count_board'];
             $volume_boards = (float)$row['volume_boards'] * $count_board;
@@ -80,9 +80,9 @@ final class BoardFromPostavReport extends AbstractReport
             $dataset->addRow([
                 $name_postav,
                 $diam_postav,
-                $name_species, //мм в м
+                $name_species, 
                 str_replace(['(', ')', ','], ['', '', '×'], $cut),
-                $st_length / 1000, //мм в м
+                $st_length, //мм в м
                 $count_board,
                 $volume_boards
             ]);

@@ -7,6 +7,8 @@
         "core-js": "^3.8.2",
         "css-loader": "^4.2.1",
         "deepmerge": "^4.2.2",
+        "eslint": "^7.18.0",
+        "eslint-plugin-vue": "^7.5.0",
         "fibers": "^5.0.0",
         "material-design-icons-iconfont": "^5.0.1",
         "regenerator-runtime": "^0.13.2",

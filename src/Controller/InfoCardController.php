@@ -39,31 +39,19 @@ class InfoCardController extends AbstractController
             'color' => 'info'
         ]);
     }
-
-    /**
-     * @Route("/volumeBoardsCurrentShift", name="volumeBoardsCurrentShift")
-     */
-    public function getVolumeBoards(ShiftRepository $shiftRepository, TimberRepository $timberRepository)
-    {
-        $currentShift = $shiftRepository->getCurrentShift();
-        if (!$currentShift)
-            return $this->json(['value' => '0', 'color' => 'error'], 404);
-
-        $volumeBoards = number_format($timberRepository->getVolumeBoardsByPeriod($currentShift->getPeriod()), BaseEntity::PRECISION_FOR_FLOAT) . ' м3';
-        return $this->json([
-            'value' => $volumeBoards,
-            'color' => 'info'
-        ]);
-    }
-
-    /**
-     * @Route("/countTimber/{duration}", requirements={"duration"="today|currentShift"}, name="countTimber")
-     */
-    public function getCountTimber(string $duration, ShiftRepository $shiftRepository, TimberRepository $timberRepository)
+    private function getPeriodForDuration(string $duration, ShiftRepository $shiftRepository) : DatePeriod 
     {
         switch ($duration) {
             case 'today':
-                $period = BaseEntity::getPeriodToday();
+                $period = BaseEntity::getPeriodForDay();
+                break;
+                        
+            case 'weekly':
+                $period = BaseEntity::getPeriodForDay(7);
+                break;
+
+            case 'mountly':
+                $period = BaseEntity::getPeriodForDay(30);
                 break;
 
             case 'currentShift':
@@ -73,6 +61,30 @@ class InfoCardController extends AbstractController
                 $period = $currentShift->getPeriod();
                 break;
         }
+
+        return $period;
+    }
+
+    /**
+     * @Route("/volumeBoards/{duration}", requirements={"duration"="today|currentShift|mountly|weekly"}, name="volumeBoards")
+     */
+    public function getVolumeBoards(string $duration, ShiftRepository $shiftRepository, TimberRepository $timberRepository)
+    {
+        $period = $this->getPeriodForDuration($duration, $shiftRepository);
+
+        $volumeBoards = number_format($timberRepository->getVolumeBoardsByPeriod($period), BaseEntity::PRECISION_FOR_FLOAT) . ' м3';
+        return $this->json([
+            'value' => $volumeBoards,
+            'color' => 'info'
+        ]);
+    }
+
+    /**
+     * @Route("/countTimber/{duration}", requirements={"duration"="today|currentShift|mountly|weekly"}, name="countTimber")
+     */
+    public function getCountTimber(string $duration, ShiftRepository $shiftRepository, TimberRepository $timberRepository)
+    {
+        $period = $this->getPeriodForDuration($duration, $shiftRepository);
 
         $countTimber = $timberRepository->getCountTimberByPeriod($period) . ' шт.';
         return $this->json([
@@ -82,22 +94,11 @@ class InfoCardController extends AbstractController
     }
 
     /**
-     * @Route("/volumeTimber/{duration}", requirements={"duration"="today|currentShift"}, name="volumeTimber")
+     * @Route("/volumeTimber/{duration}", requirements={"duration"="today|currentShift|mountly|weekly"}, name="volumeTimber")
      */
     public function getVolumeTimber(string $duration, ShiftRepository $shiftRepository, TimberRepository $timberRepository)
     {
-        switch ($duration) {
-            case 'today':
-                $period = BaseEntity::getPeriodToday();
-                break;
-
-            case 'currentShift':
-                $currentShift = $shiftRepository->getCurrentShift();
-                if (!$currentShift)
-                    return $this->json(['value' => '0', 'color' => 'error'], 404);
-                $period = $currentShift->getPeriod();
-                break;
-        }
+        $period = $this->getPeriodForDuration($duration, $shiftRepository);
 
         $volumeTimber = number_format($timberRepository->getVolumeTimberByPeriod($period), BaseEntity::PRECISION_FOR_FLOAT) . ' м3';
         return $this->json([
@@ -146,34 +147,25 @@ class InfoCardController extends AbstractController
         foreach ($shifts as $key => $shift) {
             $result['shifts'][$key]['name'] = 'Смена №' . $shift->getNumber();
 
-            $result['shifts'][$key]['volumeBoards'] = $timberRepository->getVolumeBoardsByPeriod($shift->getPeriod());
+            $result['shifts'][$key]['volumeBoards'] = round($timberRepository->getVolumeBoardsByPeriod($shift->getPeriod()), BaseEntity::PRECISION_FOR_FLOAT);
             $result['shifts'][$key]['downtime'] = $downtimeRepository->getTotalDowntimeByPeriod($shift->getPeriod());
         }
         foreach ($result['shifts'] as $shift) {
             $result['summary']['volumeBoards'] += $shift['volumeBoards'];
-
             $result['summary']['downtime']->add(BaseEntity::stringToInterval($shift['downtime']));
         }
 
+        $result['summary']['volumeBoards'] = round($result['summary']['volumeBoards'], BaseEntity::PRECISION_FOR_FLOAT);
         $result['summary']['downtime'] = BaseEntity::intervalToString(date_diff(new DateTime('00:00'), $result['summary']['downtime']));
         return $this->json($result);
     }
 
     /**
-     * @Route("/total/{duration}", requirements={"duration"="today|week"}, name="totalTimeDowntime")
+     * @Route("/total/{duration}", requirements={"duration"="today|currentShift|mountly|weekly"}, name="totalTimeDowntime")
      */
-    public function getTotalTimeDowntime(DowntimeRepository $downtimeRepository, string $duration)
-    {
-        switch ($duration) {
-            case 'today':
-                $period = BaseEntity::getPeriodToday();
-                break;
-            case 'week':
-                $startTime = new DateTime('-7 day');
-                $startTime->setTime(0, 0, 0);
-                $period = new DatePeriod($startTime, new DateInterval('P1D'), new DateTime());
-                break;
-        }
+    public function getTotalTimeDowntime(DowntimeRepository $downtimeRepository, string $duration, ShiftRepository $shiftRepository)
+    {   
+        $period = $this->getPeriodForDuration($duration, $shiftRepository);
         $durationTime = $downtimeRepository->getTotalDowntimeByPeriod($period);
 
         if (!$durationTime)
