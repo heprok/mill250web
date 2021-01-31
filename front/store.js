@@ -11,6 +11,7 @@ export default new Vuex.Store({
     isNextDay: true,
     timeForTheDay: '08:00:00',
     isAdmin: false,
+    durationCard: JSON.parse(localStorage.getItem('durationCard') || "{}") 
   },
   mutations: {
     SET_BAR_IMAGE (state, payload) {
@@ -21,6 +22,10 @@ export default new Vuex.Store({
     },
     SET_ADMIN: (state, payload ) => {
       state.isAdmin = payload;
+    },    
+    setDuration: (state, payload ) => {
+      state.durationCard[payload.nameCard] = payload.index;
+      localStorage.setItem('durationCard', JSON.stringify(state.durationCard))
     },
   },
   getters: {
@@ -39,9 +44,11 @@ export default new Vuex.Store({
     },
     timeForDay: state => {
       return state.timeForTheDay;
-    }
+    },
+    durationCard: state => (nameCard) => {
+      return state.durationCard[nameCard]
+    },
   },
   actions: {
-
   },
 })

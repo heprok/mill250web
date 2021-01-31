@@ -43,7 +43,7 @@
           title="Простои за сегодняшний день"
           url-api="api/downtimes"
           :query="query"
-          icon="mdi-pine-tree"
+          icon="mdi-camera-timer"
           :headers="headers"
         />
       </v-col>
@@ -67,7 +67,7 @@ export default {
         {
           nameCard: "Сумарный простой за сегодня",
           color: "orange",
-          icon: "mdi-sofa",
+          icon: "mdi-camera-timer",
           urlApi: "/api/infocard/totalDowntime",
           subIcon: "mdi-clock",
           duration: [

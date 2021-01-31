@@ -1,14 +1,8 @@
 <template>
   <v-dialog v-model="dialog" width="1000">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn
-        v-bind="attrs"
-        @click="date = today"
-        v-on="on"
-        fab
-        small
-      >
-      <v-icon>mdi-calendar-today</v-icon>
+      <v-btn v-bind="attrs" @click="date = today" v-on="on" fab small>
+        <v-icon>mdi-calendar-today</v-icon>
         <!-- Краткая сводка за день -->
       </v-btn>
     </template>
@@ -33,7 +27,7 @@
             <v-simple-table>
               <tbody>
                 <tr>
-                  <td>Смена</td>
+                  <td><p class="font-weight-regular">Смена</p></td>
                   <td align="center" v-for="shift in shifts" :key="shift.name">
                     {{ shift.name }}
                   </td>
@@ -41,27 +35,27 @@
                   <!-- <td>{{ shifts.number2.name }}</td> -->
                 </tr>
                 <tr>
-                  <td>Объём досок м3</td>
+                  <td><p class="font-weight-regular">Объём досок м3</p></td>
                   <td align="center" v-for="shift in shifts" :key="shift.name">
                     {{ shift.volumeBoards }}
                   </td>
                 </tr>
                 <tr>
-                  <td>Итоговый объем м3</td>
+                  <td><p class="font-weight-regular">Итоговый объем м3</p></td>
                   <td align="center" :colspan="shifts.length">
-                    {{ summary.volumeBoards }}
+                    <p class="font-weight-bold">{{ summary.volumeBoards }} </p>
                   </td>
                 </tr>
                 <tr>
-                  <td>Простой</td>
+                  <td><p class="font-weight-regular">Простой</p></td>
                   <td align="center" v-for="shift in shifts" :key="shift.name">
                     {{ shift.downtime }}
                   </td>
                 </tr>
                 <tr>
-                  <td>Итоговый простой</td>
+                  <td><p class="font-weight-regular">Итоговый простой</p></td>
                   <td align="center" :colspan="shifts.length">
-                    {{ summary.downtime }}
+                    <p class="font-weight-bold">{{ summary.downtime }} </p>
                   </td>
                 </tr>
               </tbody>
@@ -145,7 +139,7 @@ export default {
     };
   },
   watch: {
-    async date(value) {
+    async date() {
       this.loading = true;
       let request = null;
       try {
@@ -174,11 +168,12 @@ export default {
     period() {
       let periodDay = this.$store.getters.timeForTheDay(this.date);
       return periodDay.start + "..." + periodDay.end;
+      // let periodDay = this.$store.getters.timeForTheDay(this.date);
+      // return this.date.start + "..." + this.date.end;
     },
   },
 };
 </script>
 
 <style>
-
 </style>
