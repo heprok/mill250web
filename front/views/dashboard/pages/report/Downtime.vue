@@ -101,15 +101,11 @@ export default {
   },
   computed: {
     query() {
-      let start = this.today() + "T00:00:00";
-      let end = this.today() + "T23:59:59";
-      return { drecTimestampKey: start + "..." + end };
+      let periodDay = this.$store.getters.timeForTheDay(this.date);
+      return { drecTimestampKey: periodDay.start + "..." + periodDay.end };
     },
   },
   methods: {
-    today() {
-      return new Date().toISOString().substr(0, 10);
-    },
   },
 };
 </script>

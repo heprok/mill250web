@@ -30,16 +30,12 @@ export default {
     };
   },
   methods: {
-    today() {
-      return new Date().toISOString().substr(0, 10);
-    },
   },
   computed: {
     query() {
-      let start = this.today() + "T00:00:00";
-      let end = this.today() + "T23:59:59";
+      let periodDay = this.$store.getters.timeForTheDay(this.date);
 
-      return { drecTimestampKey: start + "..." + end, type: "a", source: "o" };
+      return { drecTimestampKey: periodDay.start + "..." + periodDay.end, type: "a", source: "o" };
     },
   },
 };
