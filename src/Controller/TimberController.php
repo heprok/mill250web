@@ -23,32 +23,39 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TimberController extends AbstractController
 {
+    private PeopleRepository $peopleRepository;
+    private TimberRepository $timberRepository;
+
+    public function __construct(PeopleRepository $peopleRepository, TimberRepository $timberRepository)
+    {
+        $this->peopleRepository = $peopleRepository;
+        $this->timberRepository = $timberRepository;
+    }
+
     /**
-     * @Route("/{start}...{end}/people/{idsPeople}/pdf", name="for_period_show_pdf")
+     * @Route("/{start}...{end}/people/{idsPeople}/pdf", name="for_period_with_people_show_pdf")
      */
-    public function showReportForPeriodPdf(string $start, string $end, string $idsPeople, PeopleRepository $peopleRepository, TimberRepository $repository)
+    public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
         $idsPeople = explode('...', $idsPeople);
         foreach ($idsPeople as $idPeople) {
-            $peoples[] = $peopleRepository->find($idPeople);
+            $peoples[] = $this->peopleRepository->find($idPeople);
         }
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-        $report = new TimberReport($period, $repository, $peoples);
+        $report = new TimberReport($period, $this->timberRepository, $peoples);
         $this->showPdf($report);
+    }    
+    
+    /**
+     * @Route("/{start}...{end}/pdf", name="for_period_show_pdf")
+     */
+    public function showReportForPeriodPdf(string $start, string $end)
+    {
+        $this->showReportForPeriodWithPeoplePdf($start, $end, '');
     }
-
-    // /**
-    //  * @Route("/shift/{start}/pdf", name="for_shift_show_pdf")
-    //  */
-    // public function showReportForShiftPdf(string $start, TimberRepository $repository, ShiftRepository $shiftRepository)
-    // {
-    //     $shift = $shiftRepository->find($start);
-    //     $report = new TimberReport($shift->getPeriod(), $repository, $shift);
-    //     $this->showPdf($report);
-    // }
-
+    
     private function showPdf(AbstractReport $report)
     {
         $report->init();
@@ -57,30 +64,28 @@ class TimberController extends AbstractController
     }
 
     /**
-     * @Route("_postav/{start}...{end}/people/{idsPeople}/pdf", name="from_postav_for_period_show_pdf")
+     * @Route("_postav/{start}...{end}/people/{idsPeople}/pdf", name="from_postav_for_period_with_people_show_pdf")
      */
-    public function showReportFromPostavForPeriodPdf(string $start, string $end, string $idsPeople, PeopleRepository $peopleRepository, TimberRepository $repository)
+    public function showReportFromPostavForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
         $idsPeople = explode('...', $idsPeople);
         foreach ($idsPeople as $idPeople) {
-            $peoples[] = $peopleRepository->find($idPeople);
+            $peoples[] = $this->peopleRepository->find($idPeople);
         }
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-        $report = new TimberFromPostavReport($period, $repository, $peoples);
+        $report = new TimberFromPostavReport($period, $this->timberRepository, $peoples);
         $this->showPostavPdf($report);
+    }    
+    
+    /**
+     * @Route("_postav/{start}...{end}/people/{idsPeople}/pdf", name="from_postav_for_period_show_pdf")
+     */
+    public function showReportFromPostavForPeriodPdf(string $start, string $end)
+    {
+        $this->showReportFromPostavForPeriodWithPeoplePdf($start, $end, '');
     }
-
-    // /**
-    //  * @Route("_postav/shift/{start}/pdf", name="from_postav_for_shift_show_pdf")
-    //  */
-    // public function showReportFromPostavForShiftPdf(string $start, TimberRepository $repository, ShiftRepository $shiftRepository)
-    // {
-    //     $shift = $shiftRepository->find($start);
-    //     $report = new TimberFromPostavReport($shift->getPeriod(), $repository, $shift);
-    //     $this->showPostavPdf($report);
-    // }
 
     private function showPostavPdf(AbstractReport $report)
     {

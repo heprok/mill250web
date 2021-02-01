@@ -21,31 +21,38 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class BoardController extends AbstractController
 {
+    private PeopleRepository $peopleRepository;
+    private TimberRepository $timberRepository;
+
+    public function __construct(PeopleRepository $peopleRepository, TimberRepository $timberRepository)
+    {
+        $this->peopleRepository = $peopleRepository;
+        $this->timberRepository = $timberRepository;
+    }
+
     /**
-     * @Route("_postav/{start}...{end}/people/{idsPeople}/pdf", name="from_postav_for_period_show_pdf")
+     * @Route("_postav/{start}...{end}/people/{idsPeople}/pdf", name="from_postav_for_period_with_people_show_pdf")
      */
-    public function showReportForPeriodPdf(string $start, string $end, string $idsPeople, PeopleRepository $peopleRepository, TimberRepository $repository)
+    public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
         $idsPeople = explode('...', $idsPeople);
         foreach ($idsPeople as $idPeople) {
-            $peoples[] = $peopleRepository->find($idPeople);
+            $peoples[] = $this->peopleRepository->find($idPeople);
         }
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-        $report = new BoardFromPostavReport($period, $repository, $peoples);
+        $report = new BoardFromPostavReport($period, $this->timberRepository, $peoples);
         $this->showPdf($report);
+    }    
+    
+    /**
+     * @Route("_postav/{start}...{end}/people/{idsPeople}/pdf", name="from_postav_for_period_show_pdf")
+     */
+    public function showReportForPeriodPdf(string $start, string $end)
+    {
+        $this->showReportForPeriodWithPeoplePdf($start, $end, '');
     }
-
-    // /**
-    //  * @Route("_postav/shift/{start}/pdf", name="from_postav_for_shift_show_pdf")
-    //  */
-    // public function showReportForShiftPdf(string $start, TimberRepository $repository, ShiftRepository $shiftRepository)
-    // {
-    //     $shift = $shiftRepository->find($start);
-    //     $report = new BoardFromPostavReport($shift->getPeriod(), $repository, $shift);
-    //     $this->showPdf($report);
-    // }
 
     private function showPdf(AbstractReport $report)
     {

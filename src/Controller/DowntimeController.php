@@ -21,31 +21,41 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DowntimeController extends AbstractController
 {
-    /**
-     * @Route("/{start}...{end}/people/{idsPeople}/pdf", name="for_period_show_pdf")
-     */
-    public function showReportForPeriodPdf(string $start, string $end, string $idsPeople, PeopleRepository $peopleRepository, DowntimeRepository $repository)
+    private PeopleRepository $peopleRepository;
+    private DowntimeRepository $downtimeRepository;
+
+    public function __construct(PeopleRepository $peopleRepository, DowntimeRepository $downtimeRepository)
     {
+        $this->peopleRepository = $peopleRepository;
+        $this->downtimeRepository = $downtimeRepository;
+    }
+    
+    /**
+     * @Route("/{start}...{end}/people/{idsPeople}/pdf", name="for_period_with_people_show_pdf")
+     */
+    public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
+    {
+        
         $idsPeople = explode('...', $idsPeople);
+        $peoples = [];
         foreach ($idsPeople as $idPeople) {
-            $peoples[] = $peopleRepository->find($idPeople);
+            if($idPeople != '')
+                $peoples[] = $this->peopleRepository->find($idPeople);
         }
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-        $report = new DowntimeReport($period, $repository, $peoples);
+        $report = new DowntimeReport($period, $this->downtimeRepository, $peoples);
         $this->showPdf($report);
+    }    
+    
+    /**
+     * @Route("/{start}...{end}/pdf", name="for_period_show_pdf")
+     */
+    public function showReportForPeriodPdf(string $start, string $end)
+    {
+        $this->showReportForPeriodWithPeoplePdf($start, $end, '');
     }
-
-    // /**
-    //  * @Route("/shift/{start}/pdf", name="for_shift_show_pdf")
-    //  */
-    // public function showReportForShiftPdf(string $start, DowntimeRepository $repository, ShiftRepository $shiftRepository)
-    // {
-    //     $shift = $shiftRepository->find($start);
-    //     $report = new DowntimeReport($shift->getPeriod(), $repository, $shift);
-    //     $this->showPdf($report);
-    // }
 
     private function showPdf(AbstractReport $report)
     {

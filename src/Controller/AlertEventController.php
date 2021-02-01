@@ -21,32 +21,40 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AlertEventController extends AbstractController
 {
+
+    private PeopleRepository $peopleRepository;
+    private EventRepository $eventRepository;
+
+    public function __construct(PeopleRepository $peopleRepository, EventRepository $eventRepository)
+    {
+        $this->peopleRepository = $peopleRepository;
+        $this->eventRepository = $eventRepository;
+    }
+    
     /**
      * @Route("/{start}...{end}/people/{idsPeople}/pdf", name="for_period_show_pdf")
      */
-    public function showReportForPeriodPdf(string $start, string $end, string $idsPeople, PeopleRepository $peopleRepository, EventRepository $repository)
+    public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
         $idsPeople = explode('...', $idsPeople);
         foreach ($idsPeople as $idPeople) {
-            $peoples[] = $peopleRepository->find($idPeople);
+            $peoples[] = $this->peopleRepository->find($idPeople);
         }
 
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-        $report = new AlertEventReport($period, $repository, $peoples);
+        $report = new AlertEventReport($period, $this->eventRepository, $peoples);
         $this->showPdf($report);
+    }    
+    
+    /**
+     * @Route("/{start}...{end}/people/{idsPeople}/pdf", name="for_period_show_pdf")
+     */
+    public function showReportForPeriodPdf(string $start, string $end)
+    {
+        $this->showReportForPeriodWithPeoplePdf($start, $end, '');
     }
-
-    // /**
-    //  * @Route("/shift/{start}/pdf", name="for_shift_show_pdf")
-    //  */
-    // public function showReportForShiftPdf(string $start, EventRepository $repository, ShiftRepository $shiftRepository)
-    // {
-    //     $shift = $shiftRepository->find($start);
-    //     $report = new AlertEventReport($shift->getPeriod(), $repository, $shift);
-    //     $this->showPdf($report);
-    // }
 
     private function showPdf(AbstractReport $report)
     {
