@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "81320548a51b0329860102a4954446be",
+    "content-hash": "d3a67cef76a1074576ff2443f488aa9b",
     "packages": [
         {
             "name": "api-platform/core",
@@ -6338,11 +6338,17 @@
         },
         {
             "name": "tlc/doctrineextensions",
-            "version": "dev-8adb1ba87b99934ba77877bc5a0e7a73deddebc6",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:technolescom/DoctrineExtensions.git",
+                "reference": "f90478ad57ac7ddb88dd3f8950331033b1cf45f5"
+            },
             "dist": {
-                "type": "path",
-                "url": "/home/ok/prjTechno/library/php/DoctrineExtensions",
-                "reference": "ca4ca15132110cfc0b6e60abc807ac3116b47f15"
+                "type": "zip",
+                "url": "https://api.github.com/repos/technolescom/DoctrineExtensions/zipball/f90478ad57ac7ddb88dd3f8950331033b1cf45f5",
+                "reference": "f90478ad57ac7ddb88dd3f8950331033b1cf45f5",
+                "shasum": ""
             },
             "require": {
                 "doctrine/orm": "^2.7",
@@ -6356,6 +6362,7 @@
                 "zf1/zend-date": "^1.12",
                 "zf1/zend-registry": "^1.12"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -6394,9 +6401,11 @@
                 "doctrine",
                 "orm"
             ],
-            "transport-options": {
-                "relative": false
-            }
+            "support": {
+                "source": "https://github.com/technolescom/DoctrineExtensions/tree/master",
+                "issues": "https://github.com/technolescom/DoctrineExtensions/issues"
+            },
+            "time": "2021-01-20T14:43:32+00:00"
         },
         {
             "name": "twig/twig",

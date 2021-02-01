@@ -3,10 +3,10 @@
     "license": "proprietary",
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "repositories": [
+    "repositories": [        
         {
-            "type": "path",
-            "url": "~/prjTechno/library/php/DoctrineExtensions"
+            "type": "vcs",
+            "url": "git@github.com:technolescom/DoctrineExtensions.git"
         }
     ],
     "require": {
@@ -37,7 +37,7 @@
         "symfony/validator": "5.2.*",
         "symfony/webpack-encore-bundle": "^1.7",
         "symfony/yaml": "5.2.*",
-        "tlc/doctrineextensions": "*"
+        "tlc/doctrineextensions": "master"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",
