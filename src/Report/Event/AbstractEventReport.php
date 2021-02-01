@@ -14,7 +14,13 @@ abstract class AbstractEventReport extends AbstractReport
 {
     private EventRepository $eventRepository;
 
-    public function __construct(DatePeriod $period, EventRepository $eventRepository, Shift $shift = null)
+    /**
+     *
+     * @param DatePeriod $period
+     * @param EventRepository $eventRepository
+     * @param People[] $people
+     */
+    public function __construct(DatePeriod $period, EventRepository $eventRepository, array $people = [])
     {
         $this->eventRepository = $eventRepository;
         $this->setLabels([
@@ -23,7 +29,7 @@ abstract class AbstractEventReport extends AbstractReport
             'Тип',
             'Время'
         ]);
-        parent::__construct($period, $shift);
+        parent::__construct($period, $people);
     }
 
     abstract protected function getSourceId():array;

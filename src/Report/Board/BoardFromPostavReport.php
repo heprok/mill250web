@@ -14,7 +14,12 @@ final class BoardFromPostavReport extends AbstractReport
 {
     private TimberRepository $repository;
 
-    public function __construct(DatePeriod $period, TimberRepository $repository, Shift $shift = null)
+    /**
+     * @param DatePeriod $period
+     * @param TimberRepository $repository
+     * @param People[] $people
+     */
+    public function __construct(DatePeriod $period, TimberRepository $repository, array $people = [])
     {
         $this->repository = $repository;
         $this->setLabels([
@@ -26,7 +31,7 @@ final class BoardFromPostavReport extends AbstractReport
             'Кол-во, шт',
             'Объём, м³'
         ]);
-        parent::__construct($period, $shift);
+        parent::__construct($period, $people);
     }
 
     protected function getColumnTotal(): array

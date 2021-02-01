@@ -55,7 +55,6 @@ abstract class AbstractPdf extends TCPDF
         $this->SetAutoPageBreak(true, 20);
 
         $datasets = $this->report->getDatasets();
-        
         $this->startPageGroup();
         $this->setPrintFooter(false);
         $this->setPrintHeader(false);
@@ -64,8 +63,6 @@ abstract class AbstractPdf extends TCPDF
         $this->SetXY(self::MARGIN_LEFT, self::MARGIN_TOP);
         $this->paintTitlePage();
         $this->endPage();
-        
-        
         $this->startPageGroup();
         $this->setPrintFooter(true);
         $this->setPrintHeader(true);
@@ -221,7 +218,7 @@ abstract class AbstractPdf extends TCPDF
                             $buff['currentColumn'] += $rowspan;
                         } else {
                             //Если выводится интвервал ( 1 д. 03:00:00 ), то пропускается, иначе форматирует float до PRECISION_FOR_FLOAT
-                            if(!$this->isInterval($text))
+                            if (!$this->isInterval($text))
                                 $text = strripos($text, '.') ? number_format($text, self::PRECISION_FOR_FLOAT) : $text;
                             $this->Cell($puntColumns[$buff['currentColumn'] + $rowspan - 1], $this->getHeightCell(), $text, 1, 0, $alignForColmns[$buff['currentColumn'] + $rowspan - 1], 1);
                             $buff['currentColumn'] += $rowspan;
@@ -236,7 +233,7 @@ abstract class AbstractPdf extends TCPDF
         }
         // $this->Cell(array_sum($puntColumns), 0, '', 'T');
     }
-    private function isInterval(string $interval) :bool
+    private function isInterval(string $interval): bool
     {
         $isContainDay = (bool)stripos($interval, 'д.');
         $isContainMounth = (bool)stripos($interval, 'м.');
@@ -246,25 +243,33 @@ abstract class AbstractPdf extends TCPDF
     protected function paintTitlePage()
     {
         // $this->setFont('', '', 16)
-        
+
         $widthPage = $this->getPageWidth();
         $heightPage = $this->getPageHeight();
         $nameReport = $this->report->getNameReport();
-        $shift = $this->report->getShift();
-        $textShift = $this->report->getShift() ? 'Оператор: ' . $this->report->getShift()->getPeople()->getFullFio() : '';
+        $namesOperator = '';
+        $peoples = $this->report->getPeoples();
+        if (count($peoples) == 1) {
+            $namesOperator = 'Оператор: ' . $peoples[0]->getFullFio();
+        } else if (count($peoples) > 0) {
+            $namesOperator = 'Операторы: ';
+            foreach ($peoples as $people) {
+                $namesOperator .= $people->getFullFio() . "<br />";
+            }
+        }
         $period = $this->report->getPeriod();
         $textPeriod = $period->start->format(self::DATE_FORMAT) . ' по ' . $period->end->format(self::DATE_FORMAT);
         $this->SetXY($widthPage / 2 - self::MARGIN_LEFT, $heightPage / 2 - self::MARGIN_TOP);
 
         $package = new Package(new EmptyVersionStrategy());
         $image_file = $package->getUrl('build/images/logotypeBig.svg');
-        $this->ImageSVG($image_file, $widthPage / 2 - self::MARGIN_LEFT * 2 - self::WIDTH_LOGO, $heightPage / 2 - self::HEIGHT_LOGO_BIG - self::MARGIN_TOP , self::WIDTH_LOGO_BIG, 50, 'www.techno-les.com', 'L', false, 0, 0);
+        $this->ImageSVG($image_file, $widthPage / 2 - self::MARGIN_LEFT * 2 - self::WIDTH_LOGO, $heightPage / 2 - self::HEIGHT_LOGO_BIG - self::MARGIN_TOP, self::WIDTH_LOGO_BIG, 50, 'www.techno-les.com', 'L', false, 0, 0);
 
         $html = <<<EOD
         <div style="text-align: center;">
         <h1> $nameReport за</h1>
         <h3>$textPeriod</h3>
-        <h3> $textShift </h3>
+        <h3> $namesOperator </h3>
         <br>
         <br>
         <table style=" border: 1 solid #000;border-collapse: collapse" border="1" >

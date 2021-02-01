@@ -11,6 +11,7 @@ export default new Vuex.Store({
     isNextDay: true,
     timeForTheDay: '08:00:00',
     isAdmin: false,
+    timezone: 'Asia/Irkutsk',
     durationCard: JSON.parse(localStorage.getItem('durationCard') || "{}") 
   },
   mutations: {
@@ -31,6 +32,9 @@ export default new Vuex.Store({
   getters: {
     IS_ADMIN: state => {
       return state.isAdmin;
+    },    
+    timezone: state => {
+      return state.timezone;
     },
     timeForTheDay: state => (day = null) => {
       let date = !!day ? new Date(day) : new Date();

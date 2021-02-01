@@ -53,7 +53,6 @@
                   loading-text="Загрузка... Ждите"
                   no-data-text="За данный период нет смен"
                   :items="shifts"
-                  single-select
                   v-model="selectedShift"
                   item-key="startTime"
                   show-select
@@ -188,11 +187,12 @@ export default {
       deep: true,
     },
     async date(value) {
-      let periodDay = this.$store.getters.timeForTheDay(value);
-
+      // let periodDay = this.$store.getters.timeForTheDay(value);
+      let start = value + "T00:00:00";
+      let end = value + "T23:59:59";
       let config = {
         params: {
-          startTimestampKey: periodDay.start + "..." + periodDay.end,
+          startTimestampKey: start + "..." + end,
         },
       };
 
@@ -231,10 +231,34 @@ export default {
       let start = "";
       let stop = "";
       if (this.isTypeReportIsShift) {
-        start = this.selectedShift[0].start;
-        // stop =
-        // this.selectedShift[0].stop ?? new Date().toLocaleString();
-        window.open(this.urlReport + "/shift/" + start + "/pdf");
+        //воозращает числа из api/people/ID и убирает повторяющиеся элементы
+        let idsPeople = Array.from(
+          new Set(
+            this.selectedShift.map((shift) => {
+              // let id = shift.people['@id'].replace(/\D+/g,"");
+              return shift.people["@id"].replace(/\D+/g, "");
+            })
+          )
+        );
+
+        if (this.selectedShift.length == 1) {
+          start = this.selectedShift[0].start;
+          // stop =
+          // this.selectedShift[0].stop ?? new Date().toLocaleString();
+          window.open(this.urlReport + "/shift/" + start + "/pdf");
+        } else {
+          let datesStartShift = this.selectedShift.map(shift => {{
+            return new Date(shift.start)
+          }});
+          let datesStopShift = this.selectedShift.map(shift => {{
+            return new Date(shift.stop) ?? new Date();
+          }});
+
+          let maxDate=this.$moment(Math.max.apply(null,datesStopShift)).format();
+          let minDate=this.$moment(Math.min.apply(null,datesStartShift)).format();
+          window.open(this.urlReport + "/" + minDate + "..." + maxDate +'/people/' + idsPeople.join('...') +"/pdf");
+
+        }
       } else {
         start = this.dates[0] + "T" + this.time.start;
         stop = this.dates[1] + "T" + this.time.end;
@@ -242,12 +266,9 @@ export default {
       }
     },
     clickRowShift(item) {
-      if (this.selectedShift.indexOf(item) == -1) {
-        this.selectedShift = [];
-        this.selectedShift.push(item);
-      } else {
-        this.selectedShift.splice(item);
-      }
+      this.selectedShift.indexOf(item) == -1
+        ? this.selectedShift.push(item)
+        : this.selectedShift.splice(this.selectedShift.indexOf(item), 1);
     },
     dbClickShift(object, item) {
       this.selectedShift = [];
