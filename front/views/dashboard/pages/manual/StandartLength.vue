@@ -7,6 +7,7 @@
           url-api="api/lengths"
           icon="mdi-format-line-spacing"
           :headers="headers"
+          isCheckPass
           is-crud
         >
         </crud-table>
@@ -22,7 +23,7 @@ export default {
   data() {
     return {
       headers: [
-        { text: "Стандартная длина", value: "standard", edited: false },
+        { text: "Стандартная длина", value: "standard"},
         { text: "Мин. граница", value: "minimum" },
         { text: "Макс. граница", value: "maximum" },
         { text: "Действия", value: "actions", edited: false },

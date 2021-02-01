@@ -4,8 +4,10 @@
   export default {
     name: 'CRUDTable',
     extends: CRUDTable,
-    data: () => ({
-      entryPointApi: process.env.VUE_APP_ENTRY_POINT_API || '',
-    }),
+    data(){
+      return {
+        entryPointApi: this.$store.getters.getApiEntryPoint,
+      } 
+    },
   }
 </script>

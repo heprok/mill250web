@@ -37,8 +37,10 @@ class AlertEventController extends AbstractController
     public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
         $idsPeople = explode('...', $idsPeople);
+        $peoples = [];
         foreach ($idsPeople as $idPeople) {
-            $peoples[] = $this->peopleRepository->find($idPeople);
+            if($idPeople != '')
+                $peoples[] = $this->peopleRepository->find($idPeople);
         }
 
         $startDate = new DateTime($start);

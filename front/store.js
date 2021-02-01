@@ -12,6 +12,7 @@ export default new Vuex.Store({
     timeForTheDay: '08:00:00',
     isAdmin: false,
     timezone: 'Asia/Irkutsk',
+    apiEntryPoint: '',
     durationCard: JSON.parse(localStorage.getItem('durationCard') || "{}") 
   },
   mutations: {
@@ -35,9 +36,10 @@ export default new Vuex.Store({
     },    
     timezone: state => {
       return state.timezone;
-    },
+    },    
+    getApiEntryPoint: state => state.apiEntryPoint,
     timeForTheDay: state => (day = null) => {
-      let date = !!day ? new Date(day) : new Date();
+      let date = !day ? new Date() : new Date(day);
       let today = date.toISOString().substr(0, 10) + 'T' + state.timeForTheDay;
       date.setDate(date.getDate() + 1);
       let yestarday = date.toISOString().substr(0,10) + 'T' + state.timeForTheDay

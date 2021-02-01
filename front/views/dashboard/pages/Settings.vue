@@ -279,7 +279,7 @@ export default {
         params: this.query,
       };
       const request = await Axios.get(
-        process.env.VUE_APP_ENTRY_POINT_API || "" + this.people.urlApi,
+        this.$store.getters.getApiEntryPoint + this.people.urlApi,
         config
       );
       this.people.items = request.data["hydra:member"];

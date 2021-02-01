@@ -180,6 +180,7 @@
               :url-api="duties.urlApi"
               icon="mdi-account-box"
               :headers="duty.headers"
+              isCheckPass
               is-crud
             />
           </v-card>
@@ -278,8 +279,9 @@ export default {
       const config = {
         params: this.query,
       };
+      console.log()
       const request = await Axios.get(
-        process.env.VUE_APP_ENTRY_POINT_API || "" + this.people.urlApi,
+        this.entryPointApi + this.people.urlApi,
         config
       );
       this.people.items = request.data["hydra:member"];

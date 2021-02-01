@@ -31,13 +31,15 @@ class ActionOperatorEventController extends AbstractController
     }
 
     /**
-     * @Route("/{start}...{end}/people/{idsPeople}/pdf", name="for_period_show_pdf")
+     * @Route("/{start}...{end}/people/{idsPeople}/pdf", name="for_period_with_people_show_pdf")
      */
     public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
         $idsPeople = explode('...', $idsPeople);
+        $peoples = [];
         foreach ($idsPeople as $idPeople) {
-            $peoples[] = $this->peopleRepository->find($idPeople);
+            if($idPeople != '')
+                $peoples[] = $this->peopleRepository->find($idPeople);
         }
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
@@ -47,7 +49,7 @@ class ActionOperatorEventController extends AbstractController
     }    
 
     /**
-     * @Route("/{start}...{end}/people/{idsPeople}/pdf", name="for_period_show_pdf")
+     * @Route("/{start}...{end}/pdf", name="for_period_show_pdf")
      */
     public function showReportForPeriodPdf(string $start, string $end)
     {

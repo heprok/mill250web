@@ -8,6 +8,7 @@
           icon="mdi-flag"
           :headers="place.headers"
           is-crud
+          isCheckPass
         >
         </crud-table>
       </v-col>
@@ -18,6 +19,7 @@
           icon="mdi-comment-question-outline"
           :headers="cause.headers"
           is-crud
+          isCheckPass
         >
         </crud-table>
       </v-col>

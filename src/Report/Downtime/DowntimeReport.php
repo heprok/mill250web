@@ -77,9 +77,9 @@ final class DowntimeReport extends AbstractReport
 
             if ($buff['day'] != $startTime->format('d') && $key != 0) {
                 $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal());
-                $buff['day'] = $startTime->format('d');
             }
-
+            
+            $buff['day'] = $startTime->format('d');
             $dataset->addRow([
                 $key + 1,
                 $cause,

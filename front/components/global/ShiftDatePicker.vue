@@ -230,42 +230,43 @@ export default {
       let start = "";
       let stop = "";
       if (this.isTypeReportIsShift) {
-      //воозращает числа из api/people/ID и убирает повторяющиеся элементы
-      let idsPeople = Array.from(
-        new Set(
-          this.selectedShift.map((shift) => {
-            // let id = shift.people['@id'].replace(/\D+/g,"");
-            return shift.people["@id"].replace(/\D+/g, "");
-          })
-        )
-      );
+        //воозращает числа из api/people/ID и убирает повторяющиеся элементы
+        let idsPeople = Array.from(
+          new Set(
+            this.selectedShift.map((shift) => {
+              // let id = shift.people['@id'].replace(/\D+/g,"");
+              return shift.people["@id"].replace(/\D+/g, "");
+            })
+          )
+        );
 
-      let datesStartShift = this.selectedShift.map(
-        (shift) => new Date(shift.start)
-      );
-      let datesStopShift = this.selectedShift.map(
-        (shift) => new Date(shift.stop) ?? new Date()
-      );
+        let datesStartShift = this.selectedShift.map(
+          (shift) => new Date(shift.start)
+        );
+        let datesStopShift = this.selectedShift.map((shift) =>
+          !shift.stop ? new Date() : new Date(shift.stop).toISOString()
+        );
 
-      let maxDate = this.$moment(Math.max.apply(null, datesStopShift)).format();
-      let minDate = this.$moment(
-        Math.min.apply(null, datesStartShift)
-      ).format();
-      window.open(
-        this.urlReport +
-          "/" +
-          minDate +
-          "..." +
-          maxDate +
-          "/people/" +
-          idsPeople.join("...") +
-          "/pdf"
-      );
-
+        let maxDate = this.$moment(
+          Math.max.apply(null, datesStopShift)
+        ).format();
+        let minDate = this.$moment(
+          Math.min.apply(null, datesStartShift)
+        ).format();
+        window.open(
+          this.urlReport +
+            "/" +
+            minDate +
+            "..." +
+            maxDate +
+            "/people/" +
+            idsPeople.join("...") +
+            "/pdf"
+        );
       } else {
-      start = this.dates[0] + "T" + this.time.start;
-      stop = this.dates[1] + "T" + this.time.end;
-      window.open(this.urlReport + "/" + start + "..." + stop + "/pdf");
+        start = this.dates[0] + "T" + this.time.start;
+        stop = this.dates[1] + "T" + this.time.end;
+        window.open(this.urlReport + "/" + start + "..." + stop + "/pdf");
       }
     },
     clickRowShift(item) {

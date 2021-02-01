@@ -8,6 +8,7 @@
           icon="mdi-gesture-double-tap"
           :headers="headers"
           is-crud
+          isCheckPass
         >
         </crud-table>
       </v-col>

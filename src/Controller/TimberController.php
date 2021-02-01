@@ -38,8 +38,10 @@ class TimberController extends AbstractController
     public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
         $idsPeople = explode('...', $idsPeople);
+        $peoples = [];
         foreach ($idsPeople as $idPeople) {
-            $peoples[] = $this->peopleRepository->find($idPeople);
+            if($idPeople != '')
+                $peoples[] = $this->peopleRepository->find($idPeople);
         }
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
@@ -69,8 +71,10 @@ class TimberController extends AbstractController
     public function showReportFromPostavForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
         $idsPeople = explode('...', $idsPeople);
+        $peoples = [];
         foreach ($idsPeople as $idPeople) {
-            $peoples[] = $this->peopleRepository->find($idPeople);
+            if($idPeople != '')
+                $peoples[] = $this->peopleRepository->find($idPeople);
         }
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
