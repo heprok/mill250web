@@ -167,7 +167,7 @@ export default {
             },
             {
               url: "/mountly",
-              title: "за 30 дней",
+              title: "за месяц",
             },
           ],
         },
@@ -191,7 +191,7 @@ export default {
             },
             {
               url: "/mountly",
-              title: "за 30 дней",
+              title: "за месяц",
             },
           ],
         },

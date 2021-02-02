@@ -26,7 +26,7 @@ class Length
     /**
      * @ORM\Id()
      * @ORM\Column(type="integer")
-     * @Groups({"length:read"})
+     * @Groups({"length:read", "length:write"})
      */
     private int $standard;
 
@@ -52,6 +52,13 @@ class Length
     public function getStandard(): ?int
     {
         return $this->standard;
+    }
+
+    public function setStandard(int $standard): self
+    {
+        $this->standard = $standard;
+
+        return $this;
     }
 
     public function getMinimum(): ?int

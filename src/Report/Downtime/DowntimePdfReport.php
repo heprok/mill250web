@@ -12,7 +12,7 @@ final class DowntimePdfReport extends AbstractPdf
     public function __construct(AbstractReport $actionOperatorEventReport)
     {
         $this->setReport($actionOperatorEventReport);
-        parent::__constructor();
+        parent::__constructor('L');
     }
 
 
@@ -23,7 +23,7 @@ final class DowntimePdfReport extends AbstractPdf
 
     protected function getColumnInPrecent(): array
     {
-        return [5, 15, 15, 24, 24, 20];
+        return [5, 26, 26, 14, 15, 16];
     }
 
     protected function getAlignForColumns(): array
