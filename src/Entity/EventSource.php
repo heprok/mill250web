@@ -23,6 +23,7 @@ class EventSource
     /**
      * @ORM\Id
      * @ORM\Column(type="string", length=1) 
+     * @Groups({"event_source:read"})
      */
     private string $id;
 

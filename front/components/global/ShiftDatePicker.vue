@@ -27,9 +27,32 @@
         <!-- <v-divider class="my-4"></v-divider> -->
       </v-stepper-content>
       <v-stepper-content step="2">
+        <v-row>
+          <v-col cols=12>
         <default-tlc-query-builder v-model="query">
         </default-tlc-query-builder>
+        </v-col>
+                    <v-col cols="12">
+              <v-btn
+                color="primary"
+                @click="el = 3"
+                x-large
+              >
+                Далее
+              </v-btn>
+            </v-col>
+        </v-row>
       </v-stepper-content>
+        <!-- <v-dialog v-model="dialogImage" width="1000">
+    <base-material-card
+      :color="colorImage"
+      :title="textDialogImg"
+    >
+      <v-card-text>
+        <v-img :src="imageKatya" /> 
+      </v-card-text>
+    </base-material-card>
+  </v-dialog> -->
       <v-stepper-content step="3">
         <div v-if="isTypeReportIsShift">
           <v-row>
@@ -173,6 +196,10 @@ export default {
       pickerDate: null,
       date: "",
       dates: [],
+    //   textDialogImg: '',
+    //   colorImage: 'error',
+    // imageKatya: '',
+    // dialogImage: false,
       time: {
         start: "08:00:00",
         end: "08:00:00",
@@ -227,7 +254,7 @@ export default {
         },
       };
 
-      let request = await Axios.get("api/shifts", config);
+      let request = await Axios.get(this.$store.state.apiEntryPoint + "/shifts", config);
       //todo напиисать алерт при кол-ве 0
       this.shifts = request.data["hydra:member"];
       this.selectedShift = [];
@@ -276,7 +303,7 @@ export default {
           (shift) => new Date(shift.start)
         );
         let datesStopShift = this.selectedShift.map((shift) =>
-          !shift.stop ? new Date() : new Date(shift.stop).toISOString()
+          !shift.stop ? new Date() : new Date(shift.stop)
         );
 
         let maxDate = this.$moment(
@@ -300,6 +327,20 @@ export default {
         stop = this.dates[1] + "T" + this.time.end;
         window.open(this.urlReport + "/" + start + "..." + stop + "/pdf");
       }
+    },
+    openImg() {
+      // console.log(this.query);
+      // if ( this.query.children[0].query.value == 'katya' || this.query.children[0].query.value == 'egoist' )
+      // {
+      //   this.textDialogImg = 'Найденно!';
+      //     this.imageKatya = 'build/images/katya.jpg'; 
+      //   this.colorImage = 'primary'
+      // }
+      // else {
+      //   this.textDialogImg = "Увы, нет совпадений" 
+      //   this.colorImage = 'error'
+      // }
+      //   this.dialogImage = true;
     },
     clickRowShift(item) {
       this.selectedShift.indexOf(item) == -1

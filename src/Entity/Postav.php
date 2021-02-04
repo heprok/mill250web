@@ -4,13 +4,20 @@ namespace App\Entity;
 
 use App\Repository\PostavRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=PostavRepository::class)
  * @ORM\Table(name="mill.postav",
  *      options={"comment":"Таблица поставов в формате JSON"})
+ * @ApiResource(
+ *      collectionOperations={"get"},
+ *      itemOperations={"get"},
+ *      normalizationContext={"groups"={"postav:read"}},
+ *      denormalizationContext={"groups"={"postav:write"}}
+ * )
  */
 class Postav
 {
@@ -18,8 +25,9 @@ class Postav
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"postav:read"})
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="datetime",
@@ -81,6 +89,14 @@ class Postav
     public function getPostav(): ?array
     {
         return $this->postav;
+    }
+
+    /**
+     * @Groups({"postav:read"})
+     */
+    public function getName(): string
+    {
+        return $this->postav['name'] != '' ? $this->postav['name'] :  $this->comm;
     }
 
     public function setPostav(array $postav): self

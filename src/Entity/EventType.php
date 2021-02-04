@@ -23,6 +23,7 @@ class EventType
     /**
      * @ORM\Id
      * @ORM\Column(type="string", length=1)
+     * @Groups({"event_type:read"})
      */
     private $id;
 
