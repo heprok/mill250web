@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     query() {
-      let periodDay = this.$store.getters.timeForTheDay(this.date);
+      let periodDay = this.$store.getters.TIME_FOR_THE_DAY(this.date);
 
       return { drecTimestampKey: periodDay.start + "..." + periodDay.end, type: "a", source: "o" };
     },

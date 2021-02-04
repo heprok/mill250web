@@ -48,7 +48,7 @@ export default {
         this.dates[1] = tmp;
       } else if (new Date(this.dates[0]) == new Date(this.dates[1])) {
         console.log(1111);
-        const day = this.$store.getters.timeForTheDay(this.dates[0]);
+        const day = this.$store.getters.TIME_FOR_THE_DAY(this.dates[0]);
         this.dates = [day.start, day.end];
       }
       this.$emit("input", this.dates, this.textInterval);
@@ -56,7 +56,7 @@ export default {
     },
   },
   mounted() {
-    this.timeDefaultDay = this.$store.getters.timeForDay;
+    this.timeDefaultDay = this.$store.state.timeForDay;
   },
   computed: {
     today() {

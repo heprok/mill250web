@@ -4,10 +4,13 @@
       <v-stepper-step :complete="el > 1" step="1" editable>
         Выбрать тип отчёта
       </v-stepper-step>
+      <v-divider />
+      <v-stepper-step :editable="el > 2" :complete="el > 3" step="2"
+        >Фильтры <small>Необезательно</small></v-stepper-step
+      >
+      <v-divider />
 
-      <v-divider></v-divider>
-
-      <v-stepper-step :complete="el > 2" step="2"> Параметры </v-stepper-step>
+      <v-stepper-step :complete="el > 3" step="3"> Параметры </v-stepper-step>
     </v-stepper-header>
 
     <v-stepper-items>
@@ -23,8 +26,11 @@
         </v-row>
         <!-- <v-divider class="my-4"></v-divider> -->
       </v-stepper-content>
-
       <v-stepper-content step="2">
+        <default-tlc-query-builder v-model="query">
+        </default-tlc-query-builder>
+      </v-stepper-content>
+      <v-stepper-content step="3">
         <div v-if="isTypeReportIsShift">
           <v-row>
             <v-col cols="4">
@@ -90,7 +96,7 @@
             </v-col>
             <v-col cols="7">
               <v-row>
-                <v-col cols="!2">
+                <v-col cols="12">
                   <v-text-field
                     label="Выбран интервал"
                     v-model="modelInterval"
@@ -131,16 +137,39 @@
 <script>
 import Axios from "axios";
 import menuTimePicker from "./MenuTimePicker.vue";
+// import Number from "../Number";
+import defaultTlcQueryBuilder from "./QueryBuilder";
 export default {
-  components: { menuTimePicker },
+  components: { menuTimePicker, defaultTlcQueryBuilder },
   name: "shiftDatePicker",
   data() {
     return {
+      // config: {
+      //   operators: [
+      //     {
+      //       name: "AND",
+      //       identifier: "AND",
+      //     },
+      //     {
+      //       name: "OR",
+      //       identifier: "OR",
+      //     },
+      //   ],
+      //   rules: [
+      //     {
+      //       identifier: "num",
+      //       name: "Number Selection",
+      //       component: Number,
+      //       initialValue: 10,
+      //     },
+      //   ],
+      // },
       isTypeReportIsShift: true,
       selectIndex: {},
       selectedShift: [],
       modelInterval: "",
-      el: 1,
+      query: null,
+      el: 2,
       pickerDate: null,
       date: "",
       dates: [],
@@ -169,6 +198,9 @@ export default {
     },
   },
   watch: {
+    query(val) {
+      console.log(val);
+    },
     dates() {
       // if (this.dates.length == 0) return;
 
@@ -186,7 +218,7 @@ export default {
       deep: true,
     },
     async date(value) {
-      // let periodDay = this.$store.getters.timeForTheDay(value);
+      // let periodDay = this.$store.getters.TIME_FOR_THE_DAY(value);
       let start = value + "T00:00:00";
       let end = value + "T23:59:59";
       let config = {
@@ -281,11 +313,11 @@ export default {
     },
     selectShift() {
       this.isTypeReportIsShift = true;
-      this.el = 2;
+      this.el = 3;
     },
     selectPeriod() {
       this.isTypeReportIsShift = false;
-      this.el = 2;
+      this.el = 3;
     },
   },
 };

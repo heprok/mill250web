@@ -166,9 +166,9 @@ export default {
       return new Date().toISOString().substr(0, 10);
     },
     period() {
-      let periodDay = this.$store.getters.timeForTheDay(this.date);
+      let periodDay = this.$store.getters.TIME_FOR_THE_DAY(this.date);
       return periodDay.start + "..." + periodDay.end;
-      // let periodDay = this.$store.getters.timeForTheDay(this.date);
+      // let periodDay = this.$store.getters.TIME_FOR_THE_DAY(this.date);
       // return this.date.start + "..." + this.date.end;
     },
   },

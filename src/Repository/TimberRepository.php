@@ -73,7 +73,7 @@ class TimberRepository extends ServiceEntityRepository
         ];
         $query = $this->getEntityManager()->getConnection()->prepare($sql);
         $query->execute($params);
-        return $query->fetchAllAssociative()[0]['volume_boards'];
+        return $query->fetchAllAssociative()[0]['volume_boards'] ?? 0;
     }
 
     public function getReportVolumeTimberByPeriod(DatePeriod $period)

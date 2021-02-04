@@ -6,7 +6,7 @@
     extends: CRUDTable,
     data(){
       return {
-        entryPointApi: this.$store.getters.getApiEntryPoint,
+        entryPointApi: this.$store.state.apiEntryPoint,
       } 
     },
   }

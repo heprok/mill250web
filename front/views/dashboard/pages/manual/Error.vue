@@ -8,6 +8,7 @@
           icon="mdi-account-group"
           :headers="headers"
           is-crud
+          isCheckPass
         >
         </crud-table>
       </v-col>

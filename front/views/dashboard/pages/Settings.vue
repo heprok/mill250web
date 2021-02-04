@@ -279,7 +279,7 @@ export default {
         params: this.query,
       };
       const request = await Axios.get(
-        this.$store.getters.getApiEntryPoint + this.people.urlApi,
+        this.$store.state.API_ENTRY_POINT + this.people.urlApi,
         config
       );
       this.people.items = request.data["hydra:member"];
@@ -323,7 +323,7 @@ export default {
       });
     },
     checkPassword() {
-      if (this.$store.getters.IS_ADMIN) return true;
+      if (this.$store.state.IS_ADMIN) return true;
 
       this.dialogCheckPassword = true;
     },

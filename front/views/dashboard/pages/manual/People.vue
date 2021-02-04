@@ -325,7 +325,7 @@ export default {
       });
     },
     checkPassword() {
-      if (this.$store.getters.IS_ADMIN) return true;
+      if (this.$store.state.IS_ADMIN) return true;
 
       this.dialogCheckPassword = true;
     },
