@@ -145,13 +145,13 @@ export default {
           color: "info",
           subIcon: "mdi-tag",
           icon: "mdi-account-hard-hat",
-          urlApi: "/api/infocard/currentShift",
+          urlApi: "/infocard/currentShift",
         },
         {
           nameCard: "Объем досок",
           color: "info",
           icon: "mdi-poll",
-          urlApi: "/api/infocard/volumeBoards",
+          urlApi: "/infocard/volumeBoards",
           duration: [
             {
               url: "/currentShift",
@@ -175,7 +175,7 @@ export default {
           nameCard: "Кол-во брёвен",
           color: "info",
           icon: "mdi-poll",
-          urlApi: "/api/infocard/countTimber",
+          urlApi: "/infocard/countTimber",
           duration: [
             {
               url: "/currentShift",
@@ -200,7 +200,7 @@ export default {
           color: "orange",
           icon: "mdi-account-hard-hat",
           subIcon: "mdi-clock",
-          urlApi: "/api/infocard/lastDowntime",
+          urlApi: "/infocard/lastDowntime",
         },
       ],
     };

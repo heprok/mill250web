@@ -12,7 +12,7 @@ export default new Vuex.Store({
     timeForTheDay: '08:00:00',
     isAdmin: false,
     timezone: 'Asia/Irkutsk',
-    apiEntryPoint: '',
+    apiEntryPoint: '/api',
     durationCard: JSON.parse(localStorage.getItem('durationCard') || "{}")
   },
   mutations: {

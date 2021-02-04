@@ -7,7 +7,7 @@
       <v-col cols="12">
         <crud-table
           title="Аварии и сообщения сегодняшний день"
-          url-api="api/events"
+          url-api='/events'
           :query="query"
           icon="mdi-comment-alert-outline"
           :headers="headers"

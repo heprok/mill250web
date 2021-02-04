@@ -4,7 +4,7 @@
       <v-col cols="12">
         <crud-table
           title="Список пород"
-          url-api="api/species"
+          url-api='/species'
           icon="mdi-pine-tree"
           :headers="headers"
         >

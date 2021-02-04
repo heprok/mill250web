@@ -34,7 +34,7 @@ export default {
           nameCard: "Кол-во брёвен",
           color: "info",
           icon: "mdi-poll",
-          urlApi: "/api/infocard/countTimber",
+          urlApi: "/infocard/countTimber",
           duration: [
             {
               url: "/currentShift",
@@ -58,7 +58,7 @@ export default {
           nameCard: "Объем брёвен",
           color: "info",
           icon: "mdi-poll",
-          urlApi: "/api/infocard/volumeTimber",
+          urlApi: "/infocard/volumeTimber",
           duration: [
             {
               url: "/currentShift",

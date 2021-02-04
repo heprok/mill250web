@@ -8,7 +8,7 @@
       <v-col cols="12">
         <crud-table
           title="Действия оператора за сегодняшний день"
-          url-api="api/events"
+          url-api='/events'
           :query="query"
           icon="mdi-gesture-double-tap"
           :headers="headers"

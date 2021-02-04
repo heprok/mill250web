@@ -210,12 +210,12 @@ export default {
       selectModel: [],
       defaultItem: {},
       duties: {
-        urlApi: "api/duties",
+        urlApi: this.$store.state.apiEntryPoint + "/duties",
         list: [],
         model: [],
       },
       people: {
-        urlApi: "api/people",
+        urlApi: this.$store.state.apiEntryPoint + "/people",
         loading: false,
         search: "",
         dialogAdded: false,

@@ -91,7 +91,7 @@ export default {
   name: "SummaryStatsCard",
   data() {
     return {
-      urlApi: "api/infocard/summaryDay",
+      urlApi: "/infocard/summaryDay",
       urlsToReport: [
         { name: "Отчёт по брёвнам", url: "report/timber", type: "pdf" },
         { name: "Отчёт по простям", url: "report/downtimes", type: "pdf" },

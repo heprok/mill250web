@@ -44,7 +44,7 @@ class TimberRepository extends ServiceEntityRepository
         return $qb
             ->select('count(1) as count_timber')
             ->getQuery()
-            ->getResult()[0]['count_timber'];
+            ->getResult()[0]['count_timber'] ?? 0;
     }
 
     public function getVolumeTimberByPeriod(DatePeriod $period): float
@@ -53,7 +53,7 @@ class TimberRepository extends ServiceEntityRepository
         return $qb
             ->select('sum(volume_timber(t.length, t.diam)) as volume_timber')
             ->getQuery()
-            ->getResult()[0]['volume_timber'];
+            ->getResult()[0]['volume_timber'] ?? 0;
     }
 
     public function getVolumeBoardsByPeriod(DatePeriod $period): float

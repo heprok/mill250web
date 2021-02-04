@@ -4,7 +4,7 @@
       <v-col cols="12">
         <crud-table
           title="Список ошибок"
-          url-api="api/errors"
+          url-api="/errors"
           icon="mdi-account-group"
           :headers="headers"
           is-crud

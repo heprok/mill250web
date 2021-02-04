@@ -4,7 +4,7 @@
       <v-col cols="12">
         <crud-table
           title="Действие опертора"
-          url-api="api/action_operators"
+          url-api='/action_operators'
           icon="mdi-gesture-double-tap"
           :headers="headers"
           is-crud

@@ -41,7 +41,7 @@
       <v-col cols="12">
         <crud-table
           title="Простои за сегодняшний день"
-          url-api="api/downtimes"
+          url-api='/downtimes'
           :query="query"
           icon="mdi-camera-timer"
           :headers="headers"
@@ -58,7 +58,7 @@ export default {
     return {
       infoCards: [
         {
-          urlApi: "/api/infocard/lastDowntime",
+          urlApi: "/infocard/lastDowntime",
           color: "orange",
           icon: "mdi-sofa",
           nameCard: "Последний простой",
@@ -68,7 +68,7 @@ export default {
           nameCard: "Сумарный простой за сегодня",
           color: "orange",
           icon: "mdi-camera-timer",
-          urlApi: "/api/infocard/totalDowntime",
+          urlApi: "/infocard/totalDowntime",
           subIcon: "mdi-clock",
           duration: [
             {

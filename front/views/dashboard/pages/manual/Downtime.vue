@@ -4,7 +4,7 @@
       <v-col cols="6">
         <crud-table
           title="Места простоя"
-          url-api="api/downtime_causes"
+          url-api='/downtime_causes'
           icon="mdi-flag"
           :headers="place.headers"
           is-crud
@@ -15,7 +15,7 @@
       <v-col cols="6">
         <crud-table
           title="Причины простоя"
-          url-api="api/downtime_places"
+          url-api='/downtime_places'
           icon="mdi-comment-question-outline"
           :headers="cause.headers"
           is-crud

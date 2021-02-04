@@ -4,7 +4,7 @@
       <v-col cols="12">
         <crud-table
           title="Список людей"
-          url-api="api/lengths"
+          url-api='/lengths'
           icon="mdi-format-line-spacing"
           :headers="headers"
           isCheckPass
