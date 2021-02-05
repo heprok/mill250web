@@ -1611,7 +1611,7 @@ buffer@^4.3.0:
     ieee754 "^1.1.4"
     isarray "^1.0.0"
 
-builder-query-vuetify@../../library/vue/builder-query-vuetify:
+"builder-query-vuetify@file:../../library/vue/builder-query-vuetify":
   version "1.0.0"
   dependencies:
     vuetify "^2.4.3"

@@ -1,10 +1,15 @@
 <template>
-  <tlc-query-builder
-    :rules="rules"
-    v-model="query"
-    :maxDepth="1"
-    @input="$emit('input', $event)"
-  />
+  <v-card :loading="loading">
+    <v-card-text>
+      <tlc-query-builder
+        :rules="rules"
+        v-if="visible"
+        v-model="query"
+        :maxDepth="1"
+        @input="$emit('input', $event)"
+      />
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
@@ -21,6 +26,10 @@ export default {
     },
   },
   methods: {
+    getQuery() {
+      return this.query;
+    },
+
     getRuleDowntimePlace() {
       let rule = {
         type: RuleTypes.MULTI_SELECT,
@@ -36,6 +45,7 @@ export default {
               label: place.name,
             };
           });
+          this.countLoadingRules++;
         })
         .catch((err) => {
           this.$snotify.error(err.data);
@@ -59,6 +69,7 @@ export default {
               label: cause.name,
             };
           });
+          this.countLoadingRules++;
         })
         .catch((err) => {
           this.$snotify.error(err.data);
@@ -82,6 +93,7 @@ export default {
               label: type.name,
             };
           });
+          this.countLoadingRules++;
         })
         .catch((err) => {
           this.$snotify.error(err.data);
@@ -105,6 +117,7 @@ export default {
               label: source.name,
             };
           });
+          this.countLoadingRules++;
         })
         .catch((err) => {
           this.$snotify.error(err.data);
@@ -112,7 +125,7 @@ export default {
           console.log(err);
         });
       return rule;
-    },     
+    },
     getRuleSpecies() {
       let rule = {
         type: RuleTypes.MULTI_SELECT,
@@ -128,6 +141,7 @@ export default {
               label: specie.name,
             };
           });
+          this.countLoadingRules++;
         })
         .catch((err) => {
           this.$snotify.error(err.data);
@@ -135,12 +149,12 @@ export default {
           console.log(err);
         });
       return rule;
-    },     
+    },
     getRulePostav() {
       let rule = {
         type: RuleTypes.MULTI_SELECT,
         id: "postav",
-        label: "Истотчник события",
+        label: "Постав",
       };
       Axios.get(this.$store.state.apiEntryPoint + "/postavs")
         .then((response) => {
@@ -151,6 +165,8 @@ export default {
               label: postav.name,
             };
           });
+          this.countLoadingRules++;
+          // console.log(rule.options);
         })
         .catch((err) => {
           this.$snotify.error(err.data);
@@ -158,55 +174,69 @@ export default {
           console.log(err);
         });
       return rule;
-    },    
+    },
     getRuleDiam() {
       let rule = {
         type: RuleTypes.NUMBER,
         id: "diam",
         label: "Диаметр бревна, см. ",
       };
-      
+      this.countLoadingRules++;
+
       return rule;
-    },    
+    },
     getRulePostavDiam() {
       let rule = {
         type: RuleTypes.NUMBER,
         id: "diam_postav",
         label: "Диаметр постава, см. ",
       };
-      
+      this.countLoadingRules++;
+
       return rule;
-    },    
+    },
     getRuleCut() {
       let rule = {
         type: RuleTypes.TEXT,
         id: "diam",
         label: "Сечение",
       };
-      
+      this.countLoadingRules++;
+
       return rule;
     },
   },
-  mounted() {},
-  watch: {},
-  computed: {
-    rules() {
-      let rules = [];
-      rules.push(this.getRuleDowntimePlace());
-      rules.push(this.getRuleDowntimeCause());
-      rules.push(this.getRuleEventType());
-      rules.push(this.getRuleEventSource());
-      rules.push(this.getRuleSpecies());
-      rules.push(this.getRulePostav());
-      rules.push(this.getRuleDiam());
-      rules.push(this.getRulePostavDiam());
-      rules.push(this.getRuleCut());
-      return rules;
+  mounted() {
+    this.rules.push(this.getRuleDowntimePlace());
+    this.rules.push(this.getRuleDowntimeCause());
+    this.rules.push(this.getRuleEventType());
+    this.rules.push(this.getRuleEventSource());
+    this.rules.push(this.getRuleSpecies());
+    this.rules.push(this.getRulePostav());
+    this.rules.push(this.getRuleDiam());
+    this.rules.push(this.getRulePostavDiam());
+    this.rules.push(this.getRuleCut());
+  },
+  watch: {
+    countLoadingRules() {
+      // conso
+      if (this.rules.length === this.countLoadingRules) {
+        this.visible = true;
+        this.loading = false;
+      } else {
+        this.visible = false;
+        this.loading = true;
+        }
     },
   },
+  computed: {},
   data() {
     return {
       query: this.value,
+      loading: true,
+      visible: false,
+      rules: [],
+      countLoadingRules: 0,
     };
   },
 };

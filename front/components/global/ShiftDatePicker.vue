@@ -29,13 +29,13 @@
       <v-stepper-content step="2">
         <v-row>
           <v-col cols=12>
-        <default-tlc-query-builder v-model="query">
+        <default-tlc-query-builder ref="qb" v-model="query">
         </default-tlc-query-builder>
         </v-col>
                     <v-col cols="12">
               <v-btn
                 color="primary"
-                @click="el = 3"
+                @click="openImg"
                 x-large
               >
                 Далее
@@ -329,6 +329,8 @@ export default {
       }
     },
     openImg() {
+      let qsql = this.$refs.qb.getQuery();
+      console.log(qsql);
       // console.log(this.query);
       // if ( this.query.children[0].query.value == 'katya' || this.query.children[0].query.value == 'egoist' )
       // {
