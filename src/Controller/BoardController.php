@@ -49,7 +49,7 @@ class BoardController extends AbstractController
     }    
     
     /**
-     * @Route("_postav/{start}...{end}/people/{idsPeople}/pdf", name="from_postav_for_period_show_pdf")
+     * @Route("_postav/{start}...{end}/pdf", name="from_postav_for_period_show_pdf")
      */
     public function showReportForPeriodPdf(string $start, string $end)
     {

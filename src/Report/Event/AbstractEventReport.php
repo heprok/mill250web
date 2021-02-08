@@ -20,7 +20,7 @@ abstract class AbstractEventReport extends AbstractReport
      * @param EventRepository $eventRepository
      * @param People[] $people
      */
-    public function __construct(DatePeriod $period, EventRepository $eventRepository, array $people = [])
+    public function __construct(DatePeriod $period, EventRepository $eventRepository, array $people = [], array $sqlWhere = [])
     {
         $this->eventRepository = $eventRepository;
         $this->setLabels([
@@ -29,7 +29,7 @@ abstract class AbstractEventReport extends AbstractReport
             'Тип',
             'Время'
         ]);
-        parent::__construct($period, $people);
+        parent::__construct($period, $people, $sqlWhere);
     }
 
     abstract protected function getSourceId():array;
@@ -41,7 +41,7 @@ abstract class AbstractEventReport extends AbstractReport
 
     protected function updateDataset(): bool
     {
-        $events = $this->eventRepository->findByTypeAndSourceFromPeriod($this->getPeriod(), $this->getTypeId(), $this->getSourceId());
+        $events = $this->eventRepository->findByTypeAndSourceFromPeriod($this->getPeriod(), $this->getTypeId(), $this->getSourceId(), $this->getSqlWhere());
         $dataset = new PdfDataset($this->getLabels());
 
         foreach ($events as $event){

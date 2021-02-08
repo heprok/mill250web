@@ -16,7 +16,7 @@ abstract class AbstractReport
     const DECIMAL_FORMAT = 4;
     const FORMAT_DATE_TIME = 'd.m.Y H:i:s';
     const FORMAT_DATE_FROM_DB = 'Y-m-d H:i:s';
-    
+
     private array $datasets = [];
     protected array $labels = [];
     protected DatePeriod $period;
@@ -24,19 +24,21 @@ abstract class AbstractReport
      * @param People[] $peoples
      */
     protected array $peoples;
+    protected array $sqlWhere;
 
     abstract public function getNameReport(): string;
     abstract protected function updateDataset(): bool;
-    
+
     /**
      *
      * @param DatePeriod $period
      * @param People[] $peoples
      */
-    public function __construct(DatePeriod $period, array $peoples = [])
+    public function __construct(DatePeriod $period, array $peoples = [], array $sqlWhere = [])
     {
         $this->period = $period;
         $this->peoples = $peoples;
+        $this->sqlWhere = $sqlWhere;
     }
 
     public function addDataset(AbstractDataset $dataset): self
@@ -57,7 +59,10 @@ abstract class AbstractReport
 
         return true;
     }
-
+    public function getSqlWhere()
+    {
+        return $this->sqlWhere;
+    }
     /**
      * @return People[]
      */

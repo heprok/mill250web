@@ -14,6 +14,7 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -32,10 +33,12 @@ class AlertEventController extends AbstractController
     }
     
     /**
-     * @Route("/{start}...{end}/people/{idsPeople}/pdf", name="for_period_show_pdf")
+     * @Route("/{start}...{end}/people/{idsPeople}/pdf", name="for_period_with_people_show_pdf")
      */
     public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
+        $request = Request::createFromGlobals();
+        $sqlWhere = json_decode($request->query->get('sqlWhere'));
         $idsPeople = explode('...', $idsPeople);
         $peoples = [];
         foreach ($idsPeople as $idPeople) {
@@ -46,12 +49,12 @@ class AlertEventController extends AbstractController
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-        $report = new AlertEventReport($period, $this->eventRepository, $peoples);
+        $report = new AlertEventReport($period, $this->eventRepository, $peoples, $sqlWhere);
         $this->showPdf($report);
     }    
     
     /**
-     * @Route("/{start}...{end}/people/{idsPeople}/pdf", name="for_period_show_pdf")
+     * @Route("/{start}...{end}/pdf", name="for_period_show_pdf")
      */
     public function showReportForPeriodPdf(string $start, string $end)
     {

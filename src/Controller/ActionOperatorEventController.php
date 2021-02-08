@@ -14,6 +14,7 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -33,8 +34,11 @@ class ActionOperatorEventController extends AbstractController
     /**
      * @Route("/{start}...{end}/people/{idsPeople}/pdf", name="for_period_with_people_show_pdf")
      */
-    public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
+    public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople  )
     {
+        $request = Request::createFromGlobals();
+        $sqlWhereJson = $request->query->get('q');
+        dd(json_decode($sqlWhereJson),true);
         $idsPeople = explode('...', $idsPeople);
         $peoples = [];
         foreach ($idsPeople as $idPeople) {

@@ -84,7 +84,7 @@ class TimberController extends AbstractController
     }    
     
     /**
-     * @Route("_postav/{start}...{end}/people/{idsPeople}/pdf", name="from_postav_for_period_show_pdf")
+     * @Route("_postav/{start}...{end}/pdf", name="from_postav_for_period_show_pdf")
      */
     public function showReportFromPostavForPeriodPdf(string $start, string $end)
     {

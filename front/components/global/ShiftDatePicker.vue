@@ -35,7 +35,7 @@
                     <v-col cols="12">
               <v-btn
                 color="primary"
-                @click="openImg"
+                @click="el = 3"
                 x-large
               >
                 Далее
@@ -320,17 +320,17 @@ export default {
             maxDate +
             "/people/" +
             idsPeople.join("...") +
-            "/pdf"
+            "/pdf?sqlWhere=" + JSON.stringify(this.$refs.qb.getQuery())  
         );
       } else {
         start = this.dates[0] + "T" + this.time.start;
         stop = this.dates[1] + "T" + this.time.end;
-        window.open(this.urlReport + "/" + start + "..." + stop + "/pdf");
+        window.open(this.urlReport + "/" + start + "..." + stop + "/pdf?sqlWhere=" + JSON.stringify(this.$refs.qb.getQuery()));
       }
     },
     openImg() {
       let qsql = this.$refs.qb.getQuery();
-      console.log(qsql);
+      console.log(JSON.stringify(qsql));
       // console.log(this.query);
       // if ( this.query.children[0].query.value == 'katya' || this.query.children[0].query.value == 'egoist' )
       // {

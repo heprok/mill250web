@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "builder-query-vuetify": "../../library/vue/builder-query-vuetify",
+    "builder-query-vuetify": "file:../../library/vue/builder-query-vuetify",
     "core-js": "^3.8.3",
     "material-design-icons-iconfont": "^5.0.1",
     "moment-timezone": "^0.5.32",

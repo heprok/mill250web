@@ -27,13 +27,59 @@ export default {
   },
   methods: {
     getQuery() {
-      return this.query;
+      return this.getSqlWhere();
+    },
+
+    getSqlWhere() {
+      if (this.query.children == null) return "";
+      let sqlQuery = "";
+      let arrayValues = [];
+      let query = {};
+      this.query.children.forEach((children) => {
+        if (children.type == "rule") {
+          // console.log(children.query)
+          // console.log(Array.isArray(children.query.value) ? children.query.value.join() + ')' : ' false');
+          const value =
+            children.query.id +
+            " " +
+            children.query.operator +
+            " " +
+            (Array.isArray(children.query.value)
+              ? "(" + children.query.value.join() + ")"
+              : children.query.value);
+          sqlQuery += value;
+          query.id = children.query.id;
+          query.operator = children.query.operator;
+          query.value =  Array.isArray(children.query.value)
+              ? "('" + children.query.value.join("','") + "')"
+              : children.query.value
+          arrayValues.push(query);
+        }
+        if (children.type == "group") {
+          sqlQuery += "(";
+          children.query.children.forEach((val) => {
+            sqlQuery +=
+              val.query.rule +
+              val.query.operator +
+              val.query.value +
+              " " +
+              children.query.operator +
+              " ";
+          });
+          sqlQuery = sqlQuery.substring(0, sqlQuery.length - 4);
+          sqlQuery += ")";
+        }
+        sqlQuery += " " + this.query.operator + " ";
+      });
+      sqlQuery = sqlQuery.substring(0, sqlQuery.length - 4);
+      // console.log(arrayValues);
+      return arrayValues;
     },
 
     getRuleDowntimePlace() {
       let rule = {
         type: RuleTypes.MULTI_SELECT,
-        id: "downtime_place",
+        id: "d.place",
         label: "Места простоя",
       };
       Axios.get(this.$store.state.apiEntryPoint + "/downtime_places")
@@ -57,7 +103,7 @@ export default {
     getRuleDowntimeCause() {
       let rule = {
         type: RuleTypes.MULTI_SELECT,
-        id: "downtime_cause",
+        id: "d.cause",
         label: "Причины простоя",
       };
       Axios.get(this.$store.state.apiEntryPoint + "/downtime_causes")
@@ -81,7 +127,7 @@ export default {
     getRuleEventType() {
       let rule = {
         type: RuleTypes.MULTI_SELECT,
-        id: "event_type",
+        id: "e.type",
         label: "Тип события",
       };
       Axios.get(this.$store.state.apiEntryPoint + "/event_types")
@@ -105,7 +151,7 @@ export default {
     getRuleEventSource() {
       let rule = {
         type: RuleTypes.MULTI_SELECT,
-        id: "event_source",
+        id: "e.source",
         label: "Истотчник события",
       };
       Axios.get(this.$store.state.apiEntryPoint + "/event_sources")
@@ -129,7 +175,7 @@ export default {
     getRuleSpecies() {
       let rule = {
         type: RuleTypes.MULTI_SELECT,
-        id: "species",
+        id: "s.name",
         label: "Породы",
       };
       Axios.get(this.$store.state.apiEntryPoint + "/species")
@@ -153,7 +199,7 @@ export default {
     getRulePostav() {
       let rule = {
         type: RuleTypes.MULTI_SELECT,
-        id: "postav",
+        id: "p.id",
         label: "Постав",
       };
       Axios.get(this.$store.state.apiEntryPoint + "/postavs")
@@ -178,7 +224,7 @@ export default {
     getRuleDiam() {
       let rule = {
         type: RuleTypes.NUMBER,
-        id: "diam",
+        id: "t.diam",
         label: "Диаметр бревна, см. ",
       };
       this.countLoadingRules++;
@@ -226,7 +272,7 @@ export default {
       } else {
         this.visible = false;
         this.loading = true;
-        }
+      }
     },
   },
   computed: {},

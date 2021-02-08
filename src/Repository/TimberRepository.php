@@ -28,13 +28,20 @@ class TimberRepository extends ServiceEntityRepository
      * @param DatePeriod $period
      * @return QueryBuilder
      */
-    private function getBaseQueryFromPeriod(DatePeriod $period): QueryBuilder
+    private function getBaseQueryFromPeriod(DatePeriod $period, array $sqlWhere = []): QueryBuilder
     {
-        return $this->createQueryBuilder('t')
+        $qb = $this->createQueryBuilder('t')
             ->andWhere('t.drec BETWEEN :start AND :end')
             ->setParameter('start', $period->getStartDate()->format(DATE_RFC3339_EXTENDED))
             ->setParameter('end', $period->getEndDate()->format(DATE_RFC3339_EXTENDED))
             ->leftJoin('t.species', 's');
+
+            foreach($sqlWhere as $where) {
+                $qb->andWhere($where->id . ' ' . $where->operator . ' ' . $where->value);
+            }
+    
+            return $qb;
+    
         // ->orderBy('t.drec', 'ASC');
     }
 
