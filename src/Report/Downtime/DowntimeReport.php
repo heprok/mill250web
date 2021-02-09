@@ -10,6 +10,8 @@ use App\Entity\Shift;
 use App\Report\AbstractReport;
 use App\Repository\DowntimeRepository;
 use DatePeriod;
+use Doctrine\DBAL\Driver\PDO\Exception;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 
 final class DowntimeReport extends AbstractReport
 {
@@ -21,7 +23,7 @@ final class DowntimeReport extends AbstractReport
      * @param DowntimeRepository $downtimeRepository
      * @param People[] $peoples
      */
-    public function __construct(DatePeriod $period, DowntimeRepository $downtimeRepository, array $peoples = [])
+    public function __construct(DatePeriod $period, DowntimeRepository $downtimeRepository, array $peoples = [], array $sqlWhere = [])
     {
         $this->downtimeRepository = $downtimeRepository;
         $this->setLabels([
@@ -32,7 +34,7 @@ final class DowntimeReport extends AbstractReport
             'Окончание',
             'Длит-ность',
             ]);
-        parent::__construct($period, $peoples);
+        parent::__construct($period, $peoples, $sqlWhere);
     }
 
     public function getNameReport(): string
@@ -59,7 +61,8 @@ final class DowntimeReport extends AbstractReport
 
     protected function updateDataset(): bool
     {
-        $downtimes = $this->downtimeRepository->findByPeriod($this->getPeriod());
+        $downtimes = $this->downtimeRepository->findByPeriod($this->getPeriod(), $this->getSqlWhere());
+
         if (!$downtimes)
             die('В данный период нет простоев');
         $dataset = new PdfDataset($this->getLabels());

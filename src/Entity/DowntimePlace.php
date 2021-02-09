@@ -15,9 +15,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      options={"comment":"Места простоя"})
  * @ApiResource(
  *      collectionOperations={"get", "post"},
- *      itemOperations={"get", "put", "delete"},
+ *      itemOperations={"get", "put"},
  *      normalizationContext={"groups"={"downtime_place:read"}},
- *      denormalizationContext={"groups"={"downtime_place:write"}}
+ *      denormalizationContext={"groups"={"downtime_place:write"}, "disable_type_enforcement"=true}
  * )
  */
 class DowntimePlace
@@ -25,10 +25,10 @@ class DowntimePlace
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @Groups({"downtime_place:read"})
+     * @ORM\Column(type="integer", name="id")
+     * @Groups({"downtime_place:read", "downtime_place:write"})
      */
-    private int $id;
+    private int $code;
 
     /**
      * @ORM\Column(type="string", length=128, name="text",
@@ -37,14 +37,22 @@ class DowntimePlace
      */
     private string $name;
 
-    public function __construct(string $name)
+    public function __construct(int $code, string $name)
     {
+        $this->code = $code;
         $this->name = $name;
     }
 
-    public function getId(): ?int
+    public function getCode(): ?int
     {
-        return $this->id;
+        return $this->code;
+    }
+
+    public function setCode(int $code): self
+    {
+        $this->code = $code;
+        
+        return $this;
     }
     
     public function __toString()

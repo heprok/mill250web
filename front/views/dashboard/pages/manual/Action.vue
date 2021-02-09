@@ -23,7 +23,7 @@ export default {
   data() {
     return {
       headers: [
-        { text: "Код", value: "id", edited: false },
+        { text: "Код", value: "code" },
         { text: "Название", value: "name" },
         { text: "Действия", value: "actions", edited: false },
       ],

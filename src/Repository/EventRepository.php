@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Event;
 use DatePeriod;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -37,8 +38,8 @@ class EventRepository extends ServiceEntityRepository
     }
     */
 
-    
-    private function getQueryFromPeriod(DatePeriod $period, array $sqlWhere)
+
+    private function getQueryFromPeriod(DatePeriod $period, array $sqlWhere = []) :QueryBuilder
     {
 
         $qb = $this->createQueryBuilder('e')
@@ -47,12 +48,15 @@ class EventRepository extends ServiceEntityRepository
             ->setParameter('end', $period->getEndDate()->format(DATE_ATOM))
             ->orderBy('e.drecTimestampKey', 'ASC');
 
-        foreach($sqlWhere as $where) {
-            $qb->andWhere('e.' . $where->id . ' ' . $where->operator . ' ' . $where->value);
+        foreach ($sqlWhere as $where) {
+            $query = $where->nameTable . $where->id . ' ' . $where->operator . ' ' . $where->value;
+            if ($where->logicalOperator == 'AND')
+                $qb->andWhere($query);
+            else
+                $qb->orWhere($query);
         }
 
         return $qb;
-
     }
     /**
      * Возращает события с заданным типом и источником
@@ -61,16 +65,15 @@ class EventRepository extends ServiceEntityRepository
      * @param string[] $source
      * @return Event[]
      */
-    public function findByTypeAndSourceFromPeriod(DatePeriod $period, array $type, array $source, array $sqlWhere)
+    public function findByTypeAndSourceFromPeriod(DatePeriod $period, array $type, array $source, array $sqlWhere = [])
     {
-       return $qb = $this->getQueryFromPeriod($period, $sqlWhere)
+        return $qb = $this->getQueryFromPeriod($period, $sqlWhere)
             ->andWhere('e.type IN( :type )')
             ->andWhere('e.source IN( :source )')
             ->setParameter('type', $type)
             ->setParameter('source', $source)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
         return $qb;
     }
 }

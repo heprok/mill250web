@@ -37,8 +37,8 @@ class ActionOperatorEventController extends AbstractController
     public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople  )
     {
         $request = Request::createFromGlobals();
-        $sqlWhereJson = $request->query->get('q');
-        dd(json_decode($sqlWhereJson),true);
+        $sqlWhere = json_decode($request->query->get('sqlWhere'));
+        
         $idsPeople = explode('...', $idsPeople);
         $peoples = [];
         foreach ($idsPeople as $idPeople) {
@@ -48,7 +48,7 @@ class ActionOperatorEventController extends AbstractController
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-        $report = new ActionOperatorEventReport($period, $this->eventRepository, $peoples);
+        $report = new ActionOperatorEventReport($period, $this->eventRepository, $peoples, $sqlWhere);
         $this->showPdf($report);
     }    
 

@@ -14,6 +14,7 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -35,6 +36,8 @@ class DowntimeController extends AbstractController
      */
     public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
+        $request = Request::createFromGlobals();
+        $sqlWhere = json_decode($request->query->get('sqlWhere'));
         
         $idsPeople = explode('...', $idsPeople);
         $peoples = [];
@@ -45,7 +48,7 @@ class DowntimeController extends AbstractController
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-        $report = new DowntimeReport($period, $this->downtimeRepository, $peoples);
+        $report = new DowntimeReport($period, $this->downtimeRepository, $peoples, $sqlWhere);
         $this->showPdf($report);
     }    
     

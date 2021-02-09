@@ -19,7 +19,7 @@ final class BoardFromPostavReport extends AbstractReport
      * @param TimberRepository $repository
      * @param People[] $people
      */
-    public function __construct(DatePeriod $period, TimberRepository $repository, array $people = [])
+    public function __construct(DatePeriod $period, TimberRepository $repository, array $people = [], array $sqlWhere = [])
     {
         $this->repository = $repository;
         $this->setLabels([
@@ -31,7 +31,7 @@ final class BoardFromPostavReport extends AbstractReport
             'Кол-во, шт',
             'Объём, м³'
         ]);
-        parent::__construct($period, $people);
+        parent::__construct($period, $people, $sqlWhere);
     }
 
     protected function getColumnTotal(): array
@@ -59,7 +59,7 @@ final class BoardFromPostavReport extends AbstractReport
 
     protected function updateDataset(): bool
     {
-        $timbers = $this->repository->getReportVolumeBoardFromPostavByPeriod($this->getPeriod());
+        $timbers = $this->repository->getReportVolumeBoardFromPostavByPeriod($this->getPeriod(), $this->getSqlWhere());
         if (!$timbers)
             die('В данный период нет брёвен');
         $dataset = new PdfDataset($this->getLabels());

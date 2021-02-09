@@ -18,7 +18,8 @@
         />
       </v-col>
       <v-col cols="12">
-        <shift-date-picker urlReport="report/timber"> </shift-date-picker>
+        <shift-date-picker urlReport="report/timber" :filterSqlWhere="filters">
+        </shift-date-picker>
       </v-col>
     </v-row>
   </v-container>
@@ -29,6 +30,7 @@ export default {
   name: "report_timber_dashboard",
   data() {
     return {
+      filters: ["diam", "length", 'species'],
       infoCards: [
         {
           nameCard: "Кол-во брёвен",

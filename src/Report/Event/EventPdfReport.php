@@ -13,7 +13,7 @@ final class EventPdfReport extends AbstractPdf
     public function __construct(AbstractReport $eventReport)
     {
         $this->setReport($eventReport);
-        parent::__constructor();
+        parent::__constructor('L');
     }
 
     protected function getPointFontHeader(): int
@@ -33,12 +33,12 @@ final class EventPdfReport extends AbstractPdf
 
     protected function getHeightCell():int
     {
-        return 8;
+        return 6;
     }
 
     protected function getColumnInPrecent(): array
     {
-        return [50, 15, 15, 25];
+        return [70, 10, 10, 15];
     }
 
     public function render()

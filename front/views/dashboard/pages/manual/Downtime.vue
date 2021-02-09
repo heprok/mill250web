@@ -4,7 +4,7 @@
       <v-col cols="6">
         <crud-table
           title="Места простоя"
-          url-api='/downtime_causes'
+          url-api='/downtime_places'
           icon="mdi-flag"
           :headers="place.headers"
           is-crud
@@ -15,7 +15,7 @@
       <v-col cols="6">
         <crud-table
           title="Причины простоя"
-          url-api='/downtime_places'
+          url-api='/downtime_causes'
           icon="mdi-comment-question-outline"
           :headers="cause.headers"
           is-crud
@@ -38,12 +38,14 @@ export default {
     return {
       cause: {
         headers: [
+          { text: "Код", value: "code" },
           { text: "Имя", value: "name" },
           { text: "Действия", value: "actions", edited: false },
         ],
       },
       place: {
         headers: [
+          { text: "Код", value: "code" },
           { text: "Имя", value: "name" },
           { text: "Действия", value: "actions", edited: false },
         ],

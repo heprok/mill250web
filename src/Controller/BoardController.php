@@ -14,6 +14,7 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -35,6 +36,9 @@ class BoardController extends AbstractController
      */
     public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
+        $request = Request::createFromGlobals();
+        $sqlWhere = json_decode($request->query->get('sqlWhere'));
+        
         $idsPeople = explode('...', $idsPeople);
         $peoples = [];
         foreach ($idsPeople as $idPeople) {
@@ -44,7 +48,7 @@ class BoardController extends AbstractController
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-        $report = new BoardFromPostavReport($period, $this->timberRepository, $peoples);
+        $report = new BoardFromPostavReport($period, $this->timberRepository, $peoples, $sqlWhere);
         $this->showPdf($report);
     }    
     

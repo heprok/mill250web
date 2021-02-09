@@ -29,7 +29,7 @@
       <v-stepper-content step="2">
         <v-row>
           <v-col cols=12>
-        <default-tlc-query-builder ref="qb" v-model="query">
+        <default-tlc-query-builder ref="qb" :filters="filterSqlWhere" v-model="query">
         </default-tlc-query-builder>
         </v-col>
                     <v-col cols="12">
@@ -191,7 +191,10 @@ export default {
       selectIndex: {},
       selectedShift: [],
       modelInterval: "",
-      query: null,
+      query: {
+        operator: "AND",
+        children: [],
+      },
       el: 2,
       pickerDate: null,
       date: "",
@@ -222,6 +225,10 @@ export default {
     urlReport: {
       type: String,
       require: true,
+    },
+    filterSqlWhere: {
+      type: Array,
+      require: true
     },
   },
   watch: {

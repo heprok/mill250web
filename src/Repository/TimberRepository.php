@@ -36,12 +36,17 @@ class TimberRepository extends ServiceEntityRepository
             ->setParameter('end', $period->getEndDate()->format(DATE_RFC3339_EXTENDED))
             ->leftJoin('t.species', 's');
 
-            foreach($sqlWhere as $where) {
-                $qb->andWhere($where->id . ' ' . $where->operator . ' ' . $where->value);
-            }
-    
-            return $qb;
-    
+
+        foreach ($sqlWhere as $where) {
+            $query = $where->nameTable . $where->id . ' ' . $where->operator . ' ' . $where->value;
+            if ($where->logicalOperator == 'AND')
+                $qb->andWhere($query);
+            else
+                $qb->orWhere($query);
+        }
+
+        return $qb;
+
         // ->orderBy('t.drec', 'ASC');
     }
 
@@ -83,9 +88,9 @@ class TimberRepository extends ServiceEntityRepository
         return $query->fetchAllAssociative()[0]['volume_boards'] ?? 0;
     }
 
-    public function getReportVolumeTimberByPeriod(DatePeriod $period)
+    public function getReportVolumeTimberByPeriod(DatePeriod $period, array $sqlWhere = [])
     {
-        $qb = $this->getBaseQueryFromPeriod($period);
+        $qb = $this->getBaseQueryFromPeriod($period, $sqlWhere);
         return $qb
             ->select(
                 's.name as name_species',
@@ -100,9 +105,9 @@ class TimberRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function getReportVolumeBoardFromPostavByPeriod(DatePeriod $period)
+    public function getReportVolumeBoardFromPostavByPeriod(DatePeriod $period, array $sqlWhere = [])
     {
-        $qb = $this->getBaseQueryFromPeriod($period);
+        $qb = $this->getBaseQueryFromPeriod($period, $sqlWhere);
         return $qb
             ->select(
                 "CASE WHEN get_json_filed_by_key(p.postav, 'name' ) = '' THEN
@@ -125,8 +130,14 @@ class TimberRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function getReportVolumeTimberFromPostavByPeriod(DatePeriod $period)
+    public function getReportVolumeTimberFromPostavByPeriod(DatePeriod $period, array $sqlWhere = [])
     {
+        $addWhereSql = 'AND ';
+        foreach ($sqlWhere as $key => $where) {
+            if ($key == count($sqlWhere) - 1)
+                $where->logicalOperator = '';
+            $addWhereSql .= $where->nameTable . $where->id . ' ' . $where->operator . ' ' . $where->value . ' ' . $where->logicalOperator . ' ';
+        }
         $sql =
             "SELECT
             max(CASE WHEN p.postav->>'name' = '' THEN
@@ -157,12 +168,12 @@ class TimberRepository extends ServiceEntityRepository
                 t.drec BETWEEN :start AND :end
             GROUP BY
                 t.postav_id,
-                t.species_id
+                t.species_id 
             ) AS o 
             ON COALESCE(t.postav_id, - 1) = o.postav_id
             AND COALESCE(t.species_id, '_-') = o.species_id
         WHERE 
-            t.drec BETWEEN :start AND :end
+            t.drec BETWEEN :start AND :end $addWhereSql 
         GROUP BY
             t.postav_id,
             diam_postav,

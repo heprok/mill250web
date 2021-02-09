@@ -24,6 +24,10 @@ export default {
     value: {
       required: true,
     },
+    filters: {
+      type: Array,
+      required: true,
+    },
   },
   methods: {
     getQuery() {
@@ -34,25 +38,28 @@ export default {
       if (this.query.children == null) return "";
       let sqlQuery = "";
       let arrayValues = [];
-      let query = {};
       this.query.children.forEach((children) => {
         if (children.type == "rule") {
+          if (!children.query.value || children.query.value == "") return;
+          let query = {};
           // console.log(children.query)
           // console.log(Array.isArray(children.query.value) ? children.query.value.join() + ')' : ' false');
-          const value =
-            children.query.id +
-            " " +
-            children.query.operator +
-            " " +
-            (Array.isArray(children.query.value)
-              ? "(" + children.query.value.join() + ")"
-              : children.query.value);
-          sqlQuery += value;
+          // let value =
+          //   children.query.id +
+          //   " " +
+          //   children.query.operator +
+          //   " " +
+          //   (Array.isArray(children.query.value)
+          //     ? "(" + children.query.value.join() + ")"
+          //     : children.query.value);
+          // sqlQuery += value;
           query.id = children.query.id;
+          query.nameTable = children.query.nameTable;
+          query.logicalOperator = this.query.operator;
           query.operator = children.query.operator;
-          query.value =  Array.isArray(children.query.value)
-              ? "('" + children.query.value.join("','") + "')"
-              : children.query.value
+          query.value = Array.isArray(children.query.value)
+            ? "('" + children.query.value.join("','") + "')"
+            : children.query.value;
           arrayValues.push(query);
         }
         if (children.type == "group") {
@@ -69,18 +76,18 @@ export default {
           sqlQuery = sqlQuery.substring(0, sqlQuery.length - 4);
           sqlQuery += ")";
         }
-        sqlQuery += " " + this.query.operator + " ";
+        // sqlQuery += " " + this.query.operator + " ";
       });
-      sqlQuery = sqlQuery.substring(0, sqlQuery.length - 4);
-      // console.log(arrayValues);
+      // sqlQuery = sqlQuery.substring(0, sqlQuery.length - 4);
       return arrayValues;
     },
 
     getRuleDowntimePlace() {
       let rule = {
         type: RuleTypes.MULTI_SELECT,
-        id: "d.place",
+        id: "place",
         label: "Места простоя",
+        nameTable: "d.",
       };
       Axios.get(this.$store.state.apiEntryPoint + "/downtime_places")
         .then((response) => {
@@ -103,8 +110,9 @@ export default {
     getRuleDowntimeCause() {
       let rule = {
         type: RuleTypes.MULTI_SELECT,
-        id: "d.cause",
+        id: "cause",
         label: "Причины простоя",
+        nameTable: "d.",
       };
       Axios.get(this.$store.state.apiEntryPoint + "/downtime_causes")
         .then((response) => {
@@ -127,8 +135,9 @@ export default {
     getRuleEventType() {
       let rule = {
         type: RuleTypes.MULTI_SELECT,
-        id: "e.type",
+        id: "type",
         label: "Тип события",
+        nameTable: "e.",
       };
       Axios.get(this.$store.state.apiEntryPoint + "/event_types")
         .then((response) => {
@@ -151,8 +160,9 @@ export default {
     getRuleEventSource() {
       let rule = {
         type: RuleTypes.MULTI_SELECT,
-        id: "e.source",
+        id: "source",
         label: "Истотчник события",
+        nameTable: "e.",
       };
       Axios.get(this.$store.state.apiEntryPoint + "/event_sources")
         .then((response) => {
@@ -175,8 +185,9 @@ export default {
     getRuleSpecies() {
       let rule = {
         type: RuleTypes.MULTI_SELECT,
-        id: "s.name",
+        id: "s.id",
         label: "Породы",
+        nameTable: "",
       };
       Axios.get(this.$store.state.apiEntryPoint + "/species")
         .then((response) => {
@@ -201,6 +212,7 @@ export default {
         type: RuleTypes.MULTI_SELECT,
         id: "p.id",
         label: "Постав",
+        nameTable: "",
       };
       Axios.get(this.$store.state.apiEntryPoint + "/postavs")
         .then((response) => {
@@ -224,28 +236,68 @@ export default {
     getRuleDiam() {
       let rule = {
         type: RuleTypes.NUMBER,
-        id: "t.diam",
+        id: "diam",
         label: "Диаметр бревна, см. ",
+        nameTable: "t.",
       };
       this.countLoadingRules++;
 
       return rule;
     },
-    getRulePostavDiam() {
+    getRuleTimberPostavDiam() {
       let rule = {
         type: RuleTypes.NUMBER,
-        id: "diam_postav",
-        label: "Диаметр постава, см. ",
+        id: "CAST(p.postav->'top' AS float)",
+        label: "Диаметр постава, мм. ",
+        nameTable: "",
       };
       this.countLoadingRules++;
 
+      return rule;
+    },
+    getRuleBoardPostavDiam() {
+      let rule = {
+        type: RuleTypes.NUMBER,
+        id: "get_int_into_by_key(p.postav, top)",
+        label: "Диаметр постава, мм. ",
+        nameTable: "",
+      };
+      this.countLoadingRules++;
+
+      return rule;
+    },
+    getRuleLength() {
+      let rule = {
+        type: RuleTypes.MULTI_SELECT,
+        id: "standard_length(t.length)",
+        label: "Длина, мм.",
+        nameTable: "",
+      };
+      Axios.get(this.$store.state.apiEntryPoint + "/lengths")
+        .then((response) => {
+          let data = response.data["hydra:member"];
+          rule.options = data.map((length) => {
+            return {
+              value: length.standard,
+              label: length.standard,
+            };
+          });
+          this.countLoadingRules++;
+          // console.log(rule.options);
+        })
+        .catch((err) => {
+          this.$snotify.error(err.data);
+          this.$snotify.error("Ошибка при загрузке длин");
+          console.log(err);
+        });
       return rule;
     },
     getRuleCut() {
       let rule = {
         type: RuleTypes.TEXT,
-        id: "diam",
+        id: "cut",
         label: "Сечение",
+        nameTable: "t.",
       };
       this.countLoadingRules++;
 
@@ -253,15 +305,45 @@ export default {
     },
   },
   mounted() {
-    this.rules.push(this.getRuleDowntimePlace());
-    this.rules.push(this.getRuleDowntimeCause());
-    this.rules.push(this.getRuleEventType());
-    this.rules.push(this.getRuleEventSource());
-    this.rules.push(this.getRuleSpecies());
-    this.rules.push(this.getRulePostav());
-    this.rules.push(this.getRuleDiam());
-    this.rules.push(this.getRulePostavDiam());
-    this.rules.push(this.getRuleCut());
+    this.filters.forEach((filter) => {
+      switch (filter) {
+        case "downtime_place":
+          this.rules.push(this.getRuleDowntimePlace());
+          break;
+        case "downtime_cause":
+          this.rules.push(this.getRuleDowntimeCause());
+          break;
+        case "event_type":
+          this.rules.push(this.getRuleEventType());
+          break;
+        case "event_source":
+          this.rules.push(this.getRuleEventSource());
+          break;
+        case "postav":
+          this.rules.push(this.getRulePostav());
+          break;
+        case "diam":
+          this.rules.push(this.getRuleDiam());
+          break;
+        case "postav_board_diam":
+          this.rules.push(this.getRuleBoardPostavDiam());
+          break;
+        case "postav_timber_diam":
+          this.rules.push(this.getRuleTimberPostavDiam());
+          break;
+        case "cut":
+          this.rules.push(this.getRuleCut());
+          break;
+        case "species":
+          this.rules.push(this.getRuleSpecies());
+          break;
+        case "length":
+          this.rules.push(this.getRuleLength());
+          break;
+        default:
+          break;
+      }
+    });
   },
   watch: {
     countLoadingRules() {

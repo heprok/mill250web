@@ -1,7 +1,10 @@
 <template>
   <v-container id="report_downtimes_dashboard" fluid tag="section">
     <v-row>
-      <v-col cols="12" sm="6" lg="4"
+      <v-col
+        cols="12"
+        sm="6"
+        lg="4"
         v-for="infoCard in infoCards"
         :key="infoCard.nameCard"
       >
@@ -14,7 +17,7 @@
           :durations="infoCard.duration"
         />
       </v-col>
-        <!-- <info-card
+      <!-- <info-card
           color="orange"
           icon="mdi-sofa"
           title="Последний простой"
@@ -36,12 +39,16 @@
           sub-icon="mdi-clock"
         /> -->
       <v-col cols="12">
-        <shift-date-picker urlReport="report/downtimes"> </shift-date-picker>
+        <shift-date-picker
+          urlReport="report/downtimes"
+          :filterSqlWhere="filters"
+        >
+        </shift-date-picker>
       </v-col>
       <v-col cols="12">
         <crud-table
           title="Простои за сегодняшний день"
-          url-api='/downtimes'
+          url-api="/downtimes"
           :query="query"
           icon="mdi-camera-timer"
           :headers="headers"
@@ -56,6 +63,7 @@ export default {
   name: "report_downtimes_dashboard",
   data() {
     return {
+      filters: ["downtime_cause", "downtime_place"],
       infoCards: [
         {
           urlApi: "/infocard/lastDowntime",
@@ -105,7 +113,6 @@ export default {
       return { drecTimestampKey: periodDay.start + "..." + periodDay.end };
     },
   },
-  methods: {
-  },
+  methods: {},
 };
 </script>

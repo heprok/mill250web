@@ -15,9 +15,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      options={"comment":"Причины простоя"})
  * @ApiResource(
  *      collectionOperations={"get", "post"},
- *      itemOperations={"get", "put", "delete"},
+ *      itemOperations={"get", "put"},
  *      normalizationContext={"groups"={"downtime_cause:read"}},
- *      denormalizationContext={"groups"={"downtime_cause:write"}}
+ *      denormalizationContext={"groups"={"downtime_cause:write"}, "disable_type_enforcement"=true}
  * )
  */
 class DowntimeCause
@@ -25,10 +25,10 @@ class DowntimeCause
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @Groups({"downtime_cause:read"})
+     * @ORM\Column(type="integer", name="id")
+     * @Groups({"downtime_cause:read","downtime_cause:write"})
      */
-    private int $id;
+    private int $code;
 
     /**
      * @ORM\Column(type="string", length=128, name="text",
@@ -37,14 +37,22 @@ class DowntimeCause
      */
     private string $name;
 
-    public function __construct(string $name)
+    public function __construct(int $code, string $name)
     {
+        $this->code = $code;
         $this->name = $name;
     }
 
-    public function getId(): ?int
+    public function getCode(): ?int
     {
-        return $this->id;
+        return $this->code;
+    }
+
+    public function setCode(int $code): self
+    {
+        $this->code = $code;
+
+        return $this;
     }
 
     public function __toString()

@@ -30,13 +30,27 @@ class DowntimeRepository extends ServiceEntityRepository
      * @param DatePeriod $period
      * @return QueryBuilder
      */
-    private function getQueryFromPeriod(DatePeriod $period): QueryBuilder
+    private function getQueryFromPeriod(DatePeriod $period, array $sqlWhere = []): QueryBuilder
     {
-        return $this->createQueryBuilder('d')
-            ->andWhere('d.drecTimestampKey BETWEEN :start AND :end')
+        $qb = $this->createQueryBuilder('d')
+            ->where('d.drecTimestampKey BETWEEN :start AND :end')
             ->setParameter('start', $period->getStartDate()->format(DATE_ATOM))
             ->setParameter('end', $period->getEndDate()->format(DATE_ATOM))
             ->orderBy('d.drecTimestampKey', 'ASC');
+        $query = '';
+        foreach ($sqlWhere as $key => $where) {
+            // if($key == count($sqlWhere) - 1)
+                // $where->logicalOperator = '';
+                $query = $where->nameTable . $where->id . ' ' . $where->operator . ' ' . $where->value;
+            if ($where->logicalOperator == 'AND')
+                $qb->andWhere($query);
+            elseif($where->logicalOperator == 'OR')
+                $qb->orWhere($query);
+            else
+                dd($where);
+        }
+        $qb->andWhere($query);
+        return $qb;
     }
 
     /**
@@ -59,9 +73,9 @@ class DowntimeRepository extends ServiceEntityRepository
         return $this->findByPeriod($shift->getPeriod);
     }
 
-    public function getTotalDowntimeByPeriod(DatePeriod $period): ?string
+    public function getTotalDowntimeByPeriod(DatePeriod $period, array $sqlWhere = []): ?string
     {
-        $downtmies = $this->findByPeriod($period);
+        $downtmies = $this->findByPeriod($period, $sqlWhere);
         if (!$downtmies)
             return '00:00:00';
 
@@ -77,9 +91,9 @@ class DowntimeRepository extends ServiceEntityRepository
     /**
      * @return Downtime[] Returns an array of Downtime objects
      */
-    public function findByPeriod(DatePeriod $period)
+    public function findByPeriod(DatePeriod $period, array $sqlWhere = [])
     {
-        return $this->getQueryFromPeriod($period)
+        return $this->getQueryFromPeriod($period, $sqlWhere)
             ->getQuery()
             ->getResult();
     }

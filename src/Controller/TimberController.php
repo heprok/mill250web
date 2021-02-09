@@ -16,6 +16,7 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -37,19 +38,22 @@ class TimberController extends AbstractController
      */
     public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
+        $request = Request::createFromGlobals();
+        $sqlWhere = json_decode($request->query->get('sqlWhere'));
+
         $idsPeople = explode('...', $idsPeople);
         $peoples = [];
         foreach ($idsPeople as $idPeople) {
-            if($idPeople != '')
+            if ($idPeople != '')
                 $peoples[] = $this->peopleRepository->find($idPeople);
         }
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-        $report = new TimberReport($period, $this->timberRepository, $peoples);
+        $report = new TimberReport($period, $this->timberRepository, $peoples, $sqlWhere);
         $this->showPdf($report);
-    }    
-    
+    }
+
     /**
      * @Route("/{start}...{end}/pdf", name="for_period_show_pdf")
      */
@@ -57,7 +61,7 @@ class TimberController extends AbstractController
     {
         $this->showReportForPeriodWithPeoplePdf($start, $end, '');
     }
-    
+
     private function showPdf(AbstractReport $report)
     {
         $report->init();
@@ -70,19 +74,22 @@ class TimberController extends AbstractController
      */
     public function showReportFromPostavForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
+        $request = Request::createFromGlobals();
+        $sqlWhere = json_decode($request->query->get('sqlWhere'));
+        
         $idsPeople = explode('...', $idsPeople);
         $peoples = [];
         foreach ($idsPeople as $idPeople) {
-            if($idPeople != '')
+            if ($idPeople != '')
                 $peoples[] = $this->peopleRepository->find($idPeople);
         }
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-        $report = new TimberFromPostavReport($period, $this->timberRepository, $peoples);
+        $report = new TimberFromPostavReport($period, $this->timberRepository, $peoples, $sqlWhere);
         $this->showPostavPdf($report);
-    }    
-    
+    }
+
     /**
      * @Route("_postav/{start}...{end}/pdf", name="from_postav_for_period_show_pdf")
      */
