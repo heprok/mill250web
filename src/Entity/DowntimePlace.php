@@ -37,6 +37,19 @@ class DowntimePlace
      */
     private string $name;
 
+    /**
+     * @ORM\Column(type="boolean",
+     *      options={"comment":"Используется", "default":"true"})
+     * @Groups({"downtime_place:read", "downtime_place:write", "downtime:read"})
+     */
+    private bool $enabled = true;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=DowntimeLocation::class, inversedBy="downtimePlaces")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $location;
+    
     public function __construct(int $code, string $name)
     {
         $this->code = $code;
@@ -68,6 +81,30 @@ class DowntimePlace
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getEnabled() :bool
+    {
+        return $this->enabled;
+    }
+
+    public function setEnabled(bool $enabled) : self
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    public function getLocation(): ?DowntimeLocation
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?DowntimeLocation $location): self
+    {
+        $this->location = $location;
 
         return $this;
     }

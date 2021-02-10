@@ -34,7 +34,7 @@ class Event
     /**
      * @ORM\Id
      * @ORM\Column(name="drec", type="string",
-     *      options={"comment":"Время начала простоя"})
+     *      options={"comment":"Начало события"})
      * @ApiProperty(identifier=true)
      * @Groups({"event:read"})
      */

@@ -37,6 +37,19 @@ class DowntimeCause
      */
     private string $name;
 
+    /**
+     * @ORM\Column(type="boolean",
+     *      options={"comment":"Используется", "default":"true"})
+     * @Groups({"downtime_cause:read", "downtime_cause:write", "downtime:read"})
+     */
+    private bool $enabled = true;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=DowntimeGroup::class, inversedBy="downtimeCauses")
+     * @ORM\JoinColumn(nullable=false, name="group_id")
+     */
+    private $groups;
+
     public function __construct(int $code, string $name)
     {
         $this->code = $code;
@@ -68,6 +81,30 @@ class DowntimeCause
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    public function setEnabled(bool $enabled): self
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    public function getGroups(): ?DowntimeGroup
+    {
+        return $this->groups;
+    }
+
+    public function setGroups(?DowntimeGroup $groups): self
+    {
+        $this->groups = $groups;
 
         return $this;
     }
