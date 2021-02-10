@@ -88,21 +88,6 @@ export default {
         icon: "mdi-file-chart",
         children: [
           {
-            icon: "mdi-clock-fast",
-            title: "Простои",
-            to: "downtimes",
-          },
-          {
-            icon: "mdi-comment-alert-outline",
-            title: "Аварии и сообщения",
-            to: "alert",
-          },
-          {
-            icon: "mdi-gesture-double-tap",
-            title: "Действия оператора",
-            to: "action",
-          },            
-          {
             icon: "mdi-shore",
             title: "Брёвна",
             to: "timber",
@@ -117,6 +102,21 @@ export default {
             title: "Доски из постава",
             to: "boardfrompostav",
           },          
+          {
+            icon: "mdi-clock-fast",
+            title: "Простои",
+            to: "downtimes",
+          },
+          {
+            icon: "mdi-comment-alert-outline",
+            title: "Аварии и сообщения",
+            to: "alert",
+          },
+          {
+            icon: "mdi-gesture-double-tap",
+            title: "Действия оператора",
+            to: "action",
+          },            
         ],
       },
       {

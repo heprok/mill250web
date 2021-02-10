@@ -165,7 +165,7 @@ class InfoCardController extends AbstractController
 
         $shifts = $this->shiftRepository->findByPeriod($period);
         if (!$shifts)
-            return $this->json('Нет смен за заданный день', 204);
+            return $this->json('Нет смен за заданный день', 404);
 
         $result['summary'] = ['volumeBoards' => 0, 'downtime' => new DateTime('00:00')];
         foreach ($shifts as $key => $shift) {
