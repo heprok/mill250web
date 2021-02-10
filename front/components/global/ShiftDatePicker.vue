@@ -195,7 +195,7 @@ export default {
         operator: "AND",
         children: [],
       },
-      el: 2,
+      el: 1,
       pickerDate: null,
       date: "",
       dates: [],

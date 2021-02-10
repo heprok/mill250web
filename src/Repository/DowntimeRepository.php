@@ -37,19 +37,14 @@ class DowntimeRepository extends ServiceEntityRepository
             ->setParameter('start', $period->getStartDate()->format(DATE_ATOM))
             ->setParameter('end', $period->getEndDate()->format(DATE_ATOM))
             ->orderBy('d.drecTimestampKey', 'ASC');
-        $query = '';
-        foreach ($sqlWhere as $key => $where) {
-            // if($key == count($sqlWhere) - 1)
-                // $where->logicalOperator = '';
+
+            foreach ($sqlWhere as $where) {
                 $query = $where->nameTable . $where->id . ' ' . $where->operator . ' ' . $where->value;
-            if ($where->logicalOperator == 'AND')
-                $qb->andWhere($query);
-            elseif($where->logicalOperator == 'OR')
-                $qb->orWhere($query);
-            else
-                dd($where);
-        }
-        $qb->andWhere($query);
+                if ($where->logicalOperator == 'AND')
+                    $qb->andWhere($query);
+                else
+                    $qb->orWhere($query);
+            }
         return $qb;
     }
 

@@ -45,74 +45,6 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <v-dialog v-model="people.dialogAdded" max-width="700px">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn color="primary" large dark icon v-bind="attrs" v-on="on">
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
-            </template>
-            <v-card>
-              <v-card-title>
-                <span class="headline">{{ formTitle }}</span>
-              </v-card-title>
-
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" md="4">
-                      <v-text-field
-                        v-model="people.editedItem.nam"
-                        label="Имя"
-                        required
-                      ></v-text-field>
-                    </v-col>
-
-                    <v-col cols="12" md="4">
-                      <v-text-field
-                        v-model="people.editedItem.fam"
-                        label="Фамилия"
-                      ></v-text-field>
-                    </v-col>
-
-                    <v-col cols="12" md="4">
-                      <v-text-field
-                        v-model="people.editedItem.pat"
-                        label="Отчество"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-select
-                        v-model="people.editedItem.duty"
-                        :items="duties.list"
-                        item-text="name"
-                        item-value="@id"
-                        attach
-                        chips
-                        label="Должности"
-                        multiple
-                      >
-                      </v-select>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-
-              <v-card-actions>
-                <v-spacer />
-                <v-btn color="blue darken-1" text @click="closeAddedDialog">
-                  Отмена
-                </v-btn>
-                <v-btn
-                  color="blue darken-1"
-                  :loading="loadingBtn"
-                  text
-                  @click="save"
-                >
-                  Сохранить
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
           <v-dialog v-model="dialogCheckPassword" persistent width="500">
             <base-material-card icon="mdi-key" title="Потвердите права">
               <v-card-title />
@@ -168,7 +100,104 @@
                 </v-icon>
               </template>
               <template v-slot:no-data>
-                <v-btn color="primary" @click="updateItems"> Обновить </v-btn>
+                <v-btn color="primary" @click="updatePeople"> Обновить </v-btn>
+              </template>
+              <template #top>
+                <v-toolbar flat>
+                  <v-toolbar-title>
+                    <v-row>
+                      <v-btn
+                        color="primary"
+                        icon
+                        large
+                        :loading="loadingBtn"
+                        @click="updatePeople"
+                      >
+                        <v-icon>mdi-cached</v-icon>
+                      </v-btn>
+                      <v-spacer />
+                      <v-dialog v-model="people.dialogAdded" max-width="700px">
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn
+                            color="primary"
+                            large
+                            dark
+                            icon
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                            <v-icon>mdi-plus</v-icon>
+                          </v-btn>
+                        </template>
+                        <v-card>
+                          <v-card-title>
+                            <span class="headline">{{ formTitle }}</span>
+                          </v-card-title>
+
+                          <v-card-text>
+                            <v-container>
+                              <v-row>
+                                <v-col cols="12" md="4">
+                                  <v-text-field
+                                    v-model="people.editedItem.nam"
+                                    label="Имя"
+                                    required
+                                  ></v-text-field>
+                                </v-col>
+
+                                <v-col cols="12" md="4">
+                                  <v-text-field
+                                    v-model="people.editedItem.fam"
+                                    label="Фамилия"
+                                  ></v-text-field>
+                                </v-col>
+
+                                <v-col cols="12" md="4">
+                                  <v-text-field
+                                    v-model="people.editedItem.pat"
+                                    label="Отчество"
+                                  ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                  <v-select
+                                    v-model="people.editedItem.duty"
+                                    :items="duties.list"
+                                    item-text="name"
+                                    item-value="@id"
+                                    attach
+                                    chips
+                                    label="Должности"
+                                    multiple
+                                  >
+                                  </v-select>
+                                </v-col>
+                              </v-row>
+                            </v-container>
+                          </v-card-text>
+
+                          <v-card-actions>
+                            <v-spacer />
+                            <v-btn
+                              color="blue darken-1"
+                              text
+                              @click="closeAddedDialog"
+                            >
+                              Отмена
+                            </v-btn>
+                            <v-btn
+                              color="blue darken-1"
+                              :loading="loadingBtn"
+                              text
+                              @click="save"
+                            >
+                              Сохранить
+                            </v-btn>
+                          </v-card-actions>
+                        </v-card>
+                      </v-dialog>
+                    </v-row>
+                  </v-toolbar-title>
+                </v-toolbar>
               </template>
             </v-data-table>
           </v-card>
@@ -210,12 +239,12 @@ export default {
       selectModel: [],
       defaultItem: {},
       duties: {
-        urlApi: this.$store.state.apiEntryPoint + "/duties",
+        urlApi: "/duties",
         list: [],
         model: [],
       },
       people: {
-        urlApi: this.$store.state.apiEntryPoint + "/people",
+        urlApi: "/people",
         loading: false,
         search: "",
         dialogAdded: false,
@@ -253,14 +282,25 @@ export default {
   },
   mounted() {
     this.updatePeople();
-    Axios.get(this.duties.urlApi).then((response) => {
-      this.duties.list = response.data["hydra:member"];
-    });
+    Axios.get(this.$store.state.apiEntryPoint + this.duties.urlApi).then(
+      (response) => {
+        this.duties.list = response.data["hydra:member"];
+      }
+    );
   },
   methods: {
     async updatePeople() {
-      const request = await Axios.get(this.people.urlApi);
+      this.loadingBtn = true;
+      this.people.items = [];
+      const config = {
+        params: this.query,
+      };
+      const request = await Axios.get(
+        this.$store.state.apiEntryPoint + this.people.urlApi,
+        config
+      );
       this.people.items = request.data["hydra:member"];
+      this.loadingBtn = false;
       return request;
     },
     async deleteItem() {
@@ -274,22 +314,9 @@ export default {
       );
       return request;
     },
-    async updateItems() {
-      this.people.items = [];
-      const config = {
-        params: this.query,
-      };
-      console.log()
-      const request = await Axios.get(
-        this.entryPointApi + this.people.urlApi,
-        config
-      );
-      this.people.items = request.data["hydra:member"];
-      return request;
-    },
     async addItem() {
       const request = await Axios.post(
-        this.people.urlApi,
+        this.$store.state.apiEntryPoint + this.people.urlApi,
         this.people.editedItem
       );
       return request;
@@ -325,7 +352,7 @@ export default {
       });
     },
     checkPassword() {
-      if (this.$store.state.IS_ADMIN) return true;
+      if (this.$store.state.isAdmin) return true;
 
       this.dialogCheckPassword = true;
     },
