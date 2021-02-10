@@ -102,7 +102,7 @@ abstract class AbstractPdf extends TCPDF
 
     public function render()
     {
-        return $this->Output($this->getNameFile(),);
+        return $this->Output($this->getNameFile());
     }
 
     public function header()
@@ -264,7 +264,6 @@ abstract class AbstractPdf extends TCPDF
         $package = new Package(new EmptyVersionStrategy());
         $image_file = $package->getUrl('build/images/logotypeBig.svg');
         $this->ImageSVG($image_file, $widthPage / 2 - self::MARGIN_LEFT * 2 - self::WIDTH_LOGO, $heightPage / 2 - self::HEIGHT_LOGO_BIG - self::MARGIN_TOP, self::WIDTH_LOGO_BIG, 50, 'www.techno-les.com', 'L', false, 0, 0);
-
         $html = <<<EOD
         <div style="text-align: center;">
         <h1> $nameReport за</h1>

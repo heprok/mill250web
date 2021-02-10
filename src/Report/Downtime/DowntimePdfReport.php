@@ -40,9 +40,4 @@ final class DowntimePdfReport extends AbstractPdf
     {
         return 5;
     }
-
-    public function render()
-    {
-        return $this->Output($this->getNameFile());
-    }
 }

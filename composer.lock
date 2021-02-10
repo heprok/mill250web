@@ -6342,12 +6342,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:technolescom/DoctrineExtensions.git",
-                "reference": "f90478ad57ac7ddb88dd3f8950331033b1cf45f5"
+                "reference": "69615528ad790494d097bba90fbb647eaa13d986"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/technolescom/DoctrineExtensions/zipball/f90478ad57ac7ddb88dd3f8950331033b1cf45f5",
-                "reference": "f90478ad57ac7ddb88dd3f8950331033b1cf45f5",
+                "url": "https://api.github.com/repos/technolescom/DoctrineExtensions/zipball/69615528ad790494d097bba90fbb647eaa13d986",
+                "reference": "69615528ad790494d097bba90fbb647eaa13d986",
                 "shasum": ""
             },
             "require": {
@@ -6405,7 +6405,7 @@
                 "source": "https://github.com/technolescom/DoctrineExtensions/tree/master",
                 "issues": "https://github.com/technolescom/DoctrineExtensions/issues"
             },
-            "time": "2021-01-20T14:43:32+00:00"
+            "time": "2021-02-09T10:36:50+00:00"
         },
         {
             "name": "twig/twig",

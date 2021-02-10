@@ -258,7 +258,7 @@ export default {
     getRuleBoardPostavDiam() {
       let rule = {
         type: RuleTypes.NUMBER,
-        id: "get_int_into_by_key(p.postav, top)",
+        id: "get_int_into_by_key(p.postav, 'top')",
         label: "Диаметр постава, мм. ",
         nameTable: "",
       };

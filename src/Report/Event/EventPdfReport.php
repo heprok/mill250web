@@ -41,11 +41,6 @@ final class EventPdfReport extends AbstractPdf
         return [70, 10, 10, 15];
     }
 
-    public function render()
-    {
-        return $this->Output($this->getNameFile());
-    }
-
     // /**
     //  * Рисует данные в таблице
     //  *

@@ -39,9 +39,4 @@ final class TimberPdfReport extends AbstractPdf
     {
         return 10;
     }
-
-    public function render()
-    {
-        return $this->Output($this->getNameFile());
-    }
 }
