@@ -60,7 +60,9 @@ class InfoCardController extends AbstractController
                 break;
 
             case 'weekly':
-                $period = BaseEntity::getPeriodForDay(7);
+                $period = BaseEntity::getPeriodForDay();
+                $lastMonday = new DateTime('last monday ' . $period->end->format(BaseEntity::DATE_FORMAT_DB));
+                $period = new DatePeriod($lastMonday, $period->getDateInterval(), $period->end);
                 break;
 
             case 'mountly':

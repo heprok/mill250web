@@ -48,7 +48,7 @@ export default {
             },
             {
               url: "/weekly",
-              title: "за 7 дней",
+              title: "за неделю",
             },
             {
               url: "/mountly",
@@ -72,7 +72,7 @@ export default {
             },
             {
               url: "/weekly",
-              title: "за 7 дней",
+              title: "за неделю",
             },
             {
               url: "/mountly",
