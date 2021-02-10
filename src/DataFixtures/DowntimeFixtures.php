@@ -21,14 +21,14 @@ class DowntimeFixtures extends Fixture
         $arrPlace = [];
         $arrCause = [];
         for ($i=1; $i <= self::COUNT_CAUSE; $i++) { 
-            $cause = new DowntimeCause('Причина ' . $i);
+            $cause = new DowntimeCause($i, 'Причина ' . $i);
             $arrCause[] = $cause;
 
             $manager->persist($cause);
         }
         
         for ($i=1; $i <= self::COUNT_PLACE; $i++) { 
-            $place = new DowntimePlace("Место  " . $i);
+            $place = new DowntimePlace( $i ,"Место  " . $i);
             $arrPlace[] = $place;
             $manager->persist($place);
         }

@@ -94,7 +94,7 @@ export default {
           let data = response.data["hydra:member"];
           rule.options = data.map((place) => {
             return {
-              value: place.id,
+              value: place.code,
               label: place.name,
             };
           });
@@ -119,7 +119,7 @@ export default {
           let data = response.data["hydra:member"];
           rule.options = data.map((cause) => {
             return {
-              value: cause.id,
+              value: cause.code,
               label: cause.name,
             };
           });
