@@ -88,6 +88,15 @@ class TimberRepository extends ServiceEntityRepository
         return $query->fetchAllAssociative()[0]['volume_boards'] ?? 0;
     }
 
+    public function getCountBoardsByPeriod(DatePeriod $period): int
+    {
+        $qb = $this->getBaseQueryFromPeriod($period);
+        return $qb
+            ->select('sum(array_length(t.boards, 1)) as count_boards')
+            ->getQuery()
+            ->getResult()[0]['count_boards'] ?? 0;
+    }
+
     public function getReportVolumeTimberByPeriod(DatePeriod $period, array $sqlWhere = [])
     {
         $qb = $this->getBaseQueryFromPeriod($period, $sqlWhere);

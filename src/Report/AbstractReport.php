@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Report;
 
 use App\Dataset\AbstractDataset;
+use App\Dataset\PdfDataset;
 use App\Entity\Shift;
 use DatePeriod;
 use App\Entity\People;
@@ -19,6 +20,7 @@ abstract class AbstractReport
 
     private array $datasets = [];
     protected array $labels = [];
+    protected array $summaryStats = [];
     protected DatePeriod $period;
     /**
      * @param People[] $peoples
@@ -29,6 +31,10 @@ abstract class AbstractReport
     abstract public function getNameReport(): string;
     abstract protected function updateDataset(): bool;
 
+    public function getSummaryStats(): array
+    {
+        return $this->summaryStats;
+    }
     /**
      *
      * @param DatePeriod $period

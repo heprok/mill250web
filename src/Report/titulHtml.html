@@ -1,10 +1,279 @@
-    <header class="header">
-        <div class="header__wrapper">
-            <nav class="header-nav"><a class="header__logo" href="#"><img class="header__logo-image" src="/build/images/logotypeBig.svg" width="100%"></a></nav>
-        </div>
-    </header>
-    <main class="main">
+<!DOCTYPE html>
+<html class="html" lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <title>TechForestPage</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="google" content="notranslate">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="address=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta property="og:locale" content="ru_RU">
+    <meta property="og:type" content="website">
+    <meta name="msapplication-TileImage" type="image/x-icon" rel="shortcut icon" content="/favicon.ico?11120211416">
+    <style type="text/css">
+        @import url(https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap);
+
+        .body,
+        .html {
+            width: 100%;
+            min-height: 100%
+        }
+
+        .body {
+            position: relative;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 80px;
+            font-family: Montserrat, sans-serif;
+            font-weight: 400
+        }
+
+        .body:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 466px;
+            height: 554px;
+            background: url(/images/Shape-circle.svg) no-repeat center/contain
+        }
+
+        a {
+            text-decoration: none
+        }
+
+        .footer {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            width: 100%
+        }
+
+        .header {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            -webkit-align-items: center;
+            align-items: center;
+            width: 100%;
+            margin: 0 0 120px
+        }
+
+        .header__wrapper {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1080px
+        }
+
+        .header__logo {
+            display: -webkit-flex;
+            display: flex;
+            max-width: 320px
+        }
+
+        .html {
+            background-color: #fff
+        }
+
+        .main {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            -webkit-flex-grow: 1;
+            flex-grow: 1;
+            -webkit-align-items: center;
+            align-items: center;
+            width: 100%
+        }
+
+        .main__wrapper {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1080px
+        }
+
+        @media (orientation:landscape) {
+            .main__wrapper {
+                max-width: 1800px
+            }
+        }
+
+        .main__title {
+            position: relative;
+            margin: 0 0 110px;
+            font: 700 100px Montserrat, sans-serif
+        }
+
+        .main__title:before {
+            position: absolute;
+            content: "";
+            left: -95px;
+            width: 40px;
+            height: 100%;
+            background-color: #008c00
+        }
+
+        .button {
+            display: -webkit-flex;
+            display: flex;
+            cursor: pointer
+        }
+
+        .title {
+            margin: 0;
+            text-align: center;
+            text-transform: uppercase;
+            font: 600 18px Montserrat, sans-serif
+        }
+
+        .title_h1 {
+            font-size: 26px
+        }
+
+        .interval {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: center;
+            align-items: center;
+            margin-bottom: 95px
+        }
+
+        .interval__item {
+            position: relative;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            -webkit-justify-content: center;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 20px;
+            background-color: #e3e3e3
+        }
+
+        .interval__item:first-child {
+            margin-right: 50px
+        }
+
+        .interval__item:first-child::after {
+            content: "";
+            position: absolute;
+            right: -37.5px;
+            width: 25px;
+            height: 4px;
+            background-color: #404040
+        }
+
+        .interval__item-date {
+            font: 700 32px Montserrat, sans-serif;
+            margin-bottom: 25px
+        }
+
+        .operator {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            margin-bottom: 95px
+        }
+
+        .operator__title {
+            margin-bottom: 20px;
+            font: 700 50px Montserrat, sans-serif;
+            color: #404040
+        }
+
+        .operator__name {
+            font: 700 32px Montserrat, sans-serif;
+            color: #404040
+        }
+
+        .table {
+            width: 100%;
+            border: 1px solid #d5ecd5;
+            border-collapse: collapse;
+            margin-bottom: 90px;
+            box-sizing: border-box
+        }
+
+        .table__head {
+            background-color: #edf7ed
+        }
+
+        .table__body {
+            border: 1px solid #99d199;
+            box-sizing: border-box;
+            background-color: #d9eed9
+        }
+
+        .table__row {
+            border-bottom: 1px solid #c1e3c1
+        }
+
+        .table__row:last-child {
+            border: 0
+        }
+
+        .table__cell {
+            box-sizing: border-box;
+            padding: 20px 35px;
+            text-align: left
+        }
+
+        .total {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column
+        }
+
+        .total__row {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            margin-bottom: 20px
+        }
+
+        .total__row:last-child {
+            margin-bottom: 0
+        }
+
+        .total__text_bold {
+            font-weight: 700
+        }
+    </style>
+</head>
+<div class="body">
+    <div class="main">
         <div class="main__wrapper">
+            <div class="header">
+                <div class="header__wrapper">
+                    <nav class="header-nav"><a class="header__logo" href="#"><img class="header__logo-image" src="/build/images/logotypeBig.svg" width="100%"></a></nav>
+                </div>
+            </div>
             <section class="main__content">
                 <h1 class="main__title"> Отчёт<br>по простоям</h1>
                 <div class="interval">
@@ -54,5 +323,10 @@
                 </div>
             </section>
         </div>
-    </main>
+    </div>
+    <footer class="footer">
+        <div class="footer__wrapper"></div>
+    </footer><noscript>У вас отключен JavaScript, пожалуйста, включите его для корректной работы сайта.</noscript>
+</div>
 
+</html>

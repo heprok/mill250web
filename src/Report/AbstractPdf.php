@@ -260,7 +260,18 @@ abstract class AbstractPdf extends TCPDF
         $period = $this->report->getPeriod();
         $textPeriod = $period->start->format(self::DATE_FORMAT) . ' по ' . $period->end->format(self::DATE_FORMAT);
         $this->SetXY($widthPage / 2 - self::MARGIN_LEFT, $heightPage / 2 - self::MARGIN_TOP);
-
+        $summaryStats = $this->report->getSummaryStats();
+        $summaryStatsHtml = '';
+        foreach($summaryStats as $summaryStat ){
+            $nameTitle = $summaryStat->getName();
+            $value = number_format($summaryStat->getValue(), self::PRECISION_FOR_FLOAT);
+            $count = $summaryStat->getCount();
+            $summaryStatsHtml .= '<tr>';
+            $summaryStatsHtml .= "<td style='text-align: left;'>$nameTitle</td>";
+            $summaryStatsHtml .= "<td style='text-align: center;'>$value</td>";
+            $summaryStatsHtml .= "<td style='text-align: center;'>$count</td>";
+            $summaryStatsHtml .= '</tr>';
+        }
         $package = new Package(new EmptyVersionStrategy());
         $image_file = $package->getUrl('build/images/logotypeBig.svg');
         $this->ImageSVG($image_file, $widthPage / 2 - self::MARGIN_LEFT * 2 - self::WIDTH_LOGO, $heightPage / 2 - self::HEIGHT_LOGO_BIG - self::MARGIN_TOP, self::WIDTH_LOGO_BIG, 50, 'www.techno-les.com', 'L', false, 0, 0);
@@ -276,19 +287,9 @@ abstract class AbstractPdf extends TCPDF
                 <tr>
                     <th>Хар-ка</th>
                     <th>Значение</th>
+                    <th>Кол-во</th>
                 </tr>
-                <tr>
-                    <td style="text-align: left;">Объем досок</td>
-                    <td style="text-align: center;">в разработке</td>
-                </tr>
-                <tr>
-                    <td style="text-align: left;">Объем брёвен</td>
-                    <td style="text-align: center;">в разработке</td>
-                </tr>
-                <tr>
-                    <td style="text-align: left;">Длительность простоя</td>
-                    <td style="text-align: center;">в разработке</td>
-                </tr>
+                $summaryStatsHtml
             </tbody>
         </table>
     </div>

@@ -94,6 +94,12 @@ final class PdfDataset extends AbstractDataset
         return true;
     }
 
+    /**
+     * Возращает ключи по названию столбцов
+     *
+     * @param array $nameColumns названия стообца в датасете
+     * @return array
+     */
     private function getKeysOnColumn(array $nameColumns):array
     {
         $result = [];
@@ -148,7 +154,6 @@ final class PdfDataset extends AbstractDataset
             }
             $total = $this->getTotal($keysColumn, $value, $total);
         }
-
         $total_str = $this->getPrepareTemplate(
             $nameColumns,
             $templateRow,

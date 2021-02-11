@@ -9,6 +9,7 @@ use App\Entity\Shift;
 use App\Report\AbstractReport;
 use App\Repository\TimberRepository;
 use DatePeriod;
+use App\Entity\SummaryStat;
 
 final class TimberReport extends AbstractReport
 {
@@ -31,6 +32,15 @@ final class TimberReport extends AbstractReport
             'Объём, м³',
         ]);
         parent::__construct($period, $people, $sqlWhere);
+    }
+
+    public function getSummaryStats(): array
+    {
+        $summaryStats = [];
+        $summaryStats[] = new SummaryStat('Доски', $this->repository->getVolumeBoardsByPeriod($this->period), $this->repository->getCountBoardsByPeriod($this->period));
+        $summaryStats[] = new SummaryStat('Брёвна', $this->repository->getVolumeTimberByPeriod($this->period), $this->repository->getCountTimberByPeriod($this->period));
+
+        return $summaryStats;
     }
 
     protected function getColumnTotal(): array
@@ -96,7 +106,6 @@ final class TimberReport extends AbstractReport
         
 
         $this->addDataset($dataset);
-
         return true;
     }
 }
