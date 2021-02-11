@@ -170,7 +170,10 @@ class InfoCardController extends AbstractController
         $result['summary'] = ['volumeBoards' => 0, 'downtime' => new DateTime('00:00')];
         foreach ($shifts as $key => $shift) {
             $result['shifts'][$key]['name'] = 'Смена №' . $shift->getNumber();
-
+            $result['shifts'][$key]['idOperator'] = $shift->getPeople()->getId();
+            $result['shifts'][$key]['fioOperator'] = $shift->getPeople()->getFio();
+            $result['shifts'][$key]['start'] = $shift->getStart();
+            $result['shifts'][$key]['end'] = $shift->getStop() ? $shift->getStop()->format(BaseEntity::DATE_FORMAT_DB) : date(BaseEntity::DATE_FORMAT_DB); 
             $result['shifts'][$key]['volumeBoards'] = round($this->timberRepository->getVolumeBoardsByPeriod($shift->getPeriod()), BaseEntity::PRECISION_FOR_FLOAT);
             $result['shifts'][$key]['downtime'] = $this->downtimeRepository->getTotalDowntimeByPeriod($shift->getPeriod());
         }

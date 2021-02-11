@@ -29,10 +29,20 @@
                 <tr>
                   <td><p class="font-weight-regular">Смена</p></td>
                   <td align="center" v-for="shift in shifts" :key="shift.name">
-                    {{ shift.name }}
+                    <v-btn
+                      @click="selectShift(shift)"
+                      :disabled="shift.enabled"
+                      color="secondary"
+                    >
+                      {{ shift.name }}
+                    </v-btn>
                   </td>
-                  <!-- <td>{{ shifts.number1.name }}</td> -->
-                  <!-- <td>{{ shifts.number2.name }}</td> -->
+                </tr>
+                <tr>
+                  <td><p class="font-weight-regular">Оператор</p></td>
+                  <td align="center" v-for="shift in shifts" :key="shift.name">
+                    {{ shift.fioOperator }}
+                  </td>
                 </tr>
                 <tr>
                   <td><p class="font-weight-regular">Объём досок м3</p></td>
@@ -43,7 +53,7 @@
                 <tr>
                   <td><p class="font-weight-regular">Итоговый объем м3</p></td>
                   <td align="center" :colspan="shifts.length">
-                    <p class="font-weight-bold">{{ summary.volumeBoards }} </p>
+                    <p class="font-weight-bold">{{ summary.volumeBoards }}</p>
                   </td>
                 </tr>
                 <tr>
@@ -55,7 +65,7 @@
                 <tr>
                   <td><p class="font-weight-regular">Итоговый простой</p></td>
                   <td align="center" :colspan="shifts.length">
-                    <p class="font-weight-bold">{{ summary.downtime }} </p>
+                    <p class="font-weight-bold">{{ summary.downtime }}</p>
                   </td>
                 </tr>
               </tbody>
@@ -73,9 +83,18 @@
                 elevation="2"
                 block
                 class="mt-n3"
-                :href="report.url + '/' + period + '/' + report.type"
+                :href="
+                  report.url +
+                  '/' +
+                  period +
+                  '/' +
+                  (optionsReport.idPeople != ''
+                    ? 'people/' + optionsReport.idPeople + '/'
+                    : '') +
+                  report.type
+                "
               >
-                {{ report.name }}
+                {{ report.name + " " + optionsReport.suffix }}
               </v-btn>
             </v-col>
           </v-col>
@@ -120,11 +139,27 @@ export default {
       loading: false,
       colorCard: "primary",
       date: "",
+      optionsReport: {
+        suffix: "за сутки",
+        start: "",
+        end: "",
+        idPeople: "",
+      },
       summary: {
         // volumeBoards: 0.0,
         // downtime: "00:00:00",
       },
       shifts: [
+        {
+          name: "",
+          idOperator: null,
+          fioOperator: "",
+          start: "",
+          end: "",
+          volumeBoards: null,
+          downtime: "",
+          enabled: false,
+        },
         // {
         //   volumeBoards: 0,
         //   downtime: "00:00:00",
@@ -141,10 +176,19 @@ export default {
   watch: {
     async date() {
       this.loading = true;
-      let request = null;
+      let request;
+      this.optionsReport = {
+        suffix: "за сутки",
+        start: "",
+        end: "",
+        idPeople: "",
+      };
       try {
         request = await Axios.get(this.urlApi + "/" + this.period);
         let data = request.data;
+        data.shifts.forEach((shift) => {
+          shift.enabled = false;
+        });
         this.shifts = data.shifts;
         this.colorCard = "primary";
         this.summary = data.summary;
@@ -160,13 +204,30 @@ export default {
       return request;
     },
   },
-  methods: {},
+  methods: {
+    selectShift(shift) {
+      this.shifts.forEach((shift) => {
+        shift.enabled = false;
+      });
+      this.optionsReport.suffix = "за смену";
+      this.optionsReport.start = shift.start;
+      this.optionsReport.end = shift.end;
+      this.optionsReport.idPeople = shift.idOperator;
+      shift.enabled = true;
+    },
+  },
   computed: {
     today() {
       return new Date().toISOString().substr(0, 10);
     },
     period() {
-      let periodDay = this.$store.getters.TIME_FOR_THE_DAY(this.date);
+      let periodDay;
+      if (this.optionsReport.start && this.optionsReport.end) {
+        periodDay = {
+          start: this.optionsReport.start,
+          end: this.optionsReport.end,
+        };
+      } else periodDay = this.$store.getters.TIME_FOR_THE_DAY(this.date);
       return periodDay.start + "..." + periodDay.end;
       // let periodDay = this.$store.getters.TIME_FOR_THE_DAY(this.date);
       // return this.date.start + "..." + this.date.end;

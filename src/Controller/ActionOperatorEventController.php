@@ -37,7 +37,7 @@ class ActionOperatorEventController extends AbstractController
     public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople  )
     {
         $request = Request::createFromGlobals();
-        $sqlWhere = json_decode($request->query->get('sqlWhere'));
+        $sqlWhere = json_decode($request->query->get('sqlWhere') ?? '[]');
         
         $idsPeople = explode('...', $idsPeople);
         $peoples = [];

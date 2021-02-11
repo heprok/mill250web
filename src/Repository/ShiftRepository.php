@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Shift;
+use DateInterval;
 use DatePeriod;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -29,8 +30,9 @@ class ShiftRepository extends ServiceEntityRepository
      */
     private function getQueryFromPeriod(DatePeriod $period): QueryBuilder
     {
+        
         return $this->createQueryBuilder('s')
-            ->andWhere('s.startTimestampKey BETWEEN :start AND :end')
+            ->where('CAST(((s.stop - s.startTimestampKey) / 2 + s.startTimestampKey) as timestamp) BETWEEN :start AND :end')
             ->setParameter('start', $period->getStartDate()->format(DATE_ATOM))
             ->setParameter('end', $period->getEndDate()->format(DATE_ATOM))
             ->orderBy('s.startTimestampKey', 'ASC');

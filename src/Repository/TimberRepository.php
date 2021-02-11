@@ -132,11 +132,14 @@ class TimberRepository extends ServiceEntityRepository
 
     public function getReportVolumeTimberFromPostavByPeriod(DatePeriod $period, array $sqlWhere = [])
     {
-        $addWhereSql = 'AND ';
-        foreach ($sqlWhere as $key => $where) {
-            if ($key == count($sqlWhere) - 1)
-                $where->logicalOperator = '';
-            $addWhereSql .= $where->nameTable . $where->id . ' ' . $where->operator . ' ' . $where->value . ' ' . $where->logicalOperator . ' ';
+        $addWhereSql = '';
+        if ($sqlWhere) {
+            $addWhereSql = 'AND ';
+            foreach ($sqlWhere as $key => $where) {
+                if ($key == count($sqlWhere) - 1)
+                    $where->logicalOperator = '';
+                $addWhereSql .= $where->nameTable . $where->id . ' ' . $where->operator . ' ' . $where->value . ' ' . $where->logicalOperator . ' ';
+            }
         }
         $sql =
             "SELECT
@@ -173,7 +176,7 @@ class TimberRepository extends ServiceEntityRepository
             ON COALESCE(t.postav_id, - 1) = o.postav_id
             AND COALESCE(t.species_id, '_-') = o.species_id
         WHERE 
-            t.drec BETWEEN :start AND :end $addWhereSql 
+            t.drec BETWEEN :start AND :end $addWhereSql
         GROUP BY
             t.postav_id,
             diam_postav,

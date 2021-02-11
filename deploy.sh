@@ -1,7 +1,7 @@
 #!/bin/bash
 
 rm -rf public/build
-npm run build
+yarn build
 
 echo
 while [ -n "$1" ]
