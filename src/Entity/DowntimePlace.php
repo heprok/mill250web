@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\DowntimePlaceRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -49,11 +51,17 @@ class DowntimePlace
      * @ORM\JoinColumn(nullable=false)
      */
     private $location;
+
+    /**
+     * @ORM\OneToMany(targetEntity=BreakShedule::class, mappedBy="place")
+     */
+    private $breakShedules;
     
     public function __construct(int $code, string $name)
     {
         $this->code = $code;
         $this->name = $name;
+        $this->breakShedules = new ArrayCollection();
     }
 
     public function getCode(): ?int
@@ -105,6 +113,36 @@ class DowntimePlace
     public function setLocation(?DowntimeLocation $location): self
     {
         $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|BreakShedule[]
+     */
+    public function getBreakShedules(): Collection
+    {
+        return $this->breakShedules;
+    }
+
+    public function addBreakShedule(BreakShedule $breakShedule): self
+    {
+        if (!$this->breakShedules->contains($breakShedule)) {
+            $this->breakShedules[] = $breakShedule;
+            $breakShedule->setPlace($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBreakShedule(BreakShedule $breakShedule): self
+    {
+        if ($this->breakShedules->removeElement($breakShedule)) {
+            // set the owning side to null (unless already changed)
+            if ($breakShedule->getPlace() === $this) {
+                $breakShedule->setPlace(null);
+            }
+        }
 
         return $this;
     }
