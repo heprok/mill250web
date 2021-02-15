@@ -6,6 +6,8 @@ namespace App\Report\Timber;
 
 use App\Dataset\PdfDataset;
 use App\Entity\Shift;
+use App\Entity\SummaryStat;
+use App\Entity\SummaryStatMaterial;
 use App\Report\AbstractReport;
 use App\Repository\TimberRepository;
 use DatePeriod;
@@ -46,19 +48,29 @@ final class TimberFromPostavReport extends AbstractReport
     }
 
     /**
-     * @return SummaryStat[]
-     */
-    public function getSummaryStats(): array
-    {
-        return [];
-    }
-
-    /**
      * @return SummaryStatMaterial[]
      */
     public function getSummaryStatsMaterial(): array
     {
-        return [];
+        $summaryStatsMaterial = [];
+        $summaryStatsMaterial['boards'] = new SummaryStatMaterial('Доски', $this->repository->getVolumeBoardsByPeriod($this->period), $this->repository->getCountBoardsByPeriod($this->period), 'м³', 'шт');
+        $summaryStatsMaterial['timber'] = new SummaryStatMaterial('Брёвна', $this->repository->getVolumeTimberByPeriod($this->period), $this->repository->getCountTimberByPeriod($this->period), 'м³', 'шт');
+        return $summaryStatsMaterial;
+    }
+
+    /**
+     *
+     * @return SummaryStat[]
+     */
+    public function getSummaryStats(): array
+    {
+        $summaryStats = [];
+        $summaryMaterial = $this->getSummaryStatsMaterial();
+        $precent = number_format($summaryMaterial['boards']->getValue() / $summaryMaterial['timber']->getValue() * 100, 0);
+        
+        $summaryStats[] = new SummaryStat('Суммарный процент выхода', $precent, '%');
+
+        return $summaryStats;
     }
 
     protected function getTextSubTotal(string $name_postav, $diam): string

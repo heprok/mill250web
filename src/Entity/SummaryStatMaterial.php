@@ -20,7 +20,7 @@ class SummaryStatMaterial extends SummaryStat
 
     public function getValue()
     {
-        return number_format($this->value, $this->precision);
+        return round($this->value, $this->precision);
     }
     public function getCount() :int
     {

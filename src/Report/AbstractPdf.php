@@ -27,6 +27,12 @@ abstract class AbstractPdf extends TCPDF
     const WIDTH_LOGO_BIG = 70;
     const HEIGHT_LOGO_BIG = 50;
     const PRECISION_FOR_FLOAT = 3;
+    const COLORSRGB = [
+        "greenLight" => [224, 241, 224],
+        'greenDark' => [0, 140, 0],
+        'gray' => [227, 227, 227],
+        'black' => [0, 0, 0]
+    ];
 
     /**
      * Задаёт размеры для столбца, указывать в процентах
@@ -65,10 +71,10 @@ abstract class AbstractPdf extends TCPDF
         $this->AddPage();
         $this->SetFont('dejavusans', '', 11);
         $this->SetXY(self::MARGIN_LEFT, self::MARGIN_TOP);
-        $this->paintTitlePage();
+        $this->paintTitle($orientation == 'P');
         $this->endPage();
         $this->startPageGroup();
-        
+
         $this->setPrintFooter(true);
         $this->setPrintHeader(true);
         $this->AddPage();
@@ -246,82 +252,98 @@ abstract class AbstractPdf extends TCPDF
         $isContainTime = (bool)stripos($interval, ':');
         return $isContainDay || $isContainMounth || $isContainTime;
     }
-    protected function paintTitlePage()
+
+    private function paintTitle(bool $isVerical)
     {
-
-        // $this->setFont('', '', 16)
-
         $widthPage = $this->getPageWidth();
         $heightPage = $this->getPageHeight();
         $nameReport = $this->report->getNameReport();
-        $period = $this->report->getPeriod();
         $thirtPage = self::MARGIN_TOP + $heightPage / 2 / 2 / 2;
-        $textPeriod = $period->start->format(self::DATETIME_FORMAT) . ' по ' . $period->end->format(self::DATETIME_FORMAT);
-        $color = [
-            "greenLight" => [224, 241, 224],
-            'greenDark' => [0, 140, 0],
-            'gray' => [227, 227, 227],
-            'black' => [0,0,0]
-        ];
-        // $this->SetXY($widthPage / 2 - self::MARGIN_LEFT, $heightPage / 2 - self::MARGIN_TOP);
-
+        $borderStyleRect = array('width' => 0, 'cap' => 'round', 'join' => 'round', 'dash' => '2,10', 'color' => self::COLORSRGB['greenDark']);
 
         //logogtype big
         $package = new Package(new EmptyVersionStrategy());
         $logotypeBig = $package->getUrl('build/images/logotypeBig.svg');
-        
+
         $this->ImageSVG($logotypeBig, self::MARGIN_LEFT, self::MARGIN_TOP / 2, self::WIDTH_LOGO_BIG, 0, 'www.techno-les.com', 'L', false, 0, 0);
-        
+
         //paint circle right top 
         $circleMill = $package->getUrl('build/images/circleMill.svg');
         $this->ImageSVG($circleMill, $widthPage - 70, -10, 170, 0, '', 'L', false, 0, 0);
-        // $borderStyleCircle = array('width' => 20, 'cap' => 'square', 'join' => 'miter', 'dash' => 0, 'color' => $color['greenLight']);
-        // $this->SetFillColor(255, 255, 255);
-        // $this->Circle($widthPage, 0, 80, 0, 360, 'DF', $borderStyleCircle);
 
-        $borderStyleRect = array('width' => 0, 'cap' => 'round', 'join' => 'round', 'dash' => '2,10', 'color' => $color['greenDark']);
-        //paint squary
-        $this->SetFillColor($color['greenDark']);
-        $this->Rect(0, $thirtPage, 12, 50, 'DF', $borderStyleRect, $color['greenDark']);
 
         $this->SetFontSize(50);
-        $this->SetXY(self::MARGIN_LEFT, $thirtPage );
-        $this->SetLineStyle(array('width' => 1, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)));        
-        // $this->Cell($widthPage - self::MARGIN_LEFT * 2, 67, $nameReport, 0, 1);
+        $this->SetXY(self::MARGIN_LEFT, $thirtPage);
+        $this->SetLineStyle(array('width' => 1, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)));
         //paint Title nameReport
-        
-        $this->SetFont($this->getFontFamily(), 'B');
+
+        $this->SetFont($this->getFontFamily(), 'B', 38);
         $this->Text(self::MARGIN_LEFT, $thirtPage, 'Отчёт');
-        $this->Text(self::MARGIN_LEFT, $thirtPage + 25, $nameReport);
-        $yTitleReport = $thirtPage + 25;
+        $this->Text(self::MARGIN_LEFT, $thirtPage + 17, $nameReport);
+        $yTitleReport = $thirtPage + 17;
 
-        $this->SetDrawColor($color['gray']);
-        $widthRectPeriod = 50;
+        $this->SetDrawColor(self::COLORSRGB['gray']);
         $heightRectPeriod = 24;
-        $marginRect = 4;
-        $yPeriod = $yTitleReport + 35;
+        $widthRectPeriod = 50;
 
-
-        $startPeriod = $period->getStartDate();
-        $endPeriod = $period->getEndDate();
-        // 1 period rect
-        $this->Rect(self::MARGIN_LEFT, $yPeriod, $widthRectPeriod, $heightRectPeriod, 'DF', $borderStyleRect, $color['gray']);
-        // - 
-        $this->Rect(self::MARGIN_LEFT + $widthRectPeriod + 2, $yPeriod + $heightRectPeriod / 2, 6, 1, 'DF', $borderStyleRect, $color['black'] );
-        // 2 period rect
-        $this->Rect(self::MARGIN_LEFT + $widthRectPeriod + 10, $yPeriod, $widthRectPeriod, $heightRectPeriod, 'DF', $borderStyleRect, $color['gray']);
         
+        //paint squary
+        $heightSquare = $heightRectPeriod + 20 + $heightRectPeriod + 4 + ($this->report->getPeoples() ? 20 + count($this->report->getPeoples()) * 5 : 0);
+        $this->SetFillColor(self::COLORSRGB['greenDark']);
+        $this->Rect(0, $thirtPage, 12, $heightSquare, 'DF', $borderStyleRect, self::COLORSRGB['greenDark']);
+        
+        $yPeriod = $yTitleReport + 20;
+
+        $this->paintPeriod($yPeriod, $heightRectPeriod, $widthRectPeriod);
+        $yOperators = $yPeriod + 30;
+        $this->paintOperators($yOperators);
+        
+        
+        if($isVerical)
+        {
+            $this->SetY($thirtPage + $yOperators);
+            $this->paintSummaryStatMaterial([50, 25, 25]);
+            $this->Ln();
+            $this->Ln();
+            $this->paintSummaryStat();
+        }
+        else{
+            $this->SetY($yPeriod);
+            $this->setX($widthPage / 2);
+    
+            $this->paintSummaryStatMaterial([25, 13, 13], true);
+    
+            $this->SetY($yOperators + 40);
+            $this->paintSummaryStat();
+        }
+    }
+
+    private function paintPeriod(int $y, int $height, int $width)
+    {
+        $borderStyleRect = array('width' => 0, 'cap' => 'round', 'join' => 'round', 'dash' => '2,10', 'color' => self::COLORSRGB['greenDark']);
+        $startPeriod = $this->report->getPeriod()->getStartDate();
+        $endPeriod = $this->report->getPeriod()->getEndDate();
+        $marginRect = 4;
+        // 1 period rect
+        $this->Rect(self::MARGIN_LEFT, $y, $width, $height, 'DF', $borderStyleRect, self::COLORSRGB['gray']);
+        // - 
+        $this->Rect(self::MARGIN_LEFT + $width + 2, $y + $height / 2, 6, 1, 'DF', $borderStyleRect, self::COLORSRGB['black']);
+        // 2 period rect
+        $this->Rect(self::MARGIN_LEFT + $width + 10, $y, $width, $height, 'DF', $borderStyleRect, self::COLORSRGB['gray']);
+
         $this->SetFontSize(18);
         //period startdate text
-        $this->Text(self::MARGIN_LEFT + $marginRect, $yPeriod + $marginRect, $startPeriod->format(self::DATE_FORMAT));
+        $this->Text(self::MARGIN_LEFT + $marginRect, $y + $marginRect, $startPeriod->format(self::DATE_FORMAT));
         //period enddate text
-        $this->Text(self::MARGIN_LEFT + $widthRectPeriod + 10 + $marginRect, $yPeriod + $marginRect, $endPeriod->format(self::DATE_FORMAT));
-        
-        // period time text
-        $this->SetFont($this->getFontFamily(), '', 10 );
-        $this->Text(self::MARGIN_LEFT + $marginRect, $yPeriod + $heightRectPeriod - $marginRect - $marginRect , $startPeriod->format(self::TIME_FORMAT));
-        $this->Text(self::MARGIN_LEFT + $widthRectPeriod + 10 + $marginRect, $yPeriod + $heightRectPeriod - $marginRect - $marginRect , $endPeriod->format(self::TIME_FORMAT));
+        $this->Text(self::MARGIN_LEFT + $width + 10 + $marginRect, $y + $marginRect, $endPeriod->format(self::DATE_FORMAT));
 
+        // period time text
+        $this->SetFont($this->getFontFamily(), '', 10);
+        $this->Text(self::MARGIN_LEFT + $marginRect, $y + $height - $marginRect - $marginRect, $startPeriod->format(self::TIME_FORMAT));
+        $this->Text(self::MARGIN_LEFT + $width + 10 + $marginRect, $y + $height - $marginRect - $marginRect, $endPeriod->format(self::TIME_FORMAT));
+    }
+    private function paintOperators(int $y)
+    {
         $namesOperator = '';
         $peoples = $this->report->getPeoples();
         if (count($peoples) == 1) {
@@ -332,30 +354,21 @@ abstract class AbstractPdf extends TCPDF
                 $namesOperator .= $people->getFullFio() . "<br />";
             }
         }
-        $yOperators = $yPeriod + 30;
-        $this->SetXY(self::MARGIN_LEFT, $yOperators);
-        if($peoples){
+        $this->SetXY(self::MARGIN_LEFT, $y);
+        if ($peoples) {
             $this->SetFont($this->getFontFamily(), 'B', 20);
-            $this->Cell($widthPage - self::MARGIN_LEFT * 2, 10, count($peoples) == 1 ? 'Оператор' : 'Операторы', 0, 1);
+            $this->Cell($this->getPageWidth() - self::MARGIN_LEFT * 2, 10, count($peoples) == 1 ? 'Оператор' : 'Операторы', 0, 1);
             $this->SetFontSize(16);
-            foreach($peoples as $people) {
-                $this->Cell($widthPage, 5, $people->getFullFio(), 0, 1);
+            foreach ($peoples as $people) {
+                $this->Cell($this->getPageWidth(), 5, $people->getFullFio(), 0, 1);
             }
         }
-
-        $this->SetY($this->getY() + 20);
-
-        $this->paintSummaryStatMaterial();
-        $this->Ln();
-        $this->Ln();
-        $this->paintSummaryStat();
-
     }
 
-    private function paintSummaryStatMaterial() 
+    private function paintSummaryStatMaterial(array $precentColumn, bool $isHorizontal = false)
     {
         $summaryStatsMaterial = $this->report->getSummaryStatsMaterial();
-        if(!$summaryStatsMaterial)
+        if (!$summaryStatsMaterial)
             return;
         $headers = ['Материал', 'Объём', 'Количество'];
         $this->SetFillColor(237, 247, 237); //light green
@@ -363,10 +376,10 @@ abstract class AbstractPdf extends TCPDF
         $this->SetLineWidth(0.0);
         $this->SetFont('', 'B', 10);
         // Header
-        $w = $this->getPuntForColumns([50, 25, 25]);
-            $this->Cell($w[0], 10, $headers[0], 'TLB', 0, 'C', true);
-            $this->Cell($w[1], 10, $headers[1], 'TB', 0, 'C', true);
-            $this->Cell($w[2], 10, $headers[2], 'RBT', 0, 'C', true);
+        $w = $this->getPuntForColumns($precentColumn);
+        $this->Cell($w[0], 10, $headers[0], 'TLB', 0, 'C', true);
+        $this->Cell($w[1], 10, $headers[1], 'TB', 0, 'C', true);
+        $this->Cell($w[2], 10, $headers[2], 'RBT', 0, 'C', true);
 
         $this->Ln();
         // Color and font restoration
@@ -374,33 +387,35 @@ abstract class AbstractPdf extends TCPDF
         $this->SetTextColor(0);
         $this->SetFont('');
         // Data
-        foreach($summaryStatsMaterial as $stat) {
-            if( $stat instanceof SummaryStatMaterial){
+        foreach ($summaryStatsMaterial as $stat) {
+            if ($stat instanceof SummaryStatMaterial) {
+                if ($isHorizontal) $this->setX($this->getPageWidth() / 2);
                 $this->Cell($w[0], 8, $stat->getName(), 'LB', 0, 'L', 1);
                 $this->Cell($w[1], 8, $stat->getValue() . ' ' . $stat->getSuffix(), 'B', 0, 'C', 1);
-                $this->Cell($w[2], 8, $stat->getCount() . ' ' . $stat->getSuffixCount() , 'RB', 0, 'C', 1);
+                $this->Cell($w[2], 8, $stat->getCount() . ' ' . $stat->getSuffixCount(), 'RB', 0, 'C', 1);
                 $this->Ln();
-
             }
         }
-        $this->Cell(array_sum($w), 0, '', 'T');
 
-    }    
-    
-    private function paintSummaryStat() 
+        if ($isHorizontal) $this->setX($this->getPageWidth() / 2);
+
+        $this->Cell(array_sum($w), 0, '', 'T');
+    }
+
+    private function paintSummaryStat()
     {
         $summaryStats = $this->report->getSummaryStats();
-        if(!$summaryStats)
+        if (!$summaryStats)
             return;
-        $headers = ['Материал', 'Объём', 'Количество'];
+        $this->setFontSize(16);
         // Header
-        $w = $this->getPuntForColumns([50, 50]);
+        $w = $this->getPuntForColumns([80, 20]);
         $this->SetFillColor(255, 255, 255);
         $this->SetTextColor(0);
         $this->SetFont('');
         // Data
-        foreach($summaryStats as $stat) {
-            if( $stat instanceof SummaryStat){
+        foreach ($summaryStats as $stat) {
+            if ($stat instanceof SummaryStat) {
                 $this->Cell($w[0], 8, $stat->getName(), '', 0, 'L', 1);
                 $this->Cell($w[1], 8, $stat->getValue() . ' ' . $stat->getSuffix(), '', 0, 'R', 1);
                 $this->Ln();

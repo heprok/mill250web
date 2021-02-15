@@ -34,15 +34,15 @@ final class TimberReport extends AbstractReport
         ]);
         parent::__construct($period, $people, $sqlWhere);
     }
-
+    
     /**
      * @return SummaryStatMaterial[]
      */
     public function getSummaryStatsMaterial(): array
     {
         $summaryStatsMaterial = [];
-        $summaryStatsMaterial[] = new SummaryStatMaterial('Доски', $this->repository->getVolumeBoardsByPeriod($this->period), $this->repository->getCountBoardsByPeriod($this->period), 'м³', 'шт');
-        $summaryStatsMaterial[] = new SummaryStatMaterial('Брёвна', $this->repository->getVolumeTimberByPeriod($this->period), $this->repository->getCountTimberByPeriod($this->period), 'м³', 'шт');
+        $summaryStatsMaterial['boards'] = new SummaryStatMaterial('Доски', $this->repository->getVolumeBoardsByPeriod($this->period), $this->repository->getCountBoardsByPeriod($this->period), 'м³', 'шт');
+        $summaryStatsMaterial['timber'] = new SummaryStatMaterial('Брёвна', $this->repository->getVolumeTimberByPeriod($this->period), $this->repository->getCountTimberByPeriod($this->period), 'м³', 'шт');
 
         return $summaryStatsMaterial;
     }
@@ -54,8 +54,9 @@ final class TimberReport extends AbstractReport
     public function getSummaryStats(): array
     {
         $summaryStats = [];
-        $summaryStats[] = new SummaryStat('Длительность простоя', '1 г. 1 м. 23 д. 23:45:57');
-        $summaryStats[] = new SummaryStat('Суммарный процент выхода', '78', '%');
+        $summaryMaterial = $this->getSummaryStatsMaterial();
+        $precent = number_format($summaryMaterial['boards']->getValue() / $summaryMaterial['timber']->getValue() * 100, 0);
+        $summaryStats[] = new SummaryStat('Суммарный процент выхода', $precent, '%');
 
         return $summaryStats;
     }
