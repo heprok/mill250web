@@ -34,6 +34,22 @@ final class BoardFromPostavReport extends AbstractReport
         parent::__construct($period, $people, $sqlWhere);
     }
 
+    /**
+     * @return SummaryStat[]
+     */
+    public function getSummaryStats(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return SummaryStatMaterial[]
+     */
+    public function getSummaryStatsMaterial(): array
+    {
+        return [];
+    }
+
     protected function getColumnTotal(): array
     {
         return [
@@ -54,7 +70,7 @@ final class BoardFromPostavReport extends AbstractReport
 
     public function getNameReport(): string
     {
-        return "Отчёт из постава по доскам";
+        return "из постава по доскам";
     }
 
     protected function updateDataset(): bool

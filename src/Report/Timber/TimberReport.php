@@ -10,6 +10,7 @@ use App\Report\AbstractReport;
 use App\Repository\TimberRepository;
 use DatePeriod;
 use App\Entity\SummaryStat;
+use App\Entity\SummaryStatMaterial;
 
 final class TimberReport extends AbstractReport
 {
@@ -21,7 +22,7 @@ final class TimberReport extends AbstractReport
      * @param TimberRepository $repository
      * @param People[] $people
      */
-    public function __construct(DatePeriod $period, TimberRepository $repository, array $people = [], array $sqlWhere = []) 
+    public function __construct(DatePeriod $period, TimberRepository $repository, array $people = [], array $sqlWhere = [])
     {
         $this->repository = $repository;
         $this->setLabels([
@@ -34,11 +35,27 @@ final class TimberReport extends AbstractReport
         parent::__construct($period, $people, $sqlWhere);
     }
 
+    /**
+     * @return SummaryStatMaterial[]
+     */
+    public function getSummaryStatsMaterial(): array
+    {
+        $summaryStatsMaterial = [];
+        $summaryStatsMaterial[] = new SummaryStatMaterial('Доски', $this->repository->getVolumeBoardsByPeriod($this->period), $this->repository->getCountBoardsByPeriod($this->period), 'м³', 'шт');
+        $summaryStatsMaterial[] = new SummaryStatMaterial('Брёвна', $this->repository->getVolumeTimberByPeriod($this->period), $this->repository->getCountTimberByPeriod($this->period), 'м³', 'шт');
+
+        return $summaryStatsMaterial;
+    }
+
+    /**
+     *
+     * @return SummaryStat[]
+     */
     public function getSummaryStats(): array
     {
         $summaryStats = [];
-        $summaryStats[] = new SummaryStat('Доски', $this->repository->getVolumeBoardsByPeriod($this->period), $this->repository->getCountBoardsByPeriod($this->period));
-        $summaryStats[] = new SummaryStat('Брёвна', $this->repository->getVolumeTimberByPeriod($this->period), $this->repository->getCountTimberByPeriod($this->period));
+        $summaryStats[] = new SummaryStat('Длительность простоя', '1 г. 1 м. 23 д. 23:45:57');
+        $summaryStats[] = new SummaryStat('Суммарный процент выхода', '78', '%');
 
         return $summaryStats;
     }
@@ -63,14 +80,14 @@ final class TimberReport extends AbstractReport
 
     public function getNameReport(): string
     {
-        return "Отчёт по брёвнам";
+        return "по брёвнам";
     }
 
     protected function updateDataset(): bool
     {
 
         $timbers = $this->repository->getReportVolumeTimberByPeriod($this->getPeriod(), $this->getSqlWhere());
-        
+
         if (!$timbers)
             die('В данный период нет брёвен');
         $dataset = new PdfDataset($this->getLabels());
@@ -92,7 +109,7 @@ final class TimberReport extends AbstractReport
 
             $buff['name_species'] = $name_species;
             $buff['diam'] = $diam;
-            
+
             $dataset->addRow([
                 $name_species,
                 $diam,
@@ -103,7 +120,7 @@ final class TimberReport extends AbstractReport
         }
         $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal($buff['name_species'], $buff['diam']));
         $dataset->addTotal($this->getColumnTotal(), $this->getTextTotal());
-        
+
 
         $this->addDataset($dataset);
         return true;

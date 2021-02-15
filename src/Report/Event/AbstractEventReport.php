@@ -39,6 +39,22 @@ abstract class AbstractEventReport extends AbstractReport
     //     return "Отчёт по действиям оператора";
     // }
 
+    /**
+     * @return SummaryStat[]
+     */
+    public function getSummaryStats(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return SummaryStatMaterial[]
+     */
+    public function getSummaryStatsMaterial(): array
+    {
+        return [];
+    }
+
     protected function updateDataset(): bool
     {
         $events = $this->eventRepository->findByTypeAndSourceFromPeriod($this->getPeriod(), $this->getTypeId(), $this->getSourceId(), $this->getSqlWhere());

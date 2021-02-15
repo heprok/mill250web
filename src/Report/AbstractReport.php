@@ -31,10 +31,14 @@ abstract class AbstractReport
     abstract public function getNameReport(): string;
     abstract protected function updateDataset(): bool;
 
-    public function getSummaryStats(): array
-    {
-        return $this->summaryStats;
-    }
+    /**
+     * @return SummaryStat[]
+     */
+    abstract public function getSummaryStats():array;
+    /**
+     * @return SummaryStatMaterial[]
+     */
+    abstract public function getSummaryStatsMaterial():array;
     /**
      *
      * @param DatePeriod $period

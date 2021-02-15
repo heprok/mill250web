@@ -45,6 +45,22 @@ final class TimberFromPostavReport extends AbstractReport
         ];
     }
 
+    /**
+     * @return SummaryStat[]
+     */
+    public function getSummaryStats(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return SummaryStatMaterial[]
+     */
+    public function getSummaryStatsMaterial(): array
+    {
+        return [];
+    }
+
     protected function getTextSubTotal(string $name_postav, $diam): string
     {
         return 'Итог (' . $name_postav . ','  . $diam . '){' . (string)(count($this->getLabels()) - count($this->getColumnTotal())) . '}%0{1}%1{1}';
@@ -57,7 +73,7 @@ final class TimberFromPostavReport extends AbstractReport
 
     public function getNameReport(): string
     {
-        return "Отчёт из постава по брёвнам";
+        return "из постава по брёвнам";
     }
 
     protected function updateDataset(): bool

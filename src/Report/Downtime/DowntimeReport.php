@@ -39,7 +39,23 @@ final class DowntimeReport extends AbstractReport
 
     public function getNameReport(): string
     {
-        return "Отчёт по простоям";
+        return "по простоям";
+    }
+
+    /**
+     * @return SummaryStat[]
+     */
+    public function getSummaryStats(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return SummaryStatMaterial[]
+     */
+    public function getSummaryStatsMaterial(): array
+    {
+        return [];
     }
 
     protected function getColumnTotal(): array

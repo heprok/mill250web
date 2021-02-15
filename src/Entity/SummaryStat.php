@@ -7,14 +7,14 @@ namespace App\Entity;
 class SummaryStat
 {
     private string $name;
-    private float $value;
-    private ?int $count;
+    protected $value;
+    private string $suffix;
 
-    public function __construct(string $name, float $value, ?int $count = null)
+    public function __construct(string $name, $value, string $suffix = '')
     {
         $this->name = $name;
         $this->value = $value;
-        $this->count = $count;
+        $this->suffix = $suffix;
     }
 
     public function getName(): string
@@ -22,13 +22,14 @@ class SummaryStat
         return $this->name;
     }
 
-    public function getValue() : float
+    public function getValue() 
     {
         return $this->value;
+    }    
+    
+    public function getSuffix() : string
+    {
+        return $this->suffix;
     }
     
-    public function getCount() : ?int
-    {
-        return $this->count;
-    }
 }

@@ -3,6 +3,8 @@
 namespace App\Report;
 
 use App\Entity\Shift;
+use App\Entity\SummaryStat;
+use App\Entity\SummaryStatMaterial;
 use DateInterval;
 use DatePeriod;
 use Symfony\Component\Asset\Package;
@@ -13,14 +15,16 @@ abstract class AbstractPdf extends TCPDF
 {
     protected AbstractReport $report;
     const COLOR_GRAY = 238;
-    const DATE_FORMAT = 'd.m.Y H:i:s';
+    const DATETIME_FORMAT = 'd.m.Y H:i:s';
+    const TIME_FORMAT = 'H:i:s';
+    const DATE_FORMAT = 'd.m.Y';
     const TIME_FORMAT_FOR_INTERVAL = '%H:%I:%S';
-    const DATE_FORMAT_FOR_DOWNLOAD = 'd-m-Y H:i';
+    const DATETIME_FORMAT_FOR_DOWNLOAD = 'd-m-Y H:i';
     const REG_EXP_FOR_TOTAL = '/([а-яА-Я\_\№ё\-a-zA-Z\s\d\(\)\.\:\,\×\⨯]+){(\d)}/um';
     const MARGIN_LEFT = 20;
     const MARGIN_TOP = 20;
     const WIDTH_LOGO = 14;
-    const WIDTH_LOGO_BIG = 110;
+    const WIDTH_LOGO_BIG = 70;
     const HEIGHT_LOGO_BIG = 50;
     const PRECISION_FOR_FLOAT = 3;
 
@@ -53,7 +57,7 @@ abstract class AbstractPdf extends TCPDF
         $this->SetCreator('TechoLesCom');
         $this->SetMargins(self::MARGIN_LEFT, self::MARGIN_TOP);
         $this->SetAutoPageBreak(true, 20);
-
+        $this->SetTitle('Отчёт ' . $this->report->getNameReport() . ' ' . $this->getPeriod()->getStartDate()->format(self::DATETIME_FORMAT));
         $datasets = $this->report->getDatasets();
         $this->startPageGroup();
         $this->setPrintFooter(false);
@@ -64,6 +68,7 @@ abstract class AbstractPdf extends TCPDF
         $this->paintTitlePage();
         $this->endPage();
         $this->startPageGroup();
+        
         $this->setPrintFooter(true);
         $this->setPrintHeader(true);
         $this->AddPage();
@@ -75,11 +80,11 @@ abstract class AbstractPdf extends TCPDF
      * Возращает ширины для столбцов в мм
      * @return array
      */
-    protected function getPuntForColumns(): array
+    protected function getPuntForColumns(array $widthColum): array
     {
         $widthColumnsInPunt = [];
 
-        foreach ($this->getColumnInPrecent() as $widthColumn) {
+        foreach ($widthColum as $widthColumn) {
             $widthColumnsInPunt[] = ($this->getPageWidth() - self::MARGIN_LEFT - self::MARGIN_LEFT) * $widthColumn / 100;
             // dump($widthColumn / 100);
             // dump(($this->getPageWidth() - self::MARGIN_LEFT - self::MARGIN_LEFT) * $widthColumn / 100);
@@ -91,7 +96,7 @@ abstract class AbstractPdf extends TCPDF
 
     protected function getWidthColumnForSpan(int $rowspan): int
     {
-        $puntColumns = $this->getPuntForColumns();
+        $puntColumns = $this->getPuntForColumns($this->getColumnInPrecent());
         $result = 0;
         for ($i = 0; $i < $rowspan; $i++) {
             $result += $puntColumns[$i];
@@ -113,14 +118,14 @@ abstract class AbstractPdf extends TCPDF
         $image_file = $package->getUrl('build/images/logosmall.svg');
         $this->ImageSVG($image_file, self::MARGIN_LEFT, 3, self::WIDTH_LOGO, 15, 'www.techno-les.com', 'L', false, 0, 0);
         $this->setX(self::WIDTH_LOGO + self::MARGIN_LEFT + 15);
-        $this->Cell(0, 20, $this->getNameReport(), 0, 0, 'L', 0, '',  0, false, 'М', 'М');
+        $this->Cell(0, 20, 'Отчёт ' . $this->getNameReport(), 0, 0, 'L', 0, '',  0, false, 'М', 'М');
         $this->Ln(10, true);
         $this->SetFont('dejavusans', '', 10);
         $this->SetY(self::MARGIN_TOP / 2 / 2, false);
-        $this->Cell($this->getPageWidth() - self::MARGIN_LEFT - self::MARGIN_LEFT / 2, 0, 'с ' . $this->getPeriod()->getStartDate()->format(self::DATE_FORMAT), 0, 0, 'R', 0, '',  0, false, 'М', 'М');
+        $this->Cell($this->getPageWidth() - self::MARGIN_LEFT - self::MARGIN_LEFT / 2, 0, 'с ' . $this->getPeriod()->getStartDate()->format(self::DATETIME_FORMAT), 0, 0, 'R', 0, '',  0, false, 'М', 'М');
         $this->ln();
         $this->SetY(self::MARGIN_TOP / 2, false);
-        $this->Cell($this->getPageWidth() - self::MARGIN_LEFT - self::MARGIN_LEFT / 2, 0, 'до ' . $this->getPeriod()->getEndDate()->format(self::DATE_FORMAT), 0, 0, 'R', 0, '',  0, false, 'М', 'М');
+        $this->Cell($this->getPageWidth() - self::MARGIN_LEFT - self::MARGIN_LEFT / 2, 0, 'до ' . $this->getPeriod()->getEndDate()->format(self::DATETIME_FORMAT), 0, 0, 'R', 0, '',  0, false, 'М', 'М');
         // $this->SetY(29);
         // $this->SetLineStyle(array('width' => 2, 'color' => ['#fff']));
         // $this->Line(20, 29, $this->getPageWidth() - 20, $this->getPageHeight() - 20 );
@@ -155,7 +160,7 @@ abstract class AbstractPdf extends TCPDF
 
     protected function getNameFile(): string
     {
-        return $this->report->getNameReportTranslit() . '_' . $this->report->getPeriod()->getStartDate()->format(self::DATE_FORMAT_FOR_DOWNLOAD) . '.pdf';
+        return $this->report->getNameReportTranslit() . '_' . $this->report->getPeriod()->getStartDate()->format(self::DATETIME_FORMAT_FOR_DOWNLOAD) . '.pdf';
     }
 
     /**
@@ -169,12 +174,13 @@ abstract class AbstractPdf extends TCPDF
     {
         $count_dataset = count($data);
         $count_labels = count($this->report->getLabels());
-        $puntColumns = $this->getPuntForColumns();
+        $puntColumns = $this->getPuntForColumns($this->getColumnInPrecent());
         $alignForColmns = $this->getAlignForColumns();
         // Colors, line width and bold font
         $this->SetFillColor(self::COLOR_GRAY);
         $this->SetTextColor(0);
-        // $this->SetDrawColor(128, 0, 0);
+        $this->SetDrawColor(0, 0, 0);
+
         $this->SetLineWidth(0.3);
         $this->SetFont('', 'B', $this->getPointFontHeader());
         // Header
@@ -184,7 +190,7 @@ abstract class AbstractPdf extends TCPDF
         }
         $this->Ln();
         // Color and font restoration
-        $this->SetFillColor(224, 235, 255);
+        $this->SetFillColor(224, 241, 224);
         $this->SetTextColor(0);
         $this->SetFont('', '', $this->getPointFontText());
         // Data
@@ -242,11 +248,80 @@ abstract class AbstractPdf extends TCPDF
     }
     protected function paintTitlePage()
     {
+
         // $this->setFont('', '', 16)
 
         $widthPage = $this->getPageWidth();
         $heightPage = $this->getPageHeight();
         $nameReport = $this->report->getNameReport();
+        $period = $this->report->getPeriod();
+        $thirtPage = self::MARGIN_TOP + $heightPage / 2 / 2 / 2;
+        $textPeriod = $period->start->format(self::DATETIME_FORMAT) . ' по ' . $period->end->format(self::DATETIME_FORMAT);
+        $color = [
+            "greenLight" => [224, 241, 224],
+            'greenDark' => [0, 140, 0],
+            'gray' => [227, 227, 227],
+            'black' => [0,0,0]
+        ];
+        // $this->SetXY($widthPage / 2 - self::MARGIN_LEFT, $heightPage / 2 - self::MARGIN_TOP);
+
+
+        //logogtype big
+        $package = new Package(new EmptyVersionStrategy());
+        $logotypeBig = $package->getUrl('build/images/logotypeBig.svg');
+        
+        $this->ImageSVG($logotypeBig, self::MARGIN_LEFT, self::MARGIN_TOP / 2, self::WIDTH_LOGO_BIG, 0, 'www.techno-les.com', 'L', false, 0, 0);
+        
+        //paint circle right top 
+        $circleMill = $package->getUrl('build/images/circleMill.svg');
+        $this->ImageSVG($circleMill, $widthPage - 70, -10, 170, 0, '', 'L', false, 0, 0);
+        // $borderStyleCircle = array('width' => 20, 'cap' => 'square', 'join' => 'miter', 'dash' => 0, 'color' => $color['greenLight']);
+        // $this->SetFillColor(255, 255, 255);
+        // $this->Circle($widthPage, 0, 80, 0, 360, 'DF', $borderStyleCircle);
+
+        $borderStyleRect = array('width' => 0, 'cap' => 'round', 'join' => 'round', 'dash' => '2,10', 'color' => $color['greenDark']);
+        //paint squary
+        $this->SetFillColor($color['greenDark']);
+        $this->Rect(0, $thirtPage, 12, 50, 'DF', $borderStyleRect, $color['greenDark']);
+
+        $this->SetFontSize(50);
+        $this->SetXY(self::MARGIN_LEFT, $thirtPage );
+        $this->SetLineStyle(array('width' => 1, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)));        
+        // $this->Cell($widthPage - self::MARGIN_LEFT * 2, 67, $nameReport, 0, 1);
+        //paint Title nameReport
+        
+        $this->SetFont($this->getFontFamily(), 'B');
+        $this->Text(self::MARGIN_LEFT, $thirtPage, 'Отчёт');
+        $this->Text(self::MARGIN_LEFT, $thirtPage + 25, $nameReport);
+        $yTitleReport = $thirtPage + 25;
+
+        $this->SetDrawColor($color['gray']);
+        $widthRectPeriod = 50;
+        $heightRectPeriod = 24;
+        $marginRect = 4;
+        $yPeriod = $yTitleReport + 35;
+
+
+        $startPeriod = $period->getStartDate();
+        $endPeriod = $period->getEndDate();
+        // 1 period rect
+        $this->Rect(self::MARGIN_LEFT, $yPeriod, $widthRectPeriod, $heightRectPeriod, 'DF', $borderStyleRect, $color['gray']);
+        // - 
+        $this->Rect(self::MARGIN_LEFT + $widthRectPeriod + 2, $yPeriod + $heightRectPeriod / 2, 6, 1, 'DF', $borderStyleRect, $color['black'] );
+        // 2 period rect
+        $this->Rect(self::MARGIN_LEFT + $widthRectPeriod + 10, $yPeriod, $widthRectPeriod, $heightRectPeriod, 'DF', $borderStyleRect, $color['gray']);
+        
+        $this->SetFontSize(18);
+        //period startdate text
+        $this->Text(self::MARGIN_LEFT + $marginRect, $yPeriod + $marginRect, $startPeriod->format(self::DATE_FORMAT));
+        //period enddate text
+        $this->Text(self::MARGIN_LEFT + $widthRectPeriod + 10 + $marginRect, $yPeriod + $marginRect, $endPeriod->format(self::DATE_FORMAT));
+        
+        // period time text
+        $this->SetFont($this->getFontFamily(), '', 10 );
+        $this->Text(self::MARGIN_LEFT + $marginRect, $yPeriod + $heightRectPeriod - $marginRect - $marginRect , $startPeriod->format(self::TIME_FORMAT));
+        $this->Text(self::MARGIN_LEFT + $widthRectPeriod + 10 + $marginRect, $yPeriod + $heightRectPeriod - $marginRect - $marginRect , $endPeriod->format(self::TIME_FORMAT));
+
         $namesOperator = '';
         $peoples = $this->report->getPeoples();
         if (count($peoples) == 1) {
@@ -257,45 +332,79 @@ abstract class AbstractPdf extends TCPDF
                 $namesOperator .= $people->getFullFio() . "<br />";
             }
         }
-        $period = $this->report->getPeriod();
-        $textPeriod = $period->start->format(self::DATE_FORMAT) . ' по ' . $period->end->format(self::DATE_FORMAT);
-        $this->SetXY($widthPage / 2 - self::MARGIN_LEFT, $heightPage / 2 - self::MARGIN_TOP);
-        $summaryStats = $this->report->getSummaryStats();
-        $summaryStatsHtml = '';
-        foreach($summaryStats as $summaryStat ){
-            $nameTitle = $summaryStat->getName();
-            $value = number_format($summaryStat->getValue(), self::PRECISION_FOR_FLOAT);
-            $count = $summaryStat->getCount();
-            $summaryStatsHtml .= '<tr>';
-            $summaryStatsHtml .= "<td style='text-align: left;'>$nameTitle</td>";
-            $summaryStatsHtml .= "<td style='text-align: center;'>$value</td>";
-            $summaryStatsHtml .= "<td style='text-align: center;'>$count</td>";
-            $summaryStatsHtml .= '</tr>';
+        $yOperators = $yPeriod + 30;
+        $this->SetXY(self::MARGIN_LEFT, $yOperators);
+        if($peoples){
+            $this->SetFont($this->getFontFamily(), 'B', 20);
+            $this->Cell($widthPage - self::MARGIN_LEFT * 2, 10, count($peoples) == 1 ? 'Оператор' : 'Операторы', 0, 1);
+            $this->SetFontSize(16);
+            foreach($peoples as $people) {
+                $this->Cell($widthPage, 5, $people->getFullFio(), 0, 1);
+            }
         }
-        $package = new Package(new EmptyVersionStrategy());
-        $image_file = $package->getUrl('build/images/logotypeBig.svg');
-        $this->ImageSVG($image_file, $widthPage / 2 - self::MARGIN_LEFT * 2 - self::WIDTH_LOGO, $heightPage / 2 - self::HEIGHT_LOGO_BIG - self::MARGIN_TOP, self::WIDTH_LOGO_BIG, 50, 'www.techno-les.com', 'L', false, 0, 0);
-        $html = <<<EOD
-        <div style="text-align: center;">
-        <h1> $nameReport за</h1>
-        <h3>$textPeriod</h3>
-        <h3> $namesOperator </h3>
-        <br>
-        <br>
-        <table style=" border: 1 solid #000;border-collapse: collapse" border="1" >
-            <tbody>
-                <tr>
-                    <th>Хар-ка</th>
-                    <th>Значение</th>
-                    <th>Кол-во</th>
-                </tr>
-                $summaryStatsHtml
-            </tbody>
-        </table>
-    </div>
-EOD;
 
-        // Print text using writeHTMLCell()
-        $this->writeHTMLCell(0, 0, self::MARGIN_LEFT, '', $html, 0, 0, false, true, 'С');
+        $this->SetY($this->getY() + 20);
+
+        $this->paintSummaryStatMaterial();
+        $this->Ln();
+        $this->Ln();
+        $this->paintSummaryStat();
+
+    }
+
+    private function paintSummaryStatMaterial() 
+    {
+        $summaryStatsMaterial = $this->report->getSummaryStatsMaterial();
+        if(!$summaryStatsMaterial)
+            return;
+        $headers = ['Материал', 'Объём', 'Количество'];
+        $this->SetFillColor(237, 247, 237); //light green
+        $this->SetDrawColor(154, 209, 154);
+        $this->SetLineWidth(0.0);
+        $this->SetFont('', 'B', 10);
+        // Header
+        $w = $this->getPuntForColumns([50, 25, 25]);
+            $this->Cell($w[0], 10, $headers[0], 'TLB', 0, 'C', true);
+            $this->Cell($w[1], 10, $headers[1], 'TB', 0, 'C', true);
+            $this->Cell($w[2], 10, $headers[2], 'RBT', 0, 'C', true);
+
+        $this->Ln();
+        // Color and font restoration
+        $this->SetFillColor(217, 238, 217);
+        $this->SetTextColor(0);
+        $this->SetFont('');
+        // Data
+        foreach($summaryStatsMaterial as $stat) {
+            if( $stat instanceof SummaryStatMaterial){
+                $this->Cell($w[0], 8, $stat->getName(), 'LB', 0, 'L', 1);
+                $this->Cell($w[1], 8, $stat->getValue() . ' ' . $stat->getSuffix(), 'B', 0, 'C', 1);
+                $this->Cell($w[2], 8, $stat->getCount() . ' ' . $stat->getSuffixCount() , 'RB', 0, 'C', 1);
+                $this->Ln();
+
+            }
+        }
+        $this->Cell(array_sum($w), 0, '', 'T');
+
+    }    
+    
+    private function paintSummaryStat() 
+    {
+        $summaryStats = $this->report->getSummaryStats();
+        if(!$summaryStats)
+            return;
+        $headers = ['Материал', 'Объём', 'Количество'];
+        // Header
+        $w = $this->getPuntForColumns([50, 50]);
+        $this->SetFillColor(255, 255, 255);
+        $this->SetTextColor(0);
+        $this->SetFont('');
+        // Data
+        foreach($summaryStats as $stat) {
+            if( $stat instanceof SummaryStat){
+                $this->Cell($w[0], 8, $stat->getName(), '', 0, 'L', 1);
+                $this->Cell($w[1], 8, $stat->getValue() . ' ' . $stat->getSuffix(), '', 0, 'R', 1);
+                $this->Ln();
+            }
+        }
     }
 }
