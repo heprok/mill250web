@@ -33,3 +33,4 @@ doctrine:
                 get_int_into_by_key: DoctrineExtensions\Query\Postgresql\GetIntIntoJsonByKey
                 cast: DoctrineExtensions\Query\Postgresql\Cast
                 array_length: DoctrineExtensions\Query\Postgresql\ArrayLength
+                now: DoctrineExtensions\Query\Postgresql\NowTime

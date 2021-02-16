@@ -99,14 +99,12 @@ Encore
 ;
 
 var config = Encore.getWebpackConfig();
-
 config.resolve.alias = {
   ...config.resolve.alias,
   '~bootstrap': path.resolve(__dirname, './node_modules/bootstrap'),
-//   '~': path.resolve(__dirname, './node_modules'),
+  // '~': path.resolve(__dirname, './node_modules/'),
   '@': path.resolve(__dirname, './front'),
 };
-
 
 // export the final configuration
 module.exports = config;

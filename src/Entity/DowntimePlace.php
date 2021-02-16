@@ -26,7 +26,6 @@ class DowntimePlace
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer", name="id")
      * @Groups({"downtime_place:read", "downtime_place:write"})
      */
@@ -49,6 +48,7 @@ class DowntimePlace
     /**
      * @ORM\ManyToOne(targetEntity=DowntimeLocation::class, inversedBy="downtimePlaces")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"downtime_place:read", "downtime_place:write"})
      */
     private $location;
 

@@ -1,13 +1,7 @@
 <template>
-  <v-footer
-    id="dashboard-core-footer"
-    fixed
-  >
+  <v-footer id="dashboard-core-footer" fixed>
     <v-container>
-      <v-row
-        align="center"
-        no-gutters
-      >
+      <v-row align="center" no-gutters>
         <v-col
           v-for="(link, i) in links"
           :key="i"
@@ -25,17 +19,18 @@
 
         <v-spacer class="hidden-sm-and-down" />
 
-        <v-col
-          cols="12"
-          md="auto"
-        >
+        <v-col cols="12" md="auto">
           <div class="body-1 font-weight-light pt-6 pt-md-0 text-center">
             &copy; 2020, made with
-            <v-icon size="18">
+            <v-icon size="18" @click="showAnimation = !showAnimation">
               mdi-heart
             </v-icon>
-            by <a href="https://www.techno-les.com">ТЕХНОЛЕСКОМ</a> для оперативной информации.
+            by <a href="https://www.techno-les.com">ТЕХНОЛЕСКОМ</a> для
+            оперативной информации.
           </div>
+          <transition name="slide-fade">
+            <v-img v-if="showAnimation" max-width="200" :src="lama" />
+          </transition>
         </v-col>
       </v-row>
     </v-container>
@@ -43,30 +38,33 @@
 </template>
 
 <script>
-  export default {
-    name: 'DashboardCoreFooter',
+import lama from "@/assets/images/tenor.gif";
+export default {
+  name: "DashboardCoreFooter",
 
-    data: () => ({
-      links: [
-        {
-          href: 'https://www.techno-les.com/',
-          text: 'ТЕХНОЛЕСКОМ',
-        },
-        {
-          href: 'https://www.techno-les.com/',
-          text: 'О нас',
-        },
-        {
-          href: 'https://www.techno-les.com/novosti',
-          text: 'Новости',
-        },
-        {
-          href: 'https://www.techno-les.com/kontakty',
-          text: 'Контакты',
-        },
-      ],
-    }),
-  }
+  data: () => ({
+    showAnimation: false,
+    lama: lama,
+    links: [
+      {
+        href: "https://www.techno-les.com/",
+        text: "ТЕХНОЛЕСКОМ",
+      },
+      {
+        href: "https://www.techno-les.com/",
+        text: "О нас",
+      },
+      {
+        href: "https://www.techno-les.com/novosti",
+        text: "Новости",
+      },
+      {
+        href: "https://www.techno-les.com/kontakty",
+        text: "Контакты",
+      },
+    ],
+  }),
+};
 </script>
 
 <style lang="sass">
@@ -76,4 +74,15 @@
     font-weight: 500
     text-decoration: none
     text-transform: uppercase
+
+.slide-fade-enter-active
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0)
+
+.slide-fade-leave-active
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0)
+
+.slide-fade-enter, .slide-fade-leave-to
+  transform: translateX(10px)
+  opacity: 0
+
 </style>

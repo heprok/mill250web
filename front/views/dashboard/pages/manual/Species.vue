@@ -8,6 +8,19 @@
           icon="mdi-pine-tree"
           :headers="headers"
         >
+        <template #[`item.fir`]="{ item }">
+        <v-simple-checkbox
+          v-model="item.fir"
+          disabled
+        />
+      </template>
+
+      <template #[`item.enabled`]="{ item }">
+        <v-simple-checkbox
+          v-model="item.enabled"
+          disabled
+        />
+      </template>
         </crud-table>
       </v-col>
     </v-row>

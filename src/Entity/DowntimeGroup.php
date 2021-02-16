@@ -24,9 +24,8 @@ class DowntimeGroup
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer", name="id")
-     * @Groups({"downtime_group:read","downtime_group:write"})
+     * @Groups({"downtime_group:read","downtime_group:write", "downtime_cause:read"})
      */
     private int $code;
 
@@ -40,7 +39,7 @@ class DowntimeGroup
     /**
      * @ORM\Column(type="boolean",
      *      options={"comment":"Используется", "default":"true"})
-     * @Groups({"downtime_group:read", "downtime_group:write", "downtime_cause:read"})
+     * @Groups({"downtime_group:read", "downtime_group:write"})
      */
     private bool $enabled = true;
 

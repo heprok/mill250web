@@ -24,23 +24,22 @@ class DowntimeLocation
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer", name="id")
-     * @Groups({"downtime_location:read","downtime_location:write"})
+     * @Groups({"downtime_location:read","downtime_location:write", "downtime_place:read"})
      */
     private int $code;
 
     /**
      * @ORM\Column(type="string", length=128, name="text",
      *      options={"comment":"Название причины"})
-     * @Groups({"downtime_location:read", "downtime_location:write", "downtime_place:read"})
+     * @Groups({"downtime_location:read", "downtime_location:write","downtime_place:read"})
      */
     private string $name;
 
     /**
      * @ORM\Column(type="boolean",
      *      options={"comment":"Используется", "default":"true"})
-     * @Groups({"downtime_location:read", "downtime_location:write", "downtime_place:read"})
+     * @Groups({"downtime_location:read", "downtime_location:write"})
      */
     private bool $enabled = true;
 

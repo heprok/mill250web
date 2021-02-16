@@ -26,7 +26,6 @@ class DowntimeCause
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer", name="id")
      * @Groups({"downtime_cause:read","downtime_cause:write"})
      */
@@ -49,6 +48,7 @@ class DowntimeCause
     /**
      * @ORM\ManyToOne(targetEntity=DowntimeGroup::class, inversedBy="downtimeCauses")
      * @ORM\JoinColumn(nullable=false, name="group_id")
+     * @Groups({"downtime_cause:read", "downtime_cause:write"})
      */
     private $groups;
 

@@ -32,7 +32,7 @@ class ShiftRepository extends ServiceEntityRepository
     {
         
         return $this->createQueryBuilder('s')
-            ->where('CAST(((s.stop - s.startTimestampKey) / 2 + s.startTimestampKey) as timestamp) BETWEEN :start AND :end')
+            ->where('CAST(((COALESCE(s.stop, now()) - s.startTimestampKey) / 2 + s.startTimestampKey) as timestamp) BETWEEN :start AND :end')
             ->setParameter('start', $period->getStartDate()->format(DATE_ATOM))
             ->setParameter('end', $period->getEndDate()->format(DATE_ATOM))
             ->orderBy('s.startTimestampKey', 'ASC');
