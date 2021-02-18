@@ -19,9 +19,7 @@ use DoctrineExtensions\Query\Mysql\Date;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("api/infocard", name="info_card_")
- */
+#[Route("api/infocard", name:"info_card_")]
 class InfoCardController extends AbstractController
 {
 
@@ -36,9 +34,7 @@ class InfoCardController extends AbstractController
         $this->timberRepository = $timberRepository;
     }
 
-    /**
-     * @Route("/currentShift", name="currentShift")
-     */
+    #[Route("/currentShift", name:"currentShift")]
     public function getCurrentShift()
     {
         $currentShift = $this->shiftRepository->getCurrentShift();
@@ -83,9 +79,7 @@ class InfoCardController extends AbstractController
         return $period;
     }
 
-    /**
-     * @Route("/volumeBoards/{duration}", requirements={"duration"="today|currentShift|mountly|weekly"}, name="volumeBoards")
-     */
+    #[Route("/volumeBoards/{duration}", requirements:[ "duration" => "today|currentShift|mountly|weekly"] , name:"volumeBoards")]
     public function getVolumeBoards(string $duration)
     {
         $period = $this->getPeriodForDuration($duration, $this->shiftRepository);
@@ -99,9 +93,7 @@ class InfoCardController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/countTimber/{duration}", requirements={"duration"="today|currentShift|mountly|weekly"}, name="countTimber")
-     */
+    #[Route("/countTimber/{duration}", requirements:["duration"=>"today|currentShift|mountly|weekly"], name:"countTimber")]
     public function getCountTimber(string $duration)
     {
         $period = $this->getPeriodForDuration($duration, $this->shiftRepository);
@@ -115,9 +107,7 @@ class InfoCardController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/volumeTimber/{duration}", requirements={"duration"="today|currentShift|mountly|weekly"}, name="volumeTimber")
-     */
+    #[Route("/volumeTimber/{duration}", requirements:["duration"=>"today|currentShift|mountly|weekly"], name:"volumeTimber")]
     public function getVolumeTimber(string $duration)
     {
         $period = $this->getPeriodForDuration($duration, $this->shiftRepository);
@@ -131,9 +121,7 @@ class InfoCardController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/lastDowntime", name="lastDowntime")
-     */
+    #[Route("/lastDowntime", name:"lastDowntime")]
     public function getLastDowntime()
     {
         $lastDowntime = $this->downtimeRepository->getLastDowntime();
@@ -154,9 +142,7 @@ class InfoCardController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/summaryDay/{start}...{end}", name="summaryDay")
-     */
+    #[Route("/summaryDay/{start}...{end}", name:"summaryDay")]
     public function getSummaryDay(string $start, string $end)
     {
         $startDate = new DateTime($start);
@@ -187,9 +173,7 @@ class InfoCardController extends AbstractController
         return $this->json($result);
     }
 
-    /**
-     * @Route("/totalDowntime/{duration}", requirements={"duration"="today|currentShift|mountly|weekly"}, name="totalTimeDowntime")
-     */
+    #[Route("/totalDowntime/{duration}", requirements:["duration"=>"today|currentShift|mountly|weekly"], name:"totalTimeDowntime")]
     public function getTotalTimeDowntime(string $duration)
     {
         $period = $this->getPeriodForDuration($duration, $this->shiftRepository);

@@ -17,9 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("report/event/alert", name="report_event_alert_")
- */
+#[Route("report/event/alert", name: "report_event_alert_")]
 class AlertEventController extends AbstractController
 {
 
@@ -31,10 +29,8 @@ class AlertEventController extends AbstractController
         $this->peopleRepository = $peopleRepository;
         $this->eventRepository = $eventRepository;
     }
-    
-    /**
-     * @Route("/{start}...{end}/people/{idsPeople}/pdf", name="for_period_with_people_show_pdf")
-     */
+
+    #[Route("/{start}...{end}/people/{idsPeople}/pdf", name: "for_period_with_people_show_pdf")]
     public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
         $request = Request::createFromGlobals();
@@ -42,7 +38,7 @@ class AlertEventController extends AbstractController
         $idsPeople = explode('...', $idsPeople);
         $peoples = [];
         foreach ($idsPeople as $idPeople) {
-            if($idPeople != '')
+            if ($idPeople != '')
                 $peoples[] = $this->peopleRepository->find($idPeople);
         }
 
@@ -51,11 +47,9 @@ class AlertEventController extends AbstractController
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
         $report = new AlertEventReport($period, $this->eventRepository, $peoples, $sqlWhere);
         $this->showPdf($report);
-    }    
-    
-    /**
-     * @Route("/{start}...{end}/pdf", name="for_period_show_pdf")
-     */
+    }
+
+    #[Route("/{start}...{end}/pdf", name: "for_period_show_pdf")]
     public function showReportForPeriodPdf(string $start, string $end)
     {
         $this->showReportForPeriodWithPeoplePdf($start, $end, '');

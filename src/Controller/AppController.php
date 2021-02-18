@@ -13,9 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AppController extends AbstractController
 {
-    /**
-     * @Route("/", name="app")
-     */
+    #[Route("/", name:"app")]
     public function index(EventRepository $eventRepository)
     {
         // //...2020-12-15T23:59:59

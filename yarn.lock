@@ -2599,9 +2599,9 @@ ee-first@1.1.1:
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
 electron-to-chromium@^1.3.649:
-  version "1.3.664"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.664.tgz#8fb039e2fa8ef3ab2568308464a28425d4f6e2a3"
-  integrity sha512-yb8LrTQXQnh9yhnaIHLk6CYugF/An50T20+X0h++hjjhVfgSp1DGoMSYycF8/aD5eiqS4QwaNhiduFvK8rifRg==
+  version "1.3.666"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.666.tgz#59f3ce1e45b860a0ebe439b72664354efbb8bc62"
+  integrity sha512-/mP4HFQ0fKIX4sXltG6kfcoGrfNDZwCIyWbH2SIcVaa9u7Rm0HKjambiHNg5OEruicTl9s1EwbERLwxZwk19aw==
 
 elliptic@^6.5.3:
   version "6.5.4"
@@ -6441,9 +6441,9 @@ timsort@^0.3.0:
   integrity sha1-QFQRqOfmM5/mTbmiNN4R3DHgK9Q=
 
 tlc-front-components@^1.0.6:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/tlc-front-components/-/tlc-front-components-1.0.8.tgz#74ae4df35b3a55b2297679cdbe5527a0c629341c"
-  integrity sha512-4hL61iVbDZ+JWdKOdHWtFOjFCnANMQcDYQK1Foivn7bUwfEwNYZ0TGjLaUsDOvmlkbcYYz9PJ6O9Av1lj4W2rg==
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/tlc-front-components/-/tlc-front-components-1.0.9.tgz#d2f73ef335467cedd8fc59453df02f5d4bef1e77"
+  integrity sha512-DOYr8lboV4IANQlNQI+9UvK+s1nrp61TQqOErV6I679XC25ne4flMatbymbCXSrNR0S+DWcvsafnfcuG56VvOA==
   dependencies:
     axios "^0.21.1"
     core-js "^3.8.2"
@@ -6540,9 +6540,9 @@ type@^1.0.1:
   integrity sha512-+5nt5AAniqsCnu2cEQQdpzCAh33kVx8n0VoFidKpB1dVVLAN/F+bgVOqOJqOnEnrhp222clB5p3vUlD+1QAnfg==
 
 type@^2.0.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/type/-/type-2.2.0.tgz#3edd448793f517d8b9dd108b486a043f5befd91f"
-  integrity sha512-M/u37b4oSGlusaU8ZB96BfFPWQ8MbsZYXB+kXGMiDj6IKinkcNaQvmirBuWj8mAXqP6LYn1rQvbTYum3yPhaOA==
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/type/-/type-2.3.0.tgz#ada7c045f07ead08abf9e2edd29be1a0c0661132"
+  integrity sha512-rgPIqOdfK/4J9FhiVrZ3cveAjRRo5rsQBAIhnylX874y1DX/kEKSVdLsnuHB6l1KTjHyU01VjiMBHgU2adejyg==
 
 typedarray@^0.0.6:
   version "0.0.6"

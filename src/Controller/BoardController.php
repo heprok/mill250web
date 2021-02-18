@@ -17,9 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("report/board", name="report_board_")
- */
+#[Route("report/board", name:"report_board_")]
 class BoardController extends AbstractController
 {
     private PeopleRepository $peopleRepository;
@@ -31,9 +29,7 @@ class BoardController extends AbstractController
         $this->timberRepository = $timberRepository;
     }
 
-    /**
-     * @Route("_postav/{start}...{end}/people/{idsPeople}/pdf", name="from_postav_for_period_with_people_show_pdf")
-     */
+    #[Route("_postav/{start}...{end}/people/{idsPeople}/pdf", name:"from_postav_for_period_with_people_show_pdf")]
     public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
         $request = Request::createFromGlobals();
@@ -52,9 +48,7 @@ class BoardController extends AbstractController
         $this->showPdf($report);
     }    
     
-    /**
-     * @Route("_postav/{start}...{end}/pdf", name="from_postav_for_period_show_pdf")
-     */
+    #[Route("_postav/{start}...{end}/pdf", name:"from_postav_for_period_show_pdf")]
     public function showReportForPeriodPdf(string $start, string $end)
     {
         $this->showReportForPeriodWithPeoplePdf($start, $end, '');

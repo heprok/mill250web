@@ -19,9 +19,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("report/timber", name="report_timber_")
- */
+#[Route("report/timber", name:"report_timber_")]
 class TimberController extends AbstractController
 {
     private PeopleRepository $peopleRepository;
@@ -33,9 +31,7 @@ class TimberController extends AbstractController
         $this->timberRepository = $timberRepository;
     }
 
-    /**
-     * @Route("/{start}...{end}/people/{idsPeople}/pdf", name="for_period_with_people_show_pdf")
-     */
+    #[Route("/{start}...{end}/people/{idsPeople}/pdf", name:"for_period_with_people_show_pdf")]
     public function showReportForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
         $request = Request::createFromGlobals();
@@ -54,9 +50,7 @@ class TimberController extends AbstractController
         $this->showPdf($report);
     }
 
-    /**
-     * @Route("/{start}...{end}/pdf", name="for_period_show_pdf")
-     */
+    #[Route("/{start}...{end}/pdf", name:"for_period_show_pdf")]
     public function showReportForPeriodPdf(string $start, string $end)
     {
         $this->showReportForPeriodWithPeoplePdf($start, $end, '');
@@ -69,9 +63,7 @@ class TimberController extends AbstractController
         $pdf->render();
     }
 
-    /**
-     * @Route("_postav/{start}...{end}/people/{idsPeople}/pdf", name="from_postav_for_period_with_people_show_pdf")
-     */
+    #[Route("_postav/{start}...{end}/people/{idsPeople}/pdf", name:"from_postav_for_period_with_people_show_pdf")]
     public function showReportFromPostavForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
     {
         $request = Request::createFromGlobals();
@@ -90,9 +82,7 @@ class TimberController extends AbstractController
         $this->showPostavPdf($report);
     }
 
-    /**
-     * @Route("_postav/{start}...{end}/pdf", name="from_postav_for_period_show_pdf")
-     */
+    #[Route("_postav/{start}...{end}/pdf", name:"from_postav_for_period_show_pdf")]
     public function showReportFromPostavForPeriodPdf(string $start, string $end)
     {
         $this->showReportFromPostavForPeriodWithPeoplePdf($start, $end, '');
