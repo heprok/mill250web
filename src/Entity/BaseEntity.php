@@ -18,7 +18,7 @@ class BaseEntity
     public const INTERVAL_DAY_TIME_FROMAT = '%d д. ' . self::INTERVAL_TIME_FROMAT;
     public const INTERVAL_MOUNT_DAY_TIME_FROMAT = '%m м. ' . self::INTERVAL_DAY_TIME_FROMAT;
     public const START_DAY_TIME_STRING = "08:00:00";
-    public const START_DAY_TIME_INTREVAL = 'PT8H'; 
+    public const START_DAY_TIME_INTREVAL = 'PT8H';
     public const PRECISION_FOR_FLOAT = 3;
 
 
@@ -52,7 +52,7 @@ class BaseEntity
 
         return $dateInterval;
     }
-    static public function getStartDayInterval() : DateInterval
+    static public function getStartDayInterval(): DateInterval
     {
         return new DateInterval(self::START_DAY_TIME_INTREVAL);
     }
@@ -69,15 +69,46 @@ class BaseEntity
         $nowTime = new DateTime();
         $intervalStartDay = self::getStartDayInterval();
         $startTime = $nowTime->format('H') >= $intervalStartDay->h ? $nowTime : $nowTime->sub(new DateInterval('P1D'));
-            
+
         $startTime->setTime($intervalStartDay->h, $intervalStartDay->m, $intervalStartDay->s);
-        
+
         $endTime = clone $startTime;
 
-        $countDay == 0 ? $endTime->add(new DateInterval('P1D')) : $startTime->sub(new DateInterval('P' . $countDay . 'D'));  
-            
+        $countDay == 0 ? $endTime->add(new DateInterval('P1D')) : $startTime->sub(new DateInterval('P' . $countDay . 'D'));
+
         $period = new DatePeriod($startTime, new DateInterval('P1D'), $endTime);
         return $period;
+    }
+
+
+    /**
+     * Подсчитывает кол-во досок в массиве
+     *
+     * @param Bnom[]
+     * @return array
+     */
+    static public function bnomToArray(array $bnom): array
+    {
+        //{"(15,96)","(32,96)","(15,96)"}
+
+        $result['count_boards'] = 0;
+        foreach ($bnom as $board) {
+            if ($board instanceof Bnom) {
+
+                $width = $board->getWidth();
+                $thickness = $board->getThickness();
+                $cut = $board->getCut();
+                if (isset($result['boards'][$cut]))
+                    $result['boards'][$cut]['count']++;
+                else {
+                    $result['boards'][$cut]['count'] = 1;
+                    $result['boards'][$cut]['width'] = $width;
+                    $result['boards'][$cut]['thickness'] = $thickness;
+                }
+                $result['count_boards']++;
+            }
+        }
+        return $result;
     }
 
     // static public function getPeriodForDay(int $countDay) : DatePeriod

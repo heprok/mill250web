@@ -14,6 +14,7 @@ use TCPDF;
 abstract class AbstractPdf extends TCPDF
 {
     protected AbstractReport $report;
+    private bool $duplicateHeader;
     const COLOR_GRAY = 238;
     const DATETIME_FORMAT = 'd.m.Y H:i:s';
     const TIME_FORMAT = 'H:i:s';
@@ -22,7 +23,7 @@ abstract class AbstractPdf extends TCPDF
     const DATETIME_FORMAT_FOR_DOWNLOAD = 'd-m-Y H:i';
     const REG_EXP_FOR_TOTAL = '/([а-яА-Я\_\№ё\-a-zA-Z\s\d\(\)\.\:\,\×\⨯]+){(\d)}/um';
     const MARGIN_LEFT = 20;
-    const MARGIN_TOP = 20;
+    const MARGIN_TOP = 28;
     const WIDTH_LOGO = 14;
     const WIDTH_LOGO_BIG = 70;
     const HEIGHT_LOGO_BIG = 50;
@@ -57,7 +58,8 @@ abstract class AbstractPdf extends TCPDF
 
 
     public function __constructor(
-        string $orientation = 'P'
+        string $orientation = 'P',
+        bool $duplicateHeader = false,
     ) {
         parent::__construct($orientation);
         $this->SetCreator('TechoLesCom');
@@ -74,7 +76,7 @@ abstract class AbstractPdf extends TCPDF
         $this->paintTitle($orientation == 'P');
         $this->endPage();
         $this->startPageGroup();
-
+        $this->duplicateHeader = $duplicateHeader;
         $this->setPrintFooter(true);
         $this->setPrintHeader(true);
         $this->AddPage();
@@ -132,6 +134,28 @@ abstract class AbstractPdf extends TCPDF
         $this->ln();
         $this->SetY(self::MARGIN_TOP / 2, false);
         $this->Cell($this->getPageWidth() - self::MARGIN_LEFT - self::MARGIN_LEFT / 2, 0, 'до ' . $this->getPeriod()->getEndDate()->format(self::DATETIME_FORMAT), 0, 0, 'R', 0, '',  0, false, 'М', 'М');
+
+
+        $this->SetFillColor(self::COLOR_GRAY);
+        $this->SetTextColor(0);
+        $this->SetDrawColor(0, 0, 0);
+
+        $this->SetLineWidth(0.3);
+        $this->SetFont('', 'B', $this->getPointFontHeader());
+        // Header
+        $this->Ln();
+        $this->ln();
+        if ($this->duplicateHeader) {
+
+            $header = $this->report->getLabels();
+            $puntColumns = $this->getPuntForColumns($this->getColumnInPrecent());
+            $num_headers = count($header);
+            for ($i = 0; $i < $num_headers; ++$i) {
+                $this->Cell($puntColumns[$i], $this->getHeightCell(), $header[$i], 1, 0, 'C', 1);
+            }
+        }
+        $this->Ln();
+
         // $this->SetY(29);
         // $this->SetLineStyle(array('width' => 2, 'color' => ['#fff']));
         // $this->Line(20, 29, $this->getPageWidth() - 20, $this->getPageHeight() - 20 );
@@ -143,6 +167,8 @@ abstract class AbstractPdf extends TCPDF
         $this->SetFont('dejavusans', 'I', 8);
         $this->Cell(0, 10, 'Страница ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
     }
+
+
 
     public function setNameReport(string $name_report)
     {
@@ -190,11 +216,14 @@ abstract class AbstractPdf extends TCPDF
         $this->SetLineWidth(0.3);
         $this->SetFont('', 'B', $this->getPointFontHeader());
         // Header
-        $num_headers = count($header);
-        for ($i = 0; $i < $num_headers; ++$i) {
-            $this->Cell($puntColumns[$i], $this->getHeightCell(), $header[$i], 1, 0, 'C', 1);
+        if (!$this->duplicateHeader) {
+            $num_headers = count($header);
+            for ($i = 0; $i < $num_headers; ++$i) {
+                $this->Cell($puntColumns[$i], $this->getHeightCell(), $header[$i], 1, 0, 'C', 1);
+            }
+            $this->Ln();
         }
-        $this->Ln();
+
         // Color and font restoration
         $this->SetFillColor(224, 241, 224);
         $this->SetTextColor(0);
@@ -286,33 +315,31 @@ abstract class AbstractPdf extends TCPDF
         $heightRectPeriod = 24;
         $widthRectPeriod = 50;
 
-        
+
         //paint squary
         $heightSquare = $heightRectPeriod + 20 + $heightRectPeriod + 4 + ($this->report->getPeoples() ? 20 + count($this->report->getPeoples()) * 5 : 0);
         $this->SetFillColor(self::COLORSRGB['greenDark']);
         $this->Rect(0, $thirtPage, 12, $heightSquare, 'DF', $borderStyleRect, self::COLORSRGB['greenDark']);
-        
+
         $yPeriod = $yTitleReport + 20;
 
         $this->paintPeriod($yPeriod, $heightRectPeriod, $widthRectPeriod);
         $yOperators = $yPeriod + 30;
         $this->paintOperators($yOperators);
-        
-        
-        if($isVerical)
-        {
+
+
+        if ($isVerical) {
             $this->SetY($thirtPage + $yOperators);
             $this->paintSummaryStatMaterial([50, 25, 25]);
             $this->Ln();
             $this->Ln();
             $this->paintSummaryStat();
-        }
-        else{
+        } else {
             $this->SetY($yPeriod);
             $this->setX($widthPage / 2);
-    
+
             $this->paintSummaryStatMaterial([25, 13, 13], true);
-    
+
             $this->SetY($yOperators + 40);
             $this->paintSummaryStat();
         }

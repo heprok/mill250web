@@ -17,27 +17,6 @@
           :durations="infoCard.duration"
         />
       </v-col>
-      <!-- <info-card
-          color="orange"
-          icon="mdi-sofa"
-          title="Последний простой"
-          urlApi="/api/infocard/lastDowntime"
-          sub-icon="mdi-clock"
-        />
-        <info-card
-          color="orange"
-          icon="mdi-sofa"
-          title="Сумарный простой за сегодня"
-          urlApi="/api/infocard/total/today"
-          sub-icon="mdi-clock"
-        />
-        <info-card
-          color="orange"
-          icon="mdi-sofa"
-          title="Сумарный простой за неделю"
-          urlApi="/api/infocard/total/week"
-          sub-icon="mdi-clock"
-        /> -->
       <v-col cols="12">
         <shift-date-picker
           urlReport="report/downtimes"

@@ -43,7 +43,7 @@ class ShiftRepository extends ServiceEntityRepository
      */
     public function getLastShift()
     {
-        return $this->createQueryBuilder('d')
+        return $this->createQueryBuilder('s')
             ->orderBy('s.startTimestampKey', 'DESC')
             ->setMaxResults(1)
             ->getQuery()

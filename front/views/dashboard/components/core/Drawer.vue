@@ -91,6 +91,11 @@ export default {
             icon: "mdi-shore",
             title: "Брёвна",
             to: "timber",
+          },                
+          {
+            icon: "mdi-book-open",
+            title: "Хрология брёвен",
+            to: "timberregisrty",
           },            
           {
             icon: "mdi-shore",

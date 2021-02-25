@@ -29,7 +29,7 @@
             оперативной информации.
           </div>
           <transition name="slide-fade">
-            <v-img v-if="showAnimation" max-width="200" :src="lama" />
+            <v-img v-if="showAnimation" max-width="1500" max-height="300" :src="lama" />
           </transition>
         </v-col>
       </v-row>

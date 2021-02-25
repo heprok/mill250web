@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Report\AbstractReport;
+use App\Report\Timber\RegistryTimberPdfReport;
+use App\Report\Timber\RegistryTimberReport;
 use App\Report\Timber\TimberFromPostavPdfReport;
 use App\Report\Timber\TimberFromPostavReport;
 use App\Report\Timber\TimberPdfReport;
@@ -92,6 +94,38 @@ class TimberController extends AbstractController
     {
         $report->init();
         $pdf = new TimberFromPostavPdfReport($report);
+        $pdf->render();
+    }    
+    
+    #[Route("_registry/{start}...{end}/people/{idsPeople}/pdf", name:"from_registry_for_period_with_people_show_pdf")]
+    public function showReportFromRegistryForPeriodWithPeoplePdf(string $start, string $end, string $idsPeople)
+    {
+        $request = Request::createFromGlobals();
+        $sqlWhere = $sqlWhere = json_decode($request->query->get('sqlWhere') ?? '[]');
+        
+        $idsPeople = explode('...', $idsPeople);
+        $peoples = [];
+        foreach ($idsPeople as $idPeople) {
+            if ($idPeople != '')
+                $peoples[] = $this->peopleRepository->find($idPeople);
+        }
+        $startDate = new DateTime($start);
+        $endDate = new DateTime($end);
+        $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
+        $report = new RegistryTimberReport($period, $this->timberRepository, $peoples, $sqlWhere);
+        $this->showRegistryPdf($report);
+    }
+
+    #[Route("_registry/{start}...{end}/pdf", name:"from_registry_for_period_show_pdf")]
+    public function showReportFromRegistryForPeriodPdf(string $start, string $end)
+    {
+        $this->showReportFromRegistryForPeriodWithPeoplePdf($start, $end, '');
+    }
+
+    private function showRegistryPdf(AbstractReport $report)
+    {
+        $report->init();
+        $pdf = new RegistryTimberPdfReport($report);
         $pdf->render();
     }
 }

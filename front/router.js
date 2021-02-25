@@ -78,6 +78,11 @@ export default new Router({
           name: 'Брёвна из постава',
           path: 'report/timberfrompostav',
           component: () => import('@/views/dashboard/pages/report/TimberPostav'),
+        },         
+        {
+          name: 'Хронология досок',
+          path: 'report/timberregisrty',
+          component: () => import('@/views/dashboard/pages/report/TimberRegistry'),
         }, 
         //settings         
         {
