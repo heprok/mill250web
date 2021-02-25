@@ -100,7 +100,7 @@ final class TimberReport extends AbstractReport
 
             $name_species = $row['name_species'];
             $diam = (int)$row['diam'];
-            $st_length = $row['st_length'];
+            $st_length = number_format($row['st_length'] / 1000, 1);
             $count_timber = $row['count_timber'];
             $volume_boards = (float)$row['volume_boards'];
 
@@ -114,7 +114,7 @@ final class TimberReport extends AbstractReport
             $dataset->addRow([
                 $name_species,
                 $diam,
-                $st_length / 1000, //мм в м
+                $st_length , //мм в м
                 $count_timber,
                 $volume_boards
             ]);

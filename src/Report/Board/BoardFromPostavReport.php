@@ -98,7 +98,7 @@ final class BoardFromPostavReport extends AbstractReport
             $name_postav = $row['name_postav'] ?? 'Без имени';
             $diam_postav = (int)$row['diam_postav'] / 10; //мм->см
             $name_species = $row['name_species'];
-            $st_length = $row['st_length'] / 1000;
+            $st_length = number_format($row['st_length'] / 1000, 1);
             $cut = $row['cut'];
             $count_board = $row['count_board'];
             $volume_boards = (float)$row['volume_boards'] * $count_board;

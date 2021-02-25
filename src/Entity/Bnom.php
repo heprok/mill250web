@@ -20,7 +20,7 @@ class Bnom
 
   public function getCut(): string
   {
-    return $this->width . '⨯' . $this->thickness;
+    return  $this->thickness . '⨯' . $this->width;
   }
 
   public function getWidth(): int

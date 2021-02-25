@@ -21,7 +21,7 @@ final class RegistryTimberPdfReport extends AbstractPdf
     }
     protected function getColumnInPrecent(): array
     {
-        return [15, 10, 10, 10, 10, 11, 11, 9, 8, 8, 5];
+        return [15, 10, 5, 5, 5, 6, 6, 7, 8, 6, 30];
     }
     
     protected function getAlignForColumns():array

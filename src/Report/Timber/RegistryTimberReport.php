@@ -23,15 +23,16 @@ final class RegistryTimberReport extends AbstractReport
         $this->setLabels([
             'Время записи',
             'Порода',
-            'Ø вершины, мм',
-            'Ø комля, мм',
-            'Ø по гост, см',
+            'D 1, мм',
+            'D 2, мм',
+            'D u, см',
             'Сбег, мм/м²',
             // 'Сбег комля, мм/м²',
-            'Длина бревна, мм',
-            'Ст. длина, мм',
+            'Длина, мм',
+            'Ст. длина, м',
             'Кривизна, %',
             'Объём, м³',
+            'Доски'
         ]);
         parent::__construct($period, $people, $sqlWhere);
     }
@@ -84,15 +85,15 @@ final class RegistryTimberReport extends AbstractReport
                 $drec = $timber->getDrec();
                 $namePostav = $timber->getPostav()->getName() ?? $timber->getPostav()->getComm();
                 $nameSpecies = $timber->getSpecies()->getName();
-                $top = $timber->getTop();
-                $butt = $timber->getButt();
+                $top = (int)$timber->getTop();
+                $butt = (int)$timber->getButt();
                 $diam = (int)$timber->getDiam();
                 $topTaper = (int)$timber->getTopTaper();
                 $buttTaper = (int)$timber->getButtTaper();
                 $length = $timber->getLength();
-                $taper = ($top - $butt) / $length * 1000;
-                $stLength = $row['standart_length'];
-                $sweep = number_format($timber->getSweep(), 2); // precent
+                $taper = (int)round(($top - $butt) / $length * 1000);
+                $stLength = number_format($row['standart_length'] / 1000, 1);
+                $sweep = number_format($timber->getSweep(), 1); // precent
                 $volume = (float)$row['volume_timber'];
                 $boards = BaseEntity::bnomToArray($timber->getBoards());
                 $strBoards = '';
@@ -111,8 +112,8 @@ final class RegistryTimberReport extends AbstractReport
                     $length, // реальная длина 
                     $stLength, // стандартная длина
                     $sweep, // кривизна
-                    // $strBoards,
                     $volume, // объем
+                    $strBoards
                 ]);
             }
         }
