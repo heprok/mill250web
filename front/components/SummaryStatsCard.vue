@@ -45,7 +45,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td><p class="font-weight-regular">Объём досок м3</p></td>
+                  <td><p class="font-weight-regular">Объём пил-мат м3</p></td>
                   <td align="center" v-for="shift in shifts" :key="shift.name">
                     {{ shift.volumeBoards }}
                   </td>
@@ -120,7 +120,7 @@ export default {
           type: "pdf",
         },
         {
-          name: "Отчёт по доскам из постава",
+          name: "Отчёт по пил-мат из постава",
           url: "report/board_postav",
           type: "pdf",
         },

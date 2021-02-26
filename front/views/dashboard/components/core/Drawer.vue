@@ -94,7 +94,7 @@ export default {
           },                
           {
             icon: "mdi-book-open",
-            title: "Хрология брёвен",
+            title: "Хронология брёвен",
             to: "timberregisrty",
           },            
           {
@@ -104,7 +104,7 @@ export default {
           },            
           {
             icon: "mdi-view-stream",
-            title: "Доски из постава",
+            title: "Пил-мат из постава",
             to: "boardfrompostav",
           },          
           {

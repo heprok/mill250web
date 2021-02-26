@@ -79,16 +79,30 @@ class InfoCardController extends AbstractController
         return $period;
     }
 
-    #[Route("/volumeBoards/{duration}", requirements:[ "duration" => "today|currentShift|mountly|weekly"] , name:"volumeBoards")]
-    public function getVolumeBoards(string $duration)
+    #[Route("/volumeBoard/{duration}", requirements:[ "duration" => "today|currentShift|mountly|weekly"] , name:"volumeBoard")]
+    public function getVolumeBoard(string $duration)
     {
         $period = $this->getPeriodForDuration($duration, $this->shiftRepository);
         if (!$period instanceof DatePeriod)
             return $this->json(['value' => '0', 'color' => 'error'], 204);
 
-        $volumeBoards = number_format($this->timberRepository->getVolumeBoardsByPeriod($period), BaseEntity::PRECISION_FOR_FLOAT, '.', ' ') . ' м3';
+        $volumeBoard = number_format($this->timberRepository->getVolumeBoardsByPeriod($period), BaseEntity::PRECISION_FOR_FLOAT, '.', ' ') . ' м3';
         return $this->json([
-            'value' => $volumeBoards,
+            'value' => $volumeBoard,
+            'color' => 'info'
+        ]);
+    }    
+    
+    #[Route("/countBoard/{duration}", requirements:[ "duration" => "today|currentShift|mountly|weekly"] , name:"countBoard")]
+    public function getCountBoard(string $duration)
+    {
+        $period = $this->getPeriodForDuration($duration, $this->shiftRepository);
+        if (!$period instanceof DatePeriod)
+            return $this->json(['value' => '0', 'color' => 'error'], 204);
+
+        $countBoard = $this->timberRepository->getCountBoardsByPeriod($period) . ' шт';
+        return $this->json([
+            'value' => $countBoard,
             'color' => 'info'
         ]);
     }

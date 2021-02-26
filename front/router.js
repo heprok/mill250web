@@ -70,7 +70,7 @@ export default new Router({
           component: () => import('@/views/dashboard/pages/report/Timber'),
         },            
         {
-          name: 'Доски из постава',
+          name: 'Пиломатериалы из постава',
           path: 'report/boardfrompostav',
           component: () => import('@/views/dashboard/pages/report/BoardPostav'),
         },            
@@ -80,7 +80,7 @@ export default new Router({
           component: () => import('@/views/dashboard/pages/report/TimberPostav'),
         },         
         {
-          name: 'Хронология досок',
+          name: 'Хронология пиламатериалов',
           path: 'report/timberregisrty',
           component: () => import('@/views/dashboard/pages/report/TimberRegistry'),
         }, 

@@ -12,39 +12,12 @@
           :color="infoCard.color"
           :icon="infoCard.icon"
           :sub-icon="infoCard.subIcon"
+          :subText="infoCard.subText"
           :title="infoCard.nameCard"
           :urlApi="infoCard.urlApi"
           :durations="infoCard.duration"
         />
       </v-col>
-
-      <!-- <v-col cols="12" sm="6" lg="3">
-        <info-card
-          color="info"
-          icon="mdi-poll"
-          title="Объем досок за смену"
-          urlApi="/api/infocard/volumeBoardsCurrentShift"
-        />
-      </v-col>
-
-      <v-col cols="12" sm="6" lg="3">
-        <info-card
-          color="info"
-          icon="mdi-poll"
-          title="Кол-во брёвен за смену"
-          urlApi="/api/infocard/countTimber/currentShift"
-        />
-      </v-col>
-
-      <v-col cols="12" sm="6" lg="3">
-        <info-card
-          color="orange"
-          icon="mdi-sofa"
-          title="Последний простой"
-          urlApi="/api/infocard/lastDowntime"
-          sub-icon="mdi-clock"
-        />
-      </v-col> -->
     </v-row>
     <!-- <v-row>
       <v-col cols="6" lg="6" sm="12">
@@ -141,37 +114,6 @@ export default {
       loader: false,
       infoCards: [
         {
-          nameCard: "Текущая смена",
-          color: "info",
-          subIcon: "mdi-tag",
-          icon: "mdi-account-hard-hat",
-          urlApi: "/infocard/currentShift",
-        },
-        {
-          nameCard: "Объем досок",
-          color: "info",
-          icon: "mdi-poll",
-          urlApi: "/infocard/volumeBoards",
-          duration: [
-            {
-              url: "/currentShift",
-              title: "за смену",
-            },
-            {
-              url: "/today",
-              title: "за сутки",
-            },
-            {
-              url: "/weekly",
-              title: "за неделю",
-            },
-            {
-              url: "/mountly",
-              title: "за месяц",
-            },
-          ],
-        },
-        {
           nameCard: "Кол-во брёвен",
           color: "info",
           icon: "mdi-poll",
@@ -196,9 +138,88 @@ export default {
           ],
         },
         {
+          nameCard: "Объем брёвна",
+          color: "info",
+          icon: "mdi-poll",
+          urlApi: "/infocard/volumeTimber",
+          duration: [
+            {
+              url: "/currentShift",
+              title: "за смену",
+            },
+            {
+              url: "/today",
+              title: "за сутки",
+            },
+            {
+              url: "/weekly",
+              title: "за неделю",
+            },
+            {
+              url: "/mountly",
+              title: "за месяц",
+            },
+          ],
+        },       
+        {
+          nameCard: "Кол-во пил-мат",
+          color: "info",
+          icon: "mdi-poll",
+          urlApi: "/infocard/countBoard",
+          duration: [
+            {
+              url: "/currentShift",
+              title: "за смену",
+            },
+            {
+              url: "/today",
+              title: "за сутки",
+            },
+            {
+              url: "/weekly",
+              title: "за неделю",
+            },
+            {
+              url: "/mountly",
+              title: "за месяц",
+            },
+          ],
+        },
+        {
+          nameCard: "Объем пил-мат",
+          color: "info",
+          icon: "mdi-poll",
+          urlApi: "/infocard/volumeBoard",
+          duration: [
+            {
+              url: "/currentShift",
+              title: "за смену",
+            },
+            {
+              url: "/today",
+              title: "за сутки",
+            },
+            {
+              url: "/weekly",
+              title: "за неделю",
+            },
+            {
+              url: "/mountly",
+              title: "за месяц",
+            },
+          ],
+        },
+        {
+          nameCard: "Текущая смена",
+          color: "info",
+          subIcon: "mdi-tag",
+          icon: "mdi-account-hard-hat",
+          urlApi: "/infocard/currentShift",
+        },
+        {
           nameCard: "Последний простой",
           color: "orange",
-          icon: "mdi-account-hard-hat",
+          icon: "mdi-clock-fast",
           subIcon: "mdi-clock",
           urlApi: "/infocard/lastDowntime",
         },

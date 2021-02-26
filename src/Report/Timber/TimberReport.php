@@ -41,7 +41,7 @@ final class TimberReport extends AbstractReport
     public function getSummaryStatsMaterial(): array
     {
         $summaryStatsMaterial = [];
-        $summaryStatsMaterial['boards'] = new SummaryStatMaterial('Доски', $this->repository->getVolumeBoardsByPeriod($this->period), $this->repository->getCountBoardsByPeriod($this->period), 'м³', 'шт');
+        $summaryStatsMaterial['boards'] = new SummaryStatMaterial('Пиломатериалы', $this->repository->getVolumeBoardsByPeriod($this->period), $this->repository->getCountBoardsByPeriod($this->period), 'м³', 'шт');
         $summaryStatsMaterial['timber'] = new SummaryStatMaterial('Брёвна', $this->repository->getVolumeTimberByPeriod($this->period), $this->repository->getCountTimberByPeriod($this->period), 'м³', 'шт');
 
         return $summaryStatsMaterial;

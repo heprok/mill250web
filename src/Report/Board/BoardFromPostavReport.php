@@ -42,7 +42,7 @@ final class BoardFromPostavReport extends AbstractReport
     public function getSummaryStatsMaterial(): array
     {
         $summaryStatsMaterial = [];
-        $summaryStatsMaterial['boards'] = new SummaryStatMaterial('Доски', $this->repository->getVolumeBoardsByPeriod($this->period), $this->repository->getCountBoardsByPeriod($this->period), 'м³', 'шт');
+        $summaryStatsMaterial['boards'] = new SummaryStatMaterial('Пиломатериалы', $this->repository->getVolumeBoardsByPeriod($this->period), $this->repository->getCountBoardsByPeriod($this->period), 'м³', 'шт');
         $summaryStatsMaterial['timber'] = new SummaryStatMaterial('Брёвна', $this->repository->getVolumeTimberByPeriod($this->period), $this->repository->getCountTimberByPeriod($this->period), 'м³', 'шт');
 
         return $summaryStatsMaterial;
@@ -82,7 +82,7 @@ final class BoardFromPostavReport extends AbstractReport
 
     public function getNameReport(): string
     {
-        return "из постава по доскам";
+        return "из постава по пиломатериалам";
     }
 
     protected function updateDataset(): bool
