@@ -15,6 +15,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
  * @ORM\Entity(repositoryClass=EventRepository::class)
+ * @ORM\Table(name="mill.event")
  * @ApiResource(
  *      collectionOperations={"get"},
  *      itemOperations={"get"},
@@ -24,7 +25,6 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
  * @ApiFilter(SearchFilter::class, properties={"type": "partial", "source": "partial"})
  * @ApiFilter(DateFilter::class, properties={"drecTimestampKey"})
  * @ORM\HasLifecycleCallbacks()
- * @ORM\Table(name="mill.event")
  */
 class Event
 {

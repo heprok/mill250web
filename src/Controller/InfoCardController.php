@@ -86,7 +86,7 @@ class InfoCardController extends AbstractController
         if (!$period instanceof DatePeriod)
             return $this->json(['value' => '0', 'color' => 'error'], 204);
 
-        $volumeBoards = number_format($this->timberRepository->getVolumeBoardsByPeriod($period), BaseEntity::PRECISION_FOR_FLOAT) . ' м3';
+        $volumeBoards = number_format($this->timberRepository->getVolumeBoardsByPeriod($period), BaseEntity::PRECISION_FOR_FLOAT, '.', ' ') . ' м3';
         return $this->json([
             'value' => $volumeBoards,
             'color' => 'info'
@@ -114,7 +114,7 @@ class InfoCardController extends AbstractController
         if (!$period instanceof DatePeriod)
             return $this->json(['value' => '0', 'color' => 'error'], 204);
 
-        $volumeTimber = number_format($this->timberRepository->getVolumeTimberByPeriod($period), BaseEntity::PRECISION_FOR_FLOAT) . ' м3';
+        $volumeTimber = number_format($this->timberRepository->getVolumeTimberByPeriod($period), BaseEntity::PRECISION_FOR_FLOAT, '.', ' ') . ' м3';
         return $this->json([
             'value' => $volumeTimber,
             'color' => 'info'

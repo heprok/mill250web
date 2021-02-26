@@ -239,7 +239,7 @@ abstract class AbstractPdf extends TCPDF
                         if ($row[$j] instanceof DateInterval) {
                             $this->Cell($puntColumns[$j], $this->getHeightCell(), $row[$j]->format(self::TIME_FORMAT_FOR_INTERVAL), 1, 0, $alignForColmns[$j], 0);
                         } elseif (is_float($row[$j])) {
-                            $this->Cell($puntColumns[$j], $this->getHeightCell(), number_format($row[$j], self::PRECISION_FOR_FLOAT), 1, 0, $alignForColmns[$j], 0);
+                            $this->Cell($puntColumns[$j], $this->getHeightCell(), number_format($row[$j], self::PRECISION_FOR_FLOAT, '.', ' '), 1, 0, $alignForColmns[$j], 0);
                         } else {
                             $this->Cell($puntColumns[$j], $this->getHeightCell(), $row[$j], 1, 0, $alignForColmns[$j], 0);
                         }
@@ -260,7 +260,7 @@ abstract class AbstractPdf extends TCPDF
                         } else {
                             //Если выводится интвервал ( 1 д. 03:00:00 ), то пропускается, иначе форматирует float до PRECISION_FOR_FLOAT
                             if (!$this->isInterval($text))
-                                $text = strripos($text, '.') ? number_format($text, self::PRECISION_FOR_FLOAT) : $text;
+                                $text = strripos($text, '.') ? number_format($text, self::PRECISION_FOR_FLOAT, '.', ' ') : $text;
                             $this->Cell($puntColumns[$buff['currentColumn'] + $rowspan - 1], $this->getHeightCell(), $text, 1, 0, $alignForColmns[$buff['currentColumn'] + $rowspan - 1], 1);
                             $buff['currentColumn'] += $rowspan;
                         }

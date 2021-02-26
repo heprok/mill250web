@@ -28,6 +28,9 @@
                 is-crud
                 isCheckPass
               >
+                <template #[`item.duty`]="{ item }">
+                  {{ itemShift(item) }}
+                </template>
               </crud-table>
             </v-col>
             <v-col cols="6">
@@ -142,6 +145,9 @@ export default {
     await this.getItemsGroups();
   },
   methods: {
+    itemShift(item){
+      console.log(item);
+    },
     getItemsLocations() {
       this.place.itemsSelect.location = {};
       Axios.get(this.$store.state.apiEntryPoint + "/downtime_locations")
