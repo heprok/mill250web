@@ -20,13 +20,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("report/event/action_operator", name:"report_event_action_operator_")]
 class ActionOperatorEventController extends AbstractController
 {
-    private PeopleRepository $peopleRepository;
-    private EventRepository $eventRepository;
-
-    public function __construct(PeopleRepository $peopleRepository, EventRepository $eventRepository)
+    public function __construct(
+        private PeopleRepository $peopleRepository, 
+        private EventRepository $eventRepository)
     {
-        $this->peopleRepository = $peopleRepository;
-        $this->eventRepository = $eventRepository;
     }
 
     #[Route("/{start}...{end}/people/{idsPeople}/pdf", name:"for_period_with_people_show_pdf")]

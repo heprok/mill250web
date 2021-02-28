@@ -11,6 +11,7 @@ use App\Entity\Shift;
 use App\Entity\People;
 use App\Repository\DowntimeRepository;
 use App\Repository\TimberRepository;
+use App\Repository\VarsRepository;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -23,15 +24,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class InfoCardController extends AbstractController
 {
 
-    private DowntimeRepository $downtimeRepository;
-    private ShiftRepository $shiftRepository;
-    private TimberRepository $timberRepository;
 
-    public function __construct(ShiftRepository $shiftRepository, TimberRepository $timberRepository, DowntimeRepository $downtimeRepository)
+    public function __construct(
+        private ShiftRepository $shiftRepository, 
+        private TimberRepository $timberRepository, 
+        private DowntimeRepository $downtimeRepository,
+        private VarsRepository $varsRepository
+        )
     {
-        $this->downtimeRepository = $downtimeRepository;
-        $this->shiftRepository = $shiftRepository;
-        $this->timberRepository = $timberRepository;
     }
 
     #[Route("/currentShift", name:"currentShift")]
@@ -117,6 +117,19 @@ class InfoCardController extends AbstractController
         $countTimber = $this->timberRepository->getCountTimberByPeriod($period) . ' шт.';
         return $this->json([
             'value' => $countTimber,
+            'color' => 'info'
+        ]);
+    }
+
+    #[Route("/vars/{name}", name: "vars")]
+    public function getVarByName(string $name)
+    {
+        $var = $this->varsRepository->findOneByName($name);
+        if(!$var)
+            return $this->json(['value' => 'Not found', 'color' => 'error']);
+            
+        return $this->json([
+            'value' => $var->getValue(),
             'color' => 'info'
         ]);
     }

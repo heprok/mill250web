@@ -15,6 +15,7 @@
           :subText="infoCard.subText"
           :title="infoCard.nameCard"
           :urlApi="infoCard.urlApi"
+          :suffix="infoCard.suffix"
           :durations="infoCard.duration"
         />
       </v-col>
@@ -160,7 +161,7 @@ export default {
               title: "за месяц",
             },
           ],
-        },       
+        },
         {
           nameCard: "Кол-во пил-мат",
           color: "info",
@@ -208,6 +209,34 @@ export default {
               title: "за месяц",
             },
           ],
+        },
+        {
+          nameCard: "Скорость загрузки",
+          color: "info",
+          icon: "mdi-speedometer",
+          suffix: 'м/мин',
+          urlApi: "/infocard/vars/LoadinSpeed",
+        },
+        {
+          nameCard: "Дистанция на загрузке",
+          color: "info",
+          icon: "mdi-ray-start-end",
+          suffix: 'м',
+          urlApi: "/infocard/vars/LoadingDistance"
+        },
+        {
+          nameCard: "Скорость линии",
+          color: "info",
+          icon: "mdi-speedometer",
+          suffix: 'м/мин',
+          urlApi: "/infocard/vars/LineSpeed",
+        },
+        {
+          nameCard: "Дистанция на линии",
+          color: "info",
+          icon: "mdi-ray-start-end",
+          suffix: 'м',
+          urlApi: "/infocard/vars/LineDistance",
         },
         {
           nameCard: "Текущая смена",

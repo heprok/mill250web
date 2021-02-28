@@ -26,9 +26,10 @@ export default {
   name: "report_event_alert_dashboard",
   data() {
     return {
-      filters: ["event_type", "event_source"],
+      filters: ["event_type", "event_source", 'code'],
       headers: [
         { text: "Время", value: "startTime" },
+        { text: "Код", value: "code" },
         { text: "Сообщение", value: "text" },
         { text: "Источник", value: "source.name" },
         { text: "Тип", value: "type.name" },

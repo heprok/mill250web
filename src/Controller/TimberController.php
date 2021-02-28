@@ -24,13 +24,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("report/timber", name:"report_timber_")]
 class TimberController extends AbstractController
 {
-    private PeopleRepository $peopleRepository;
-    private TimberRepository $timberRepository;
-
-    public function __construct(PeopleRepository $peopleRepository, TimberRepository $timberRepository)
+    public function __construct(
+        private PeopleRepository $peopleRepository, 
+        private TimberRepository $timberRepository)
     {
-        $this->peopleRepository = $peopleRepository;
-        $this->timberRepository = $timberRepository;
     }
 
     #[Route("/{start}...{end}/people/{idsPeople}/pdf", name:"for_period_with_people_show_pdf")]

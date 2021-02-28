@@ -20,13 +20,11 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("report/board", name:"report_board_")]
 class BoardController extends AbstractController
 {
-    private PeopleRepository $peopleRepository;
-    private TimberRepository $timberRepository;
 
-    public function __construct(PeopleRepository $peopleRepository, TimberRepository $timberRepository)
+    public function __construct(
+        private PeopleRepository $peopleRepository, 
+        private TimberRepository $timberRepository)
     {
-        $this->peopleRepository = $peopleRepository;
-        $this->timberRepository = $timberRepository;
     }
 
     #[Route("_postav/{start}...{end}/people/{idsPeople}/pdf", name:"from_postav_for_period_with_people_show_pdf")]
