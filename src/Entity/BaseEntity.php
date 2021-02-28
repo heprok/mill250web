@@ -14,9 +14,10 @@ class BaseEntity
     public const DATE_SECOND_FORMAT_DB = 'Y-m-d H:i:s.u';
     public const DATETIME_FOR_FRONT = 'd.m.Y H:i:s';
     public const TIME_FOR_FRONT = 'H:i:s';
-    public const INTERVAL_TIME_FROMAT = '%H:%I:%S';
-    public const INTERVAL_DAY_TIME_FROMAT = '%d д. ' . self::INTERVAL_TIME_FROMAT;
-    public const INTERVAL_MOUNT_DAY_TIME_FROMAT = '%m м. ' . self::INTERVAL_DAY_TIME_FROMAT;
+    public const INTERVAL_TIME_FORMAT = '%H:%I';
+    public const INTERVAL_TIME_SECOND_FORMAT = '%H:%I:%S';
+    public const INTERVAL_DAY_TIME_FORMAT = '%d д. ' . self::INTERVAL_TIME_SECOND_FORMAT;
+    public const INTERVAL_MOUNT_DAY_TIME_FORMAT = '%m м. ' . self::INTERVAL_DAY_TIME_FORMAT;
     public const START_DAY_TIME_STRING = "08:00:00";
     public const START_DAY_TIME_INTREVAL = 'PT8H';
     public const PRECISION_FOR_FLOAT = 3;
@@ -44,11 +45,11 @@ class BaseEntity
     static public function intervalToString(DateInterval $dateInterval): string
     {
         if ($dateInterval->m > 0)
-            $dateInterval = $dateInterval->format(BaseEntity::INTERVAL_MOUNT_DAY_TIME_FROMAT);
+            $dateInterval = $dateInterval->format(BaseEntity::INTERVAL_MOUNT_DAY_TIME_FORMAT);
         elseif ($dateInterval->d > 0)
-            $dateInterval = $dateInterval->format(BaseEntity::INTERVAL_DAY_TIME_FROMAT);
+            $dateInterval = $dateInterval->format(BaseEntity::INTERVAL_DAY_TIME_FORMAT);
         else
-            $dateInterval = $dateInterval->format(BaseEntity::INTERVAL_TIME_FROMAT);
+            $dateInterval = $dateInterval->format(BaseEntity::INTERVAL_TIME_SECOND_FORMAT);
 
         return $dateInterval;
     }
@@ -111,6 +112,13 @@ class BaseEntity
         return $result;
     }
 
+    static public function int2time(int $inttime) : DateInterval
+    {
+        $time = new DateInterval('P1D');
+        $time->h = $inttime / 100;
+        $time->i = $inttime % 100;
+        return $time;
+    }    
     // static public function getPeriodForDay(int $countDay) : DatePeriod
     // {
     //     $nowTime = new DateTime();

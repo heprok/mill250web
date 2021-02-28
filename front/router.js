@@ -39,6 +39,11 @@ export default new Router({
           component: () => import('@/views/dashboard/pages/manual/Error'),
         },         
         {
+          name: 'Рабочее расписание',
+          path: 'manual/workschedule',
+          component: () => import('@/views/dashboard/pages/manual/WorkSchedule'),
+        },         
+        {
           name: 'Стандартные длины',
           path: 'manual/standartlength',
           component: () => import('@/views/dashboard/pages/manual/StandartLength'),

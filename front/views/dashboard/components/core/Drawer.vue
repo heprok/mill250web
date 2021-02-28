@@ -138,6 +138,11 @@ export default {
             icon: "mdi-account-group",
             title: "Люди",
             to: "people",
+          },          
+          {
+            icon: "mdi-timetable",
+            title: "Рабочее расписание",
+            to: "workschedule",
           },
           {
             icon: "mdi-camera-timer",
