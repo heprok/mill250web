@@ -13,6 +13,7 @@ class BaseEntity
     public const DATE_FORMAT_DB = 'Y-m-d\TH:i:sP';
     public const DATE_SECOND_FORMAT_DB = 'Y-m-d H:i:s.u';
     public const DATETIME_FOR_FRONT = 'd.m.Y H:i:s';
+    public const DATE_SECOND_TIMEZONE_FORMAT_DB = 'Y-m-d H:i:s.uP';
     public const TIME_FOR_FRONT = 'H:i:s';
     public const INTERVAL_TIME_FORMAT = '%H:%I';
     public const INTERVAL_TIME_SECOND_FORMAT = '%H:%I:%S';

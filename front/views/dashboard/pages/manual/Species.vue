@@ -7,6 +7,8 @@
           url-api='/species'
           icon="mdi-pine-tree"
           :headers="headers"
+          isCheckPass
+          is-crud
         >
         <template #[`item.fir`]="{ item }">
         <v-simple-checkbox
@@ -44,8 +46,9 @@ export default {
           value: "id",
         },
         { text: "Название", value: "name" },
-        { text: "Хвойное", value: "fir" },
-        { text: "Включен", value: "enabled" },
+        { text: "Хвойное", type: 'bool', value: "fir" },
+        { text: "Включен", type: "bool", value: "enabled" },
+        { text: "Действия", value: "actions", edited: false },
       ],
     };
   },

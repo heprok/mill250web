@@ -292,14 +292,18 @@ abstract class AbstractPdf extends TCPDF
 
         //logogtype big
         $package = new Package(new EmptyVersionStrategy());
+        //paint circle right top 
+        $circleMill = $package->getUrl('build/images/circleMill.svg');
+        $this->ImageSVG($circleMill, $widthPage - 60, $thirtPage, 80, 0, '', 'L', false, 0, 0);
+        
         $logotypeBig = $package->getUrl('build/images/logotypeBig.svg');
 
         $this->ImageSVG($logotypeBig, self::MARGIN_LEFT, self::MARGIN_TOP / 2, self::WIDTH_LOGO_BIG, 0, 'www.techno-les.com', 'L', false, 0, 0);
+        // $this->ImageSVG($logotypeBig, $widthPage - self::WIDTH_LOGO_BIG - self::MARGIN_LEFT / 2, self::MARGIN_TOP / 2, self::WIDTH_LOGO_BIG, 0, 'www.techno-les.com', 'L', false, 0, 0);
 
-        //paint circle right top 
-        $circleMill = $package->getUrl('build/images/circleMill.svg');
-        $this->ImageSVG($circleMill, $widthPage - 70, -10, 170, 0, '', 'L', false, 0, 0);
-
+        // $siberiaGroupLogo = $package->getUrl('build/images/siberiaGroupLogo.svg');
+        $this->Image('build/images/siberiaGroupLogo.png', $widthPage - 100 - self::MARGIN_LEFT / 2, self::MARGIN_TOP / 2, 100, 30);
+        
 
         $this->SetFontSize(50);
         $this->SetXY(self::MARGIN_LEFT, $thirtPage);
