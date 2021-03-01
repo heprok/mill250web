@@ -300,9 +300,9 @@ abstract class AbstractPdf extends TCPDF
 
         $this->ImageSVG($logotypeBig, self::MARGIN_LEFT, self::MARGIN_TOP / 2, self::WIDTH_LOGO_BIG, 0, 'www.techno-les.com', 'L', false, 0, 0);
         // $this->ImageSVG($logotypeBig, $widthPage - self::WIDTH_LOGO_BIG - self::MARGIN_LEFT / 2, self::MARGIN_TOP / 2, self::WIDTH_LOGO_BIG, 0, 'www.techno-les.com', 'L', false, 0, 0);
-
-        // $siberiaGroupLogo = $package->getUrl('build/images/siberiaGroupLogo.svg');
-        $this->Image('build/images/siberiaGroupLogo.png', $widthPage - 100 - self::MARGIN_LEFT / 2, self::MARGIN_TOP / 2, 100, 30);
+        
+        $siberiaGroupLogo = $package->getUrl('build/images/siberiaGroupLogo.svg');
+        $this->ImageSVG($siberiaGroupLogo, $widthPage - 100 - self::MARGIN_LEFT / 2, self::MARGIN_TOP / 2, 100, 0, '', 'L', false, 0, 0);
         
 
         $this->SetFontSize(50);
