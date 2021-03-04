@@ -25,12 +25,13 @@ doctrine:
                 alias: App
         dql:
             numeric_functions:
-                standard_length: DoctrineExtensions\Query\Postgresql\StandardLength
+                standard_length: DoctrineExtensions\Query\Postgresql\StandardLengthMill
                 volume_timber: DoctrineExtensions\Query\Postgresql\VolumeTimber
                 unnest: DoctrineExtensions\Query\Postgresql\Unnest
                 volume_boards: DoctrineExtensions\Query\Postgresql\VolumeBoard
                 get_json_filed_by_key: DoctrineExtensions\Query\Postgresql\GetJsonFieldByKey
                 get_int_into_by_key: DoctrineExtensions\Query\Postgresql\GetIntIntoJsonByKey
-                cast: DoctrineExtensions\Query\Postgresql\Cast
+                cast: DoctrineExtensions\Query\Mysql\Cast
+                cast_with_json: DoctrineExtensions\Query\Postgresql\CastWithJson
                 array_length: DoctrineExtensions\Query\Postgresql\ArrayLength
                 now: DoctrineExtensions\Query\Postgresql\NowTime

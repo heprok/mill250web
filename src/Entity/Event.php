@@ -86,6 +86,13 @@ class Event
         return $this->drec->format(BaseEntity::TIME_FOR_FRONT);
     }
 
+    /**
+     * @ORM\Column(type="smallint", 
+     *      options={"comment", "Код ошибки"})
+     * @Groups({"event:read"})
+     */
+    private ?int $code;
+
     public function setDrec(\DateTimeInterface $drec): self
     {
         $this->drec = $drec;
@@ -98,6 +105,11 @@ class Event
         return $this->type;
     }
 
+    public function getCode() :?int
+    {
+        return $this->code;
+    }
+    
     public function setType(?EventType $type): self
     {
         $this->type = $type;

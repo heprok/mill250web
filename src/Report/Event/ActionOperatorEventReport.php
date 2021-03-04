@@ -13,7 +13,7 @@ final class ActionOperatorEventReport extends AbstractEventReport
 
     protected function getSourceId(): array
     {
-        return ['o'];
+        return ['o', 'm', 'p'];
     }
 
     protected function getTypeId(): array

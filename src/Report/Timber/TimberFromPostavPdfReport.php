@@ -22,7 +22,7 @@ final class TimberFromPostavPdfReport extends AbstractPdf
 
     protected function getColumnInPrecent(): array
     {
-        return [23, 10, 15, 8, 15, 15, 8, 8];
+        return [26, 7, 15, 8, 15, 15, 8, 8];
     }
     
     protected function getAlignForColumns():array

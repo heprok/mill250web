@@ -13,7 +13,7 @@ final class AlertEventReport extends AbstractEventReport
 
     protected function getSourceId(): array
     {
-        return ['p', 's', 'o'];
+        return ['p', 's', 'o', 'm'];
     }
 
     protected function getTypeId(): array

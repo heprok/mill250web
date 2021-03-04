@@ -53,8 +53,8 @@ final class TimberFromPostavReport extends AbstractReport
     public function getSummaryStatsMaterial(): array
     {
         $summaryStatsMaterial = [];
-        $summaryStatsMaterial['boards'] = new SummaryStatMaterial('Пиломатериалы', $this->repository->getVolumeBoardsByPeriod($this->period), $this->repository->getCountBoardsByPeriod($this->period), 'м³', 'шт');
-        $summaryStatsMaterial['timber'] = new SummaryStatMaterial('Брёвна', $this->repository->getVolumeTimberByPeriod($this->period), $this->repository->getCountTimberByPeriod($this->period), 'м³', 'шт');
+        $summaryStatsMaterial['boards'] = new SummaryStatMaterial('Пиломатериалы', $this->repository->getVolumeBoardsByPeriod($this->period, $this->sqlWhere), $this->repository->getCountBoardsByPeriodSimpleSql($this->period, $this->sqlWhere), 'м³', 'шт');
+        $summaryStatsMaterial['timber'] = new SummaryStatMaterial('Брёвна', $this->repository->getVolumeTimberByPeriodSimpleSql($this->period, $this->sqlWhere), $this->repository->getCountTimberByPeriodSimpleSql($this->period, $this->sqlWhere), 'м³', 'шт');
         return $summaryStatsMaterial;
     }
 
@@ -73,9 +73,9 @@ final class TimberFromPostavReport extends AbstractReport
         return $summaryStats;
     }
 
-    protected function getTextSubTotal(string $name_postav, $diam): string
+    protected function getTextSubTotal(string $name_postav): string
     {
-        return 'Итог (' . $name_postav . ','  . $diam . '){' . (string)(count($this->getLabels()) - count($this->getColumnTotal())) . '}%0{1}%1{1}';
+        return 'Итог ( ' . $name_postav . ' ){' . (string)(count($this->getLabels()) - count($this->getColumnTotal())) . '}%0{1}%1{1}';
     }
 
     protected function getTextTotal(): string
@@ -104,9 +104,10 @@ final class TimberFromPostavReport extends AbstractReport
             $name_postav = $row['name_postav'] ?? 'Без имени';
             $diam_postav = (int)$row['diam_postav'] / 10;
             $name_species = $row['name_species']; 
-            $diam_timber = $row['diam_timber'];
+            $diam_timber = (int)$row['diam_timber'];
             $count_timber = $row['count_timber'];
             $volume_timber = (float)$row['volume_timber'];
+            dump($row['start_date']);
             $date_start_postav = DateTime::createFromFormat(self::FORMAT_DATE_FROM_DB, $row['start_date']);
             $date_end_postav = DateTime::createFromFormat(self::FORMAT_DATE_FROM_DB, $row['end_date']);
 

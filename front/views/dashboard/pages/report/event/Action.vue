@@ -27,6 +27,7 @@ export default {
       headers: [
         { text: "Время", value: "startTime" },
         { text: "Код", value: "code" },
+        { text: "Источник", value: "source.name" },
         { text: "Действие", value: "text" },
       ],
     };
@@ -37,7 +38,7 @@ export default {
     query() {
       let periodDay = this.$store.getters.TIME_FOR_THE_DAY(this.date);
 
-      return { drecTimestampKey: periodDay.start + "..." + periodDay.end, type: "a", source: "o" };
+      return { drecTimestampKey: periodDay.start + "..." + periodDay.end, type: "a", source: ['o', 'm', 'p'] };
     },
   },
 };

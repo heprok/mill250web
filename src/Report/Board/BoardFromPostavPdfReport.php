@@ -22,7 +22,7 @@ final class BoardFromPostavPdfReport extends AbstractPdf
 
     protected function getColumnInPrecent(): array
     {
-        return [20, 10, 18, 11, 15, 15, 10];
+        return [30, 10, 18, 11, 10, 10, 10];
     }
     
     protected function getAlignForColumns():array

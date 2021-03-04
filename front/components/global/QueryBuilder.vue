@@ -247,8 +247,8 @@ export default {
     getRuleTimberPostavDiam() {
       let rule = {
         type: RuleTypes.NUMBER,
-        id: "CAST(p.postav->'top' AS float)",
-        label: "Диаметр постава, мм. ",
+        id: "CAST (p.postav->'top' AS float) / 10 ",
+        label: "Диаметр постава, см ",
         nameTable: "",
       };
       this.countLoadingRules++;
@@ -258,8 +258,8 @@ export default {
     getRuleBoardPostavDiam() {
       let rule = {
         type: RuleTypes.NUMBER,
-        id: "get_int_into_by_key(p.postav, 'top')",
-        label: "Диаметр постава, мм. ",
+        id: "get_int_into_by_key(p.postav, 'top') / 10",
+        label: "Диаметр постава, см. ",
         nameTable: "",
       };
       this.countLoadingRules++;
@@ -290,6 +290,11 @@ export default {
           this.$snotify.error("Ошибка при загрузке длин");
           console.log(err);
         });
+      return rule;
+    },
+    getRuleLengthSimpleSql(){
+      let rule = this.getRuleLength();
+      rule.id = "mill.standard_length(t.length)";
       return rule;
     },
     getRuleCut() {
@@ -339,6 +344,9 @@ export default {
           break;
         case "length":
           this.rules.push(this.getRuleLength());
+          break;        
+        case "lengthSimpleSql":
+          this.rules.push(this.getRuleLengthSimpleSql());
           break;
         default:
           break;

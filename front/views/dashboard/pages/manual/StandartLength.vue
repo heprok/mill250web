@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12">
         <crud-table
-          title="Список людей"
+          title="Список стандартных длин"
           url-api='/lengths'
           icon="mdi-format-line-spacing"
           :headers="headers"
