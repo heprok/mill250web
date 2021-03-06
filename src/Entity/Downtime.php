@@ -156,9 +156,11 @@ class Downtime
 
     public function getDurationInterval(): ?DateInterval
     {
-        if (isset($this->finish))
-            return $this->finish->diff($this->drec);
-        else {
+        if (isset($this->finish)) {
+            $dateInterval = $this->finish->diff($this->drec);
+            $dateInterval->f = 0;
+            return $dateInterval;
+        } else {
             return null;
         }
     }

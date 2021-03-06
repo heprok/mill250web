@@ -5,35 +5,28 @@ declare(strict_types=1);
 namespace App\Report\Downtime;
 
 use App\Dataset\PdfDataset;
-use App\Entity\People;
-use App\Entity\Shift;
+use App\Dataset\SummaryPdfDataset;
+use App\Entity\BaseEntity;
+use App\Entity\Column;
+use App\Entity\SummaryStat;
+use App\Entity\Unload;
 use App\Report\AbstractReport;
+use App\Repository\BreakSheduleRepository;
 use App\Repository\DowntimeRepository;
+use DateInterval;
 use DatePeriod;
-use Doctrine\DBAL\Driver\PDO\Exception;
-use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use DateTime;
 
 final class DowntimeReport extends AbstractReport
 {
-    private DowntimeRepository $downtimeRepository;
+    public function __construct(
+        DatePeriod $period,
+        private DowntimeRepository $downtimeRepository,
+        private BreakSheduleRepository $breakSheduleRepository,
+        array $peoples = [],
+        array $sqlWhere = []
+    ) {
 
-    /**
-     *
-     * @param DatePeriod $period
-     * @param DowntimeRepository $downtimeRepository
-     * @param People[] $peoples
-     */
-    public function __construct(DatePeriod $period, DowntimeRepository $downtimeRepository, array $peoples = [], array $sqlWhere = [])
-    {
-        $this->downtimeRepository = $downtimeRepository;
-        $this->setLabels([
-            '№',
-            'Причина',
-            'Место',
-            'Начало',
-            'Окончание',
-            'Длит-ность',
-            ]);
         parent::__construct($period, $peoples, $sqlWhere);
     }
 
@@ -58,61 +51,115 @@ final class DowntimeReport extends AbstractReport
         return [];
     }
 
-    protected function getColumnTotal(): array
-    {
-        return [
-            $this->labels[5]
-        ];
-    }
-
-    protected function getTextSubTotal(): string
-    {
-        return 'Длительность простоя за день{' . (string)(count($this->getLabels()) - count($this->getColumnTotal())) . '}%0{1}';
-    }
-
-    protected function getTextTotal(): string
-    {
-        return 'Общая продолжительность{' . (string)(count($this->getLabels()) - count($this->getColumnTotal())) . '}%0{1}';
-    }
-
     protected function updateDataset(): bool
     {
         $downtimes = $this->downtimeRepository->findByPeriod($this->getPeriod(), $this->getSqlWhere());
-
         if (!$downtimes)
             die('В данный период нет простоев');
-        $dataset = new PdfDataset($this->getLabels());
 
+        $mainDatatetColumns = [
+            new Column(title: 'Расположение', precentWidth: 12, group: false, align: 'C',  total: false),
+            new Column(title: 'Место', precentWidth: 20, group: false, align: 'C',  total: false),
+            new Column(title: 'Группа', precentWidth: 11, group: false, align: 'C',  total: false),
+            new Column(title: 'Причина', precentWidth: 20, group: false, align: 'C',  total: false),
+            new Column(title: 'Начало', precentWidth: 15, group: false, align: 'C',  total: false),
+            new Column(title: 'Окончание', precentWidth: 15, group: false, align: 'C',  total: false),
+            $columnDurationInMain = new Column(title: 'Длит-ност', precentWidth: 10, group: false, align: 'C',  total: true),
+        ];
+
+        $groupDatatsetColumns = [
+            new Column(title: 'Группа', precentWidth: 40, group: false, align: 'R', total: false),
+            $columndDurationInGroup = new Column(title: 'Длительность', precentWidth: 30, group: false, align: 'C', total: true),
+            new Column(title: '% от длит. простоев', precentWidth: 30, group: false, align: 'C', total: true),
+        ];
+        $techDatatsetColumns = [
+            new Column(title: 'Место', precentWidth: 20, group: false, align: 'C', total: false),
+            new Column(title: 'Причина', precentWidth: 20, group: false, align: 'C', total: false),
+            new Column(title: 'Начало', precentWidth: 20, group: false, align: 'C', total: false),
+            new Column(title: 'Окончание', precentWidth: 20, group: false, align: 'C', total: false),
+            new Column(title: 'Длит-ность', precentWidth: 20, group: false, align: 'C', total: true),
+        ];
+
+        $groupSummaryPdfDataset = new SummaryPdfDataset(
+            nameSummary: 'Группы простоев',
+            columns: $groupDatatsetColumns,
+            textTotal: 'Итого',
+        );
+        $techSummaryPdfDataset = new SummaryPdfDataset(
+            nameSummary: 'Технологические простои',
+            columns: $techDatatsetColumns,
+            textTotal: 'Общая продолжительность',
+            textSubTotal: 'Длительность простоя за день'
+        );
+        $mainDataset = new PdfDataset(
+            columns: $mainDatatetColumns,
+            textTotal: 'Общая продолжительность',
+            textSubTotal: 'Длительность простоя за день'
+        );
+
+        $nowDatetime = new Datetime('00:00');
         $buff['day'] = '';
         foreach ($downtimes as $key => $downtime) {
 
             $cause = $downtime->getCause();
             $place = $downtime->getPlace();
-
+            $locationName = $place?->getLocation()->getName() ?? '';
+            $groupName = $cause?->getGroups()->getName() ?? '';
             $startTime = $downtime->getDrec();
             $endTime = $downtime->getFinish();
-
-            $duration  = $endTime ? $endTime->diff($startTime, true) : 'Продолжается';
+            $duration  = $downtime->getDurationInterval() ?? 'Продолжается';
 
             if ($buff['day'] != $startTime->format('d') && $key != 0) {
-                $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal());
+                $mainDataset->addSubTotal();
+                $techSummaryPdfDataset->addSubTotal();
             }
-            
+
             $buff['day'] = $startTime->format('d');
-            $dataset->addRow([
-                $key + 1,
-                $cause,
-                $place,
-                $startTime->format(self::FORMAT_DATE_TIME),
-                $endTime ? $endTime->format(self::FORMAT_DATE_TIME) : 'Продолжается',
-                $duration
-            ]);
+            if ($this->breakSheduleRepository->isDowntimeBreak($downtime)) {
+                $techSummaryPdfDataset->addRow([
+                    $place,
+                    $cause,
+                    $startTime->format(self::FORMAT_DATE_TIME),
+                    $endTime ? $endTime->format(self::FORMAT_DATE_TIME) : 'Продолжается',
+                    $duration
+                ]);
+            } else {
+                $mainDataset->addRow([
+                    $locationName,
+                    $place,
+                    $groupName,
+                    $cause,
+                    $startTime->format(self::FORMAT_DATE_TIME),
+                    $endTime ? $endTime->format(self::FORMAT_DATE_TIME) : 'Продолжается',
+                    $duration
+                ]);
+                $duration  = $endTime ? $endTime->diff($startTime, true) : new DateInterval('P1D');
+                $buffSummaryStatGroup[$groupName][$columndDurationInGroup->getTitle()] = $buffSummaryStatGroup[$groupName][$columndDurationInGroup->getTitle()] ??  new Datetime('00:00');
+                $buffSummaryStatGroup[$groupName][$columndDurationInGroup->getTitle()]->add($duration);
+            }
         }
-        $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal());
-        $dataset->addTotal($this->getColumnTotal(), $this->getTextTotal());
 
-        $this->addDataset($dataset);
+        $totalDowntimeSecond = $nowDatetime->diff($mainDataset->getTotalResultInColumn($columnDurationInMain));
+        foreach ($buffSummaryStatGroup as $nameGroup => $group) {
+            $duration = $nowDatetime->diff($group[$columndDurationInGroup->getTitle()]);
+            $precentTotalDowntime = round(BaseEntity::dateIntervalToSeconds($duration) / BaseEntity::dateIntervalToSeconds($totalDowntimeSecond) * 100);
+            $groupSummaryPdfDataset->addRow(
+                [
+                    $nameGroup,
+                    $duration,
+                    (int)abs($precentTotalDowntime)
+                ]
+            );
+        }
 
+        $mainDataset->addSubTotal();
+        $mainDataset->addTotal();
+        $techSummaryPdfDataset->addSubTotal();
+        $techSummaryPdfDataset->addTotal();
+        $groupSummaryPdfDataset->addTotal();
+        $this->addDataset($mainDataset);
+        $this->addDataset($groupSummaryPdfDataset);
+        $this->addDataset($techSummaryPdfDataset);
         return true;
     }
 }

@@ -6,6 +6,7 @@ namespace App\Report\Timber;
 
 use App\Dataset\PdfDataset;
 use App\Entity\BaseEntity;
+use App\Entity\Column;
 use App\Entity\SummaryStat;
 use App\Entity\SummaryStatMaterial;
 use App\Entity\Timber;
@@ -15,25 +16,12 @@ use DatePeriod;
 
 final class RegistryTimberReport extends AbstractReport
 {
-    private TimberRepository $repository;
-
-    public function __construct(DatePeriod $period, TimberRepository $repository, array $people = [], array $sqlWhere = [])
-    {
-        $this->repository = $repository;
-        $this->setLabels([
-            'Время записи',
-            'Порода',
-            'D 1, мм',
-            'D 2, мм',
-            'D u, см',
-            'Сбег, мм/м²',
-            // 'Сбег комля, мм/м²',
-            'Длина, мм',
-            'Ст. длина, м',
-            'Кривизна, %',
-            'Объём, м³',
-            'Доски'
-        ]);
+    public function __construct(
+        DatePeriod $period,
+        private TimberRepository $repository,
+        array $people = [],
+        array $sqlWhere = []
+    ) {
         parent::__construct($period, $people, $sqlWhere);
     }
     /**
@@ -76,7 +64,25 @@ final class RegistryTimberReport extends AbstractReport
         $timbers = $this->repository->findByPeriod($this->getPeriod(), $this->getSqlWhere());
         if (!$timbers)
             die('В данный период нет брёвен');
-        $dataset = new PdfDataset($this->getLabels());
+
+        $mainDataSetColumns = [
+            new Column(title: 'Время записи', precentWidth: 15, group: true, align: 'C', total: false),
+            new Column(title: 'Порода', precentWidth: 10, group: true, align: 'C', total: false),
+            new Column(title: 'D 1, мм', precentWidth: 5, group: true, align: 'C', total: false),
+            new Column(title: 'D 2, мм', precentWidth: 5, group: true, align: 'C', total: false),
+            new Column(title: 'D u, см', precentWidth: 5, group: true, align: 'C', total: false),
+            new Column(title: 'Сбег, мм/м²', precentWidth: 6, group: true, align: 'C', total: false),
+            new Column(title: 'Длина, мм', precentWidth: 6, group: true, align: 'C', total: false),
+            new Column(title: 'Ст. длина, м', precentWidth: 7, group: true, align: 'C', total: false),
+            new Column(title: 'Кривизна, %', precentWidth: 8, group: true, align: 'C', total: false),
+            new Column(title: 'Объём, м³', precentWidth: 6, group: true, align: 'C', total: false),
+            new Column(title: 'Доски', precentWidth: 30, group: true, align: 'C', total: false),
+        ];
+        $mainDataset = new PdfDataset(
+            columns: $mainDataSetColumns,
+            textTotal: 'Общий итог',
+            textSubTotal: 'Итог'
+        );
 
         foreach ($timbers as $key => $row) {
             $timber = $row[0];
@@ -97,10 +103,11 @@ final class RegistryTimberReport extends AbstractReport
                 $volume = (float)$row['volume_timber'];
                 $boards = BaseEntity::bnomToArray($timber->getBoards());
                 $strBoards = '';
+                
                 foreach ($boards['boards'] as $section => $board) {
                     $strBoards .= $section . ' - ' . $board['count'] . ' | ';
                 }
-                $dataset->addRow([
+                $mainDataset->addRow([
                     $drec->format(self::FORMAT_DATE_TIME),
                     $nameSpecies, //Название породы
                     $top, //Диаметр вершины
@@ -118,7 +125,7 @@ final class RegistryTimberReport extends AbstractReport
             }
         }
 
-        $this->addDataset($dataset);
+        $this->addDataset($mainDataset);
 
         return true;
     }

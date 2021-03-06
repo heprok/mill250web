@@ -14,9 +14,10 @@ use Transliterator;
 
 abstract class AbstractReport
 {
-    const DECIMAL_FORMAT = 4;
+    // const DECIMAL_FORMAT = 4;
     const FORMAT_DATE_TIME = 'd.m.Y H:i:s';
     const FORMAT_DATE_FROM_DB = 'Y-m-d H:i:s';
+    const FORMAT_DATE_SECOND_TIMEZONE_FROM_DB = self::FORMAT_DATE_FROM_DB . '.uP';
 
     private array $datasets = [];
     protected array $labels = [];
@@ -34,11 +35,11 @@ abstract class AbstractReport
     /**
      * @return SummaryStat[]
      */
-    abstract public function getSummaryStats():array;
+    abstract public function getSummaryStats(): array;
     /**
      * @return SummaryStatMaterial[]
      */
-    abstract public function getSummaryStatsMaterial():array;
+    abstract public function getSummaryStatsMaterial(): array;
     /**
      *
      * @param DatePeriod $period

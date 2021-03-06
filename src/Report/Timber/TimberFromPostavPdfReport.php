@@ -20,16 +20,6 @@ final class TimberFromPostavPdfReport extends AbstractPdf
         return 6;
     }
 
-    protected function getColumnInPrecent(): array
-    {
-        return [26, 7, 15, 8, 15, 15, 8, 8];
-    }
-    
-    protected function getAlignForColumns():array
-    {
-        return ['C', 'C', 'C', 'C', 'C', 'C', 'R', 'R'];
-    }
-
     protected function getPointFontText(): int
     {
         return 8;

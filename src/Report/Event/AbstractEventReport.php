@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Report\Event;
 
 use App\Dataset\PdfDataset;
+use App\Entity\Column;
 use App\Entity\Shift;
 use App\Report\AbstractReport;
 use App\Repository\EventRepository;
@@ -12,32 +13,24 @@ use DatePeriod;
 
 abstract class AbstractEventReport extends AbstractReport
 {
-    private EventRepository $eventRepository;
-
     /**
      *
      * @param DatePeriod $period
      * @param EventRepository $eventRepository
      * @param People[] $people
      */
-    public function __construct(DatePeriod $period, EventRepository $eventRepository, array $people = [], array $sqlWhere = [])
-    {
-        $this->eventRepository = $eventRepository;
-        $this->setLabels([
-            'Событие',
-            'Источник',
-            'Тип',
-            'Время'
-        ]);
+    public function __construct(
+        DatePeriod $period,
+        private EventRepository $eventRepository,
+        array $people = [],
+        array $sqlWhere = []
+    ) {
         parent::__construct($period, $people, $sqlWhere);
     }
 
-    abstract protected function getSourceId():array;
-    abstract protected function getTypeId():array;
+    abstract protected function getSourceId(): array;
+    abstract protected function getTypeId(): array;
     abstract public function getNameReport(): string;
-    // {
-    //     return "Отчёт по действиям оператора";
-    // }
 
     /**
      * @return SummaryStat[]
@@ -58,27 +51,37 @@ abstract class AbstractEventReport extends AbstractReport
     protected function updateDataset(): bool
     {
         $events = $this->eventRepository->findByTypeAndSourceFromPeriod($this->getPeriod(), $this->getTypeId(), $this->getSourceId(), $this->getSqlWhere());
-        $dataset = new PdfDataset($this->getLabels());
+        if(!$events)
+            die('За данный период нет событий');
 
-        foreach ($events as $event){
-            
+        $mainDataSetColumns = [
+            new Column(title: 'Событие', precentWidth: 70, group: true, align: 'L', total: false),
+            new Column(title: 'Источник', precentWidth: 10, group: true, align: 'C', total: false),
+            new Column(title: 'Тип', precentWidth: 10, group: true, align: 'C', total: false),
+            new Column(title: 'Время', precentWidth: 15, group: true, align: 'C', total: false),
+        ];
+        $mainDataset = new PdfDataset(
+            columns: $mainDataSetColumns
+        );
+
+        foreach ($events as $event) {
+
             $text = $event->getText();
             $source = $event->getSource();
             $type = $event->getType();
-            
+
             $time = $event->getDrec()->format(parent::FORMAT_DATE_TIME);
 
-            $dataset->addRow([
+            $mainDataset->addRow([
                 $text,
                 $source,
                 $type,
                 $time,
             ]);
-
         }
 
-        $this->addDataset($dataset);
-        
+        $this->addDataset($mainDataset);
+
         return true;
     }
 }

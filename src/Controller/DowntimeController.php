@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\BreakShedule;
 use App\Report\AbstractReport;
 use App\Report\Downtime\DowntimePdfReport;
 use App\Report\Downtime\DowntimeReport;
+use App\Repository\BreakSheduleRepository;
 use App\Repository\DowntimeRepository;
 use App\Repository\PeopleRepository;
 use App\Repository\ShiftRepository;
@@ -23,7 +25,9 @@ class DowntimeController extends AbstractController
 
     public function __construct(
         private PeopleRepository $peopleRepository, 
-        private DowntimeRepository $downtimeRepository)
+        private DowntimeRepository $downtimeRepository,
+        private BreakSheduleRepository $breakSheduleRepository,
+        )
     {
     }
     
@@ -42,7 +46,7 @@ class DowntimeController extends AbstractController
         $startDate = new DateTime($start);
         $endDate = new DateTime($end);
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-        $report = new DowntimeReport($period, $this->downtimeRepository, $peoples, $sqlWhere);
+        $report = new DowntimeReport($period, $this->downtimeRepository, $this->breakSheduleRepository, $peoples, $sqlWhere);
         $this->showPdf($report);
     }    
     

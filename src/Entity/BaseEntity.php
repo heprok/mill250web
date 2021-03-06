@@ -7,6 +7,7 @@ namespace App\Entity;
 use DateInterval;
 use DatePeriod;
 use DateTime;
+use DoctrineExtensions\Types\Bnom;
 
 class BaseEntity
 {
@@ -41,6 +42,13 @@ class BaseEntity
         //00:03:00 
         //1 д. 00:03:00
         //1 м. 1 д. 00:03:00
+    }
+
+    static public function  dateIntervalToSeconds(DateInterval $interval): int
+    {
+        $seconds = $interval->days * 86400 + $interval->h * 3600
+            + $interval->i * 60 + $interval->s;
+        return $interval->invert == 1 ? $seconds * (-1) : $seconds;
     }
 
     static public function intervalToString(DateInterval $dateInterval): string
@@ -113,13 +121,13 @@ class BaseEntity
         return $result;
     }
 
-    static public function int2time(int $inttime) : DateInterval
+    static public function int2time(int $inttime): DateInterval
     {
         $time = new DateInterval('P1D');
         $time->h = $inttime / 100;
         $time->i = $inttime % 100;
         return $time;
-    }    
+    }
     // static public function getPeriodForDay(int $countDay) : DatePeriod
     // {
     //     $nowTime = new DateTime();

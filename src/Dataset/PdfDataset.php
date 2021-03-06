@@ -4,24 +4,28 @@ declare(strict_types=1);
 
 namespace App\Dataset;
 
+use App\Entity\BaseEntity;
+use App\Entity\Column;
 use DateInterval;
 use DateTime;
 use Exception;
 use Symfony\Component\Validator\Constraints\Date;
 
-final class PdfDataset extends AbstractDataset
+class PdfDataset extends AbstractDataset
 {
 
-    private array $nameColumns;
     private array $keysSubTotal = [];
 
     /**
-     * @param string[] $nameColumns
+     * @param Column[] $nameColumns
      */
-    public function __construct(array $nameColumns = [])
-    {
+    public function __construct(
+        private array $columns = [],
+        private ?string $textSubTotal = null,
+        private ?string $textTotal = null,
+
+    ) {
         $this->data = [];
-        $this->nameColumns = $nameColumns;
     }
 
     public function getKeysSubTotal(): array
@@ -37,7 +41,7 @@ final class PdfDataset extends AbstractDataset
      */
     public function addRow(array $arv)
     {
-        if (count($arv) != count($this->nameColumns)) {
+        if (count($arv) != count($this->columns)) {
             throw new Exception(
                 'Кол-во аргументов не соотвествует количеству столбцов',
                 1
@@ -54,7 +58,7 @@ final class PdfDataset extends AbstractDataset
      */
     public function getCountColumn(): int
     {
-        return count($this->nameColumns);
+        return count($this->columns);
     }
 
     /**
@@ -62,105 +66,210 @@ final class PdfDataset extends AbstractDataset
      *
      * @return string[]
      */
-    public function getNameColumn(): array
+    public function getNameColumns(): array
     {
-        return $this->nameColumns;
-    }
+        $namesColumns = [];
+        $columns = $this->columns;
 
-    private function isValidNameColumn(array $nameColumns): bool
-    {
-        foreach ($nameColumns as $column) {
-            if (!isset($column, $this->nameColumns)) {
-                throw new Exception("$column отсутствует в массиве");
-            }
+        foreach ($columns as $column) {
+            $namesColumns[] = $column->getTitle();
         }
-        return true;
+        return $namesColumns;
     }
-
 
     /**
-     * Проверяет на валидность шаблон кол-во аргументов в строке
+     * Возращает ширину столбцов в процентах
      *
-     * @param array $array Массив значений
-     * @param string $templateRow
-     * @return boolean
+     * @return int[]
      */
-    private function isValidTemplate(array $array, string $templateRow): bool
+    public function getWidthInPrecent(): array
     {
-        if (count($array) != preg_match_all('/\%\d/m', $templateRow)) {
-            throw new Exception('Кол-во аргументов не соотвествует количеству в шаблоне', 1);
+        $widthsColumns = [];
+        foreach ($this->columns as $column) {
+            if ($column instanceof Column)
+                $widthsColumns[] = $column->getPrecentWidth();
+        }
+        return $widthsColumns;
+    }
+    /**
+     * Возращает названия столбцов
+     *
+     * @return string[]
+     */
+    public function getAlignForColumns(): array
+    {
+        $alignColumns = [];
+        foreach ($this->columns as $column) {
+            if ($column instanceof Column)
+                $alignColumns[] = $column->getAlign();
+        }
+        return $alignColumns;
+    }
+
+    /**
+     * Возращает колонки для итогов
+     *
+     * @return Column[]
+     */
+    public function getTotalColumns(): array
+    {
+        $columns = [];
+
+        foreach ($this->columns as $column) {
+            if ($column instanceof Column && $column->isTotal())
+                $columns[] =  $column;
         }
 
-        return true;
+        return $columns;
     }
+
+    /**
+     * Возращает колонки для группировки
+     *
+     * @return Column[]
+     */
+    public function getGroupColumns(): array
+    {
+        $columns = [];
+
+        foreach ($this->columns as $column) {
+            if ($column instanceof Column && $column->isGroup())
+                $columns[] =  $column;
+        }
+
+        return $columns;
+    }
+
+    // private function isValidNameColumn(array $nameColumns): bool
+    // {
+    //     $nameColumnsInDataset = $this->getNameColumns();
+    //     foreach ($nameColumns as $column) {
+    //         if (!isset($column, $nameColumnsInDataset)) {
+    //             throw new Exception("$column отсутствует в массиве");
+    //         }
+    //     }
+    //     return true;
+    // }
+
+
+    // /**
+    //  * Проверяет на валидность шаблон кол-во аргументов в строке
+    //  *
+    //  * @param array $array Массив значений
+    //  * @param string $templateRow
+    //  * @return boolean
+    //  */
+    // private function isValidTemplate(array $array, string $templateRow): bool
+    // {
+    //     if (count($array) != preg_match_all('/\%\d/m', $templateRow)) {
+    //         throw new Exception('Кол-во аргументов не соотвествует количеству в шаблоне', 1);
+    //     }
+
+    //     return true;
+    // }
 
     /**
      * Возращает ключи по названию столбцов
      *
-     * @param array $nameColumns названия стообца в датасете
-     * @return array
+     * @param Column[] $nameColumns названия стообца в датасете
+     * @return int[]
      */
-    private function getKeysOnColumn(array $nameColumns):array
+    private function getKeysOnColumns(array $columns): array
     {
         $result = [];
-        foreach ($nameColumns as $column) {
-            if (isset($column, $this->nameColumns)) {
-                $result[$column] = array_search($column, $this->nameColumns);
+        foreach ($columns as $column) {
+            if (isset($column, $this->columns)) {
+                $result[$column->getTitle()] = array_search($column, $this->columns);
             }
         }
         return $result;
     }
 
-    public function addTotal(array $nameColumns, string $templateRow)
+    public function addTotal()
     {
-        $this->isValidNameColumn($nameColumns);
-        $this->isValidTemplate($nameColumns, $templateRow);
-        $keysColumn = $this->getKeysOnColumn($nameColumns);
+        $totalColumns = $this->getTotalColumns();
+        $keysColumn = $this->getKeysOnColumns($totalColumns);
+        $stringTotal = "$this->textTotal{" . (string)($this->getCountColumn() - count($totalColumns)) . '}';
 
         $total = [];
         foreach ($this->data as $key => $value) {
-
-            foreach ($keysColumn as $column => $key) {
-                if (is_string($value[$key])) {
-                    continue;
-                }
-                if ($value[$key] instanceof DateInterval) {
-                    $total[$column] = $total[$column] ?? new DateTime("00:00");
-                    $total[$column]->add($value[$key]);
-                } else {
-                    $total[$column] = $total[$column] ?? 0;
-                    $total[$column] += $value[$key];
-                }
-            }
-        }
-        $totalStr = $this->getPrepareTemplate($nameColumns, $templateRow, $total);
-
-        $this->pushTotalStr($totalStr);
-    }
-
-    public function addSubTotal(array $nameColumns, string $templateRow)
-    {
-        $this->isValidTemplate($nameColumns, $templateRow);
-        //проверяет $nameColumns на наличие столбцов(заголовков) в отчёте
-        $this->isValidNameColumn($nameColumns);
-
-        $keysColumn = $this->getKeysOnColumn($nameColumns);
-        $data_array_reserve = array_reverse($this->data);
-        $total = [];
-        //подсчёт снизу вверх, итогов до ключа в keysSubTotal
-        foreach ($data_array_reserve as $key => $value) {
-            if (in_array(count($this->data) - $key, $this->keysSubTotal)) {
-                break;
+            if (in_array($key, $this->keysSubTotal)) {
+                continue;
             }
             $total = $this->getTotal($keysColumn, $value, $total);
         }
-        $total_str = $this->getPrepareTemplate(
-            $nameColumns,
-            $templateRow,
-            $total
-        );
-        // $this->sub_total[array_key_last($this->data)] = $total_str;
-        $this->pushTotalStr($total_str);
+
+        foreach ($total as $value) {
+            if ($value instanceof DateTime) {
+                $nowTime = new DateTime('00:00:00');
+                $strValue = BaseEntity::intervalToString($nowTime->diff($value));
+            } else {
+                $strValue = $value;
+            }
+            $stringTotal .= $strValue . '{1}';
+        }
+        $this->pushTotalStr($stringTotal);
+    }
+
+    public function addSubTotal()
+    {
+        $totalColumns = $this->getTotalColumns();
+        $groupColumns = $this->getGroupColumns();
+        $keysColumnTotal = $this->getKeysOnColumns($totalColumns);
+        $keysColumnGroup = $this->getKeysOnColumns($groupColumns);
+        $data_array_reserve = array_reverse($this->data);
+        $countData = count($this->data);
+        $total = [];
+        $stringSubTotal = $this->textSubTotal;
+        //подсчёт снизу вверх, итогов до ключа в keysSubTotal
+
+        foreach ($data_array_reserve as $key => $value) {
+            if ($countData == 1 || in_array($countData - $key, $this->keysSubTotal)) {
+                $stringSubTotal .= '(';
+                foreach ($keysColumnGroup as $key) {
+                    $stringSubTotal .= $value[$key] . ($key + 1 == count($keysColumnGroup)  ? ')' : ', ');
+                }
+                if ($countData !== 1)
+                    break;
+            }
+            $total = $this->getTotal($keysColumnTotal, $value, $total);
+        }
+        $stringSubTotal .= "{" . (string)($this->getCountColumn() - count($totalColumns)) . '}';
+
+        foreach ($total as $value) {
+            if ($value instanceof DateTime) {
+                $nowTime = new DateTime('00:00');
+                $strValue = BaseEntity::intervalToString($nowTime->diff($value));
+            } else {
+                $strValue = $value;
+            }
+            $stringSubTotal .= $strValue . '{1}';
+        }
+        $this->pushTotalStr($stringSubTotal);
+    }
+
+    public function getTotalResultInColumn(Column $column)
+    {
+        // $this->isValidcolumn([$column]);
+        $keyColumn = $this->getKeysOnColumns([$column])[$column->getTitle()];
+
+        $total = null;
+        foreach ($this->data as $key => $row) {
+            if (!in_array($key, $this->keysSubTotal)) {
+                $value = $row[$keyColumn];
+                if (is_string($value)) {
+                    continue;
+                }
+                if ($value instanceof DateInterval) {
+                    $total = $total ?? new DateTime('00:00');
+                    $total->add($value);
+                    continue;
+                }
+                $total = $total ?? 0;
+                $total += $value;
+            }
+        }
+        return $total;
     }
 
     private function getTotal(array $keysColumn, $value, array $total)
@@ -186,43 +295,42 @@ final class PdfDataset extends AbstractDataset
         $this->keysSubTotal[] = array_key_last($this->data);
     }
 
-
-    /**
-     * Возращает готовую строку, шаблон берётся
-     * из $templateRow, вместо %0, %1 ... %N
-     * Поставляет $total, важно чтобы кол-во элементов name_colums
-     * совпадало с аргументами и $total
-     *
-     * @param array $nameColumns Имя столбцов из таблицы(по полю какому делать итог)
-     * @param string $templateRow Шаблон строки
-     * @param array $total Массив итогов, поставляется вместо %0, %1
-     * @return string
-     */
-    private function getPrepareTemplate(
-        array $nameColumns,
-        string $templateRow,
-        array $total
-    ): string {
-        $this->isValidTemplate($nameColumns, $templateRow);
-        $pattern = [];
-        $replacements = [];
-        foreach ($nameColumns as $key => $value) {
-            $pattern[] = "/%$key/";
-            // dd(preg_match("/%$key/", $templateRow));
-            if ($total[$value] instanceof DateTime) {
-                $nowTime = new DateTime('00:00');
-                $duration = $nowTime->diff($total[$value]);
-                if ($duration->m > 0)
-                    $replacements[] = $duration->format(self::DURATION_MOUNT_DAY_TIME_FROMAT);
-                elseif ($duration->d > 0)
-                    $replacements[] = $duration->format(self::DURATION_DAY_TIME_FROMAT);
-                else
-                    $replacements[] = $duration->format(self::DURATION_TIME_FROMAT);
-                continue;
-            }
-            $replacements[] = $total[$value];
-        }
-        $str = preg_replace($pattern, $replacements, $templateRow);
-        return $str;
-    }
+    // /**
+    //  * Возращает готовую строку, шаблон берётся
+    //  * из $templateRow, вместо %0, %1 ... %N
+    //  * Поставляет $total, важно чтобы кол-во элементов name_colums
+    //  * совпадало с аргументами и $total
+    //  *
+    //  * @param array $nameColumns Имя столбцов из таблицы(по полю какому делать итог)
+    //  * @param string $templateRow Шаблон строки
+    //  * @param array $total Массив итогов, поставляется вместо %0, %1
+    //  * @return string
+    //  */
+    // private function getPrepareTemplate(
+    //     array $nameColumns,
+    //     string $templateRow,
+    //     array $total
+    // ): string {
+    //     $this->isValidTemplate($nameColumns, $templateRow);
+    //     $pattern = [];
+    //     $replacements = [];
+    //     foreach ($nameColumns as $key => $value) {
+    //         $pattern[] = "/%$key/";
+    //         // dd(preg_match("/%$key/", $templateRow));
+    //         if ($total[$value] instanceof DateTime) {
+    //             $nowTime = new DateTime('00:00');
+    //             $duration = $nowTime->diff($total[$value]);
+    //             if ($duration->m > 0)
+    //                 $replacements[] = $duration->format(self::DURATION_MOUNT_DAY_TIME_FROMAT);
+    //             elseif ($duration->d > 0)
+    //                 $replacements[] = $duration->format(self::DURATION_DAY_TIME_FROMAT);
+    //             else
+    //                 $replacements[] = $duration->format(self::DURATION_TIME_FROMAT);
+    //             continue;
+    //         }
+    //         $replacements[] = $total[$value];
+    //     }
+    //     $str = preg_replace($pattern, $replacements, $templateRow);
+    //     return $str;
+    // }
 }

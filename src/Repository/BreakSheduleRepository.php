@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\BreakShedule;
+use App\Entity\Downtime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,6 +20,22 @@ class BreakSheduleRepository extends ServiceEntityRepository
         parent::__construct($registry, BreakShedule::class);
     }
 
+
+    public function isDowntimeBreak(Downtime $downtime): bool
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->select('')
+            ->where('b.place = :place')
+            ->andWhere('b.cause = :cause')
+            ->setParameter('place', $downtime->getPlace())
+            ->setParameter('cause', $downtime->getCause())
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult();
+
+        return !is_null($qb);
+    }
+    
     // /**
     //  * @return BreakShedule[] Returns an array of BreakShedule objects
     //  */

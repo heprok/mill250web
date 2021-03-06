@@ -90,7 +90,6 @@ export default {
       tab: null,
       cause: {
         headers: [
-          { text: "Код", value: "code" },
           { text: "Имя", value: "name" },
           {
             text: "Группа",
@@ -107,7 +106,6 @@ export default {
       },
       place: {
         headers: [
-          { text: "Код", value: "code" },
           { text: "Имя", value: "name" },
           {
             text: "Локация",
@@ -124,14 +122,12 @@ export default {
       },
       location: {
         headers: [
-          { text: "Код", value: "code" },
           { text: "Имя", value: "name" },
           { text: "Действия", value: "actions", edited: false },
         ],
       },
       group: {
         headers: [
-          { text: "Код", value: "code" },
           { text: "Имя", value: "name" },
           { text: "Действия", value: "actions", edited: false },
         ],

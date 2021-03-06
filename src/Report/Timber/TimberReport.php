@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Report\Timber;
 
 use App\Dataset\PdfDataset;
+use App\Entity\Column;
 use App\Entity\Shift;
 use App\Report\AbstractReport;
 use App\Repository\TimberRepository;
@@ -14,35 +15,41 @@ use App\Entity\SummaryStatMaterial;
 
 final class TimberReport extends AbstractReport
 {
-    private TimberRepository $repository;
-
     /**
      *
      * @param DatePeriod $period
      * @param TimberRepository $repository
      * @param People[] $people
      */
-    public function __construct(DatePeriod $period, TimberRepository $repository, array $people = [], array $sqlWhere = [])
-    {
-        $this->repository = $repository;
-        $this->setLabels([
-            'Порода',
-            'Ø, см',
-            'Длина, м',
-            'Кол-во, шт',
-            'Объём, м³',
-        ]);
+    public function __construct(
+        DatePeriod $period,
+        private TimberRepository $repository,
+        array $people = [],
+        array $sqlWhere = []
+    ) {
         parent::__construct($period, $people, $sqlWhere);
     }
-    
+
     /**
      * @return SummaryStatMaterial[]
      */
     public function getSummaryStatsMaterial(): array
     {
         $summaryStatsMaterial = [];
-        $summaryStatsMaterial['boards'] = new SummaryStatMaterial('Пиломатериалы', $this->repository->getVolumeBoardsByPeriod($this->period, $this->sqlWhere), $this->repository->getCountBoardsByPeriod($this->period, $this->sqlWhere), 'м³', 'шт');
-        $summaryStatsMaterial['timber'] = new SummaryStatMaterial('Брёвна', $this->repository->getVolumeTimberByPeriod($this->period, $this->sqlWhere), $this->repository->getCountTimberByPeriod($this->period, $this->sqlWhere), 'м³', 'шт');
+        $summaryStatsMaterial['boards'] = new SummaryStatMaterial(
+            name: 'Пиломатериалы',
+            value: $this->repository->getVolumeBoardsByPeriod($this->period, $this->sqlWhere),
+            count: $this->repository->getCountBoardsByPeriod($this->period, $this->sqlWhere),
+            suffixValue: 'м³',
+            suffixCount: 'шт'
+        );
+        $summaryStatsMaterial['timber'] = new SummaryStatMaterial(
+            name: 'Брёвна',
+            value: $this->repository->getVolumeTimberByPeriod($this->period, $this->sqlWhere),
+            count: $this->repository->getCountTimberByPeriod($this->period, $this->sqlWhere),
+            suffixValue: 'м³',
+            suffixCount: 'шт'
+        );
 
         return $summaryStatsMaterial;
     }
@@ -61,24 +68,6 @@ final class TimberReport extends AbstractReport
         return $summaryStats;
     }
 
-    protected function getColumnTotal(): array
-    {
-        return [
-            $this->labels[3],
-            $this->labels[4]
-        ];
-    }
-
-    protected function getTextSubTotal(string $name_species, $diam): string
-    {
-        return 'Итог (' . $name_species . ','  . $diam . '){' . (string)(count($this->getLabels()) - count($this->getColumnTotal())) . '}%0{1}%1{1}';
-    }
-
-    protected function getTextTotal(): string
-    {
-        return 'Общий итог{' . (string)(count($this->getLabels()) - count($this->getColumnTotal())) . '}%0{1}%1{1}';
-    }
-
     public function getNameReport(): string
     {
         return "по брёвнам";
@@ -91,8 +80,18 @@ final class TimberReport extends AbstractReport
 
         if (!$timbers)
             die('В данный период нет брёвен');
-        $dataset = new PdfDataset($this->getLabels());
-
+        $mainDataSetColumns = [
+            new Column(title: 'Порода', precentWidth: 30, group: true, align: 'C', total: false),
+            new Column(title: 'Ø, см', precentWidth: 20, group: true, align: 'C', total: false),
+            new Column(title: 'Длина, м', precentWidth: 20, group: false, align: 'C', total: false),
+            new Column(title: 'Кол-во, шт', precentWidth: 15, group: false, align: 'C', total: true),
+            new Column(title: 'Объём, м³', precentWidth: 15, group: false, align: 'R', total: true),
+        ];
+        $mainDataset = new PdfDataset(
+            columns: $mainDataSetColumns,
+            textTotal: 'Общий итог',
+            textSubTotal: 'Итог'
+        );
         $buff['diam'] = -1;
         $buff['name_species'] = '';
 
@@ -105,25 +104,25 @@ final class TimberReport extends AbstractReport
             $volume_boards = (float)$row['volume_boards'];
 
             if (($buff['diam'] != $diam || $buff['name_species'] != $name_species) && $key != 0) {
-                $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal($buff['name_species'], $buff['diam']));
+                $mainDataset->addSubTotal();
             }
 
             $buff['name_species'] = $name_species;
             $buff['diam'] = $diam;
 
-            $dataset->addRow([
+            $mainDataset->addRow([
                 $name_species,
                 $diam,
-                $st_length , //мм в м
+                $st_length, //мм в м
                 $count_timber,
                 $volume_boards
             ]);
         }
-        $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal($buff['name_species'], $buff['diam']));
-        $dataset->addTotal($this->getColumnTotal(), $this->getTextTotal());
+        $mainDataset->addSubTotal();
+        $mainDataset->addTotal();
 
 
-        $this->addDataset($dataset);
+        $this->addDataset($mainDataset);
         return true;
     }
 }

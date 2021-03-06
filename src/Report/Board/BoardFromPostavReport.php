@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Report\Board;
 
 use App\Dataset\PdfDataset;
+use App\Entity\Column;
 use App\Entity\Shift;
 use App\Entity\SummaryStat;
 use App\Entity\SummaryStatMaterial;
@@ -14,25 +15,17 @@ use DatePeriod;
 
 final class BoardFromPostavReport extends AbstractReport
 {
-    private TimberRepository $repository;
-
     /**
      * @param DatePeriod $period
      * @param TimberRepository $repository
      * @param People[] $people
      */
-    public function __construct(DatePeriod $period, TimberRepository $repository, array $people = [], array $sqlWhere = [])
-    {
-        $this->repository = $repository;
-        $this->setLabels([
-            'Постав',
-            'Ø, см',
-            'Порода',
-            'Сечение, мм',
-            'Длина, м',
-            'Кол-во, шт',
-            'Объём, м³'
-        ]);
+    public function __construct(
+        DatePeriod $period,
+        private TimberRepository $repository,
+        array $people = [],
+        array $sqlWhere = []
+    ) {
         parent::__construct($period, $people, $sqlWhere);
     }
 
@@ -62,24 +55,6 @@ final class BoardFromPostavReport extends AbstractReport
         return $summaryStats;
     }
 
-    protected function getColumnTotal(): array
-    {
-        return [
-            $this->labels[5],
-            $this->labels[6]
-        ];
-    }
-
-    protected function getTextSubTotal(string $name_postav): string
-    {
-        return 'Итог ( ' . $name_postav .' ){' . (string)(count($this->getLabels()) - count($this->getColumnTotal())) . '}%0{1}%1{1}';
-    }
-
-    protected function getTextTotal(): string
-    {
-        return 'Общий итог{' . (string)(count($this->getLabels()) - count($this->getColumnTotal())) . '}%0{1}%1{1}';
-    }
-
     public function getNameReport(): string
     {
         return "из постава по пиломатериалам";
@@ -90,7 +65,22 @@ final class BoardFromPostavReport extends AbstractReport
         $timbers = $this->repository->getReportVolumeBoardFromPostavByPeriod($this->getPeriod(), $this->getSqlWhere());
         if (!$timbers)
             die('В данный период нет брёвен');
-        $dataset = new PdfDataset($this->getLabels());
+
+        $mainDataSetColumns = [
+            new Column(title: 'Постав', precentWidth: 30, group: true, align: 'C', total: false),
+            new Column(title: 'Ø, см', precentWidth: 10, group: false, align: 'C', total: false),
+            new Column(title: 'Порода', precentWidth: 18, group: false, align: 'C', total: false),
+            new Column(title: 'Сечение, мм', precentWidth: 11, group: false, align: 'C', total: false),
+            new Column(title: 'Длина, м', precentWidth: 10, group: false, align: 'C', total: false),
+            new Column(title: 'Кол-во, шт', precentWidth: 10, group: false, align: 'C', total: true),
+            new Column(title: 'Объём, м³', precentWidth: 10, group: false, align: 'R', total: true),
+        ];
+        $mainDataset = new PdfDataset(
+            columns: $mainDataSetColumns,
+            textTotal: 'Общий итог',
+            textSubTotal: 'Итог'
+        );
+
         $buff['diam_postav'] = -1;
         $buff['name_species'] = '';
         $buff['name_postav'] = '';
@@ -104,16 +94,16 @@ final class BoardFromPostavReport extends AbstractReport
             $volume_boards = (float)$row['volume_boards'] * $count_board;
 
             if (($buff['diam_postav']  != $diam_postav || $buff['name_postav'] != $name_postav || $buff['name_species'] != $name_species) && $key != 0) {
-                $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal($buff['name_postav'], $buff['diam_postav']));
+                $mainDataset->addSubTotal();
             }
             $buff['name_species'] = $name_species;
             $buff['name_postav'] = $name_postav;
             $buff['diam_postav'] = $diam_postav;
 
-            $dataset->addRow([
+            $mainDataset->addRow([
                 $name_postav,
                 $diam_postav,
-                $name_species, 
+                $name_species,
                 str_replace(['(', ')', ','], ['', '', '×'], $cut),
                 $st_length, //мм в м
                 $count_board,
@@ -121,10 +111,10 @@ final class BoardFromPostavReport extends AbstractReport
             ]);
         }
 
-        $dataset->addSubTotal($this->getColumnTotal(), $this->getTextSubTotal($buff['name_postav'], $buff['diam_postav']));
-        $dataset->addTotal($this->getColumnTotal(), $this->getTextTotal());
+        $mainDataset->addSubTotal();
+        $mainDataset->addTotal();
 
-        $this->addDataset($dataset);
+        $this->addDataset($mainDataset);
 
         return true;
     }

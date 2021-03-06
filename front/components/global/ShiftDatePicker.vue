@@ -59,7 +59,7 @@
             <v-col cols="4">
               <v-date-picker
                 locale="ru-ru"
-                :max="today"
+                :max="today.start"
                 :first-day-of-week="1"
                 v-model="date"
                 full-width
@@ -108,7 +108,7 @@
           <v-row>
             <v-col cols="5">
               <v-date-picker
-                :max="today"
+                :max="today.end"
                 full-width
                 locale="ru-ru"
                 v-model="dates"
@@ -270,7 +270,7 @@ export default {
     },
   },
   beforeMount() {
-    this.date = this.today;
+    this.date = this.today.start;
   },
   computed: {
     textInterval() {
@@ -288,7 +288,12 @@ export default {
       return result;
     },
     today() {
-      return new Date().toISOString().substr(0, 10);
+      let qb = this.$store.getters.TIME_FOR_THE_DAY();
+      qb = {
+        start: qb.start.substring(0, qb.start.length - 9),
+        end: qb.end.substring(0, qb.end.length - 9)
+      }
+      return qb;
     },
   },
   methods: {

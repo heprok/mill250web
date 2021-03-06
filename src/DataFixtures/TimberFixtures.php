@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Bnom;
+use DoctrineExtensions\Types\Bnom;
 use App\Entity\Postav;
 use App\Entity\Species;
 use App\Entity\Timber;

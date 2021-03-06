@@ -2,6 +2,9 @@
 
 namespace App\Report;
 
+use App\Dataset\AbstractDataset;
+use App\Dataset\PdfDataset;
+use App\Dataset\SummaryPdfDataset;
 use App\Entity\Shift;
 use App\Entity\SummaryStat;
 use App\Entity\SummaryStatMaterial;
@@ -14,6 +17,7 @@ use TCPDF;
 abstract class AbstractPdf extends TCPDF
 {
     protected AbstractReport $report;
+    protected PdfDataset $currentDataset;
     private bool $duplicateHeader;
     const COLOR_GRAY = 238;
     const DATETIME_FORMAT = 'd.m.Y H:i:s';
@@ -35,12 +39,6 @@ abstract class AbstractPdf extends TCPDF
         'black' => [0, 0, 0]
     ];
 
-    /**
-     * Задаёт размеры для столбца, указывать в процентах
-     * В сумме должно быть 100
-     * @return int[]
-     */
-    abstract protected function getColumnInPrecent(): array;
     abstract protected function getHeightCell(): int;
     /**
      * Кегль для текста
@@ -48,13 +46,11 @@ abstract class AbstractPdf extends TCPDF
      */
 
     abstract protected function getPointFontText(): int;
-    abstract protected function getAlignForColumns(): array;
     /**
      * Кегль для шапки
      * @return integer
      */
     abstract protected function getPointFontHeader(): int;
-    // abstract protected function paintTable(array $header, array $data);
 
 
     public function __constructor(
@@ -66,7 +62,6 @@ abstract class AbstractPdf extends TCPDF
         $this->SetMargins(self::MARGIN_LEFT, self::MARGIN_TOP);
         $this->SetAutoPageBreak(true, 20);
         $this->SetTitle('Отчёт ' . $this->report->getNameReport() . ' ' . $this->getPeriod()->getStartDate()->format(self::DATETIME_FORMAT));
-        $datasets = $this->report->getDatasets();
         $this->startPageGroup();
         $this->setPrintFooter(false);
         $this->setPrintHeader(false);
@@ -74,13 +69,29 @@ abstract class AbstractPdf extends TCPDF
         $this->SetFont('dejavusans', '', 11);
         $this->SetXY(self::MARGIN_LEFT, self::MARGIN_TOP);
         $this->paintTitle($orientation == 'P');
+        if (count($this->report->getDatasets()) > 1)
+            $this->AddPage();
+
+        $datasets = $this->report->getDatasets();
+        foreach ($datasets as $dataset) {
+            if (get_class($dataset) === SummaryPdfDataset::class) {
+                if ($dataset instanceof SummaryPdfDataset) {
+                    $this->duplicateHeader = false;
+                    $this->currentDataset = $dataset;
+                    $this->paintTableSummary();
+                }
+            }
+            if (get_class($dataset) === PdfDataset::class)
+                $mainDataset = $dataset;
+        }
+        $this->currentDataset = $mainDataset;
         $this->endPage();
         $this->startPageGroup();
         $this->duplicateHeader = $duplicateHeader;
         $this->setPrintFooter(true);
         $this->setPrintHeader(true);
         $this->AddPage();
-        $this->paintTable($this->report->getLabels(), $datasets);
+        $this->paintTable();
     }
 
 
@@ -88,26 +99,23 @@ abstract class AbstractPdf extends TCPDF
      * Возращает ширины для столбцов в мм
      * @return array
      */
-    protected function getPuntForColumns(array $widthColum): array
+    protected function getPuntForColumns(array $widthColums): array
     {
         $widthColumnsInPunt = [];
 
-        foreach ($widthColum as $widthColumn) {
-            $widthColumnsInPunt[] = ($this->getPageWidth() - self::MARGIN_LEFT - self::MARGIN_LEFT) * $widthColumn / 100;
-            // dump($widthColumn / 100);
-            // dump(($this->getPageWidth() - self::MARGIN_LEFT - self::MARGIN_LEFT) * $widthColumn / 100);
+        foreach ($widthColums as $widthColumn) {
+            $widthColumnsInPunt[] = floor(($this->getPageWidth() - self::MARGIN_LEFT - self::MARGIN_LEFT) * $widthColumn / 100);
         }
-        // dd($widthColumnsInPunt);
         return $widthColumnsInPunt;
     }
 
 
     protected function getWidthColumnForSpan(int $rowspan): int
     {
-        $puntColumns = $this->getPuntForColumns($this->getColumnInPrecent());
+        $puntColumns = $this->getPuntForColumns($this->currentDataset->getWidthInPrecent());
         $result = 0;
         for ($i = 0; $i < $rowspan; $i++) {
-            $result += $puntColumns[$i];
+            $result += floor($puntColumns[$i]);
         }
         return $result;
     }
@@ -146,9 +154,8 @@ abstract class AbstractPdf extends TCPDF
         $this->Ln();
         $this->ln();
         if ($this->duplicateHeader) {
-
-            $header = $this->report->getLabels();
-            $puntColumns = $this->getPuntForColumns($this->getColumnInPrecent());
+            $header = $this->currentDataset->getNameColumns();
+            $puntColumns = $this->getPuntForColumns($this->currentDataset->getWidthInPrecent());
             $num_headers = count($header);
             for ($i = 0; $i < $num_headers; ++$i) {
                 $this->Cell($puntColumns[$i], $this->getHeightCell(), $header[$i], 1, 0, 'C', 1);
@@ -195,6 +202,23 @@ abstract class AbstractPdf extends TCPDF
         return $this->report->getNameReportTranslit() . '_' . $this->report->getPeriod()->getStartDate()->format(self::DATETIME_FORMAT_FOR_DOWNLOAD) . '.pdf';
     }
 
+
+    private function paintTableSummary()
+    {
+        $dataset = $this->currentDataset;
+        if ($dataset instanceof SummaryPdfDataset) {
+            $this->SetFillColor(self::COLOR_GRAY);
+            $this->SetTextColor(0);
+            $this->SetDrawColor(0, 0, 0);
+            $this->SetFont('', 'B', 14);
+            $widthPage = $this->getPageWidth();
+            $this->Cell($widthPage - self::MARGIN_LEFT * 2, 10, $dataset->getNameSummary(), 0, 1, 'C');
+
+            $this->paintTable();
+            $this->ln();
+        }
+    }
+
     /**
      * Рисует данные в таблице
      *
@@ -202,24 +226,23 @@ abstract class AbstractPdf extends TCPDF
      * @param PdfDataset[] $data
      * @return void
      */
-    protected function paintTable(array $header, array $data)
+    protected function paintTable()
     {
-        $count_dataset = count($data);
-        $count_labels = count($this->report->getLabels());
-        $puntColumns = $this->getPuntForColumns($this->getColumnInPrecent());
-        $alignForColmns = $this->getAlignForColumns();
+        // $count_dataset = count($data);
+        $headers = $this->currentDataset->getNameColumns();
+        $count_labels = count($headers);
+        $puntColumns = $this->getPuntForColumns($this->currentDataset->getWidthInPrecent());
+        $alignForColmns = $this->currentDataset->getAlignForColumns();
         // Colors, line width and bold font
         $this->SetFillColor(self::COLOR_GRAY);
         $this->SetTextColor(0);
         $this->SetDrawColor(0, 0, 0);
-
         $this->SetLineWidth(0.3);
         $this->SetFont('', 'B', $this->getPointFontHeader());
         // Header
         if (!$this->duplicateHeader) {
-            $num_headers = count($header);
-            for ($i = 0; $i < $num_headers; ++$i) {
-                $this->Cell($puntColumns[$i], $this->getHeightCell(), $header[$i], 1, 0, 'C', 1);
+            for ($i = 0; $i < $count_labels; ++$i) {
+                $this->Cell($puntColumns[$i], $this->getHeightCell(), $headers[$i], 1, 0, 'C', 1);
             }
             $this->Ln();
         }
@@ -230,9 +253,9 @@ abstract class AbstractPdf extends TCPDF
         $this->SetFont('', '', $this->getPointFontText());
         // Data
         // $fill = 0;
-        for ($i = 0; $i < $count_dataset; $i++) {
-            $keys_sub_total = $data[$i]->getKeysSubTotal();
-            $data = $data[$i]->getData();
+        if ($this->currentDataset instanceof PdfDataset) {
+            $keys_sub_total = $this->currentDataset->getKeysSubTotal();
+            $data = $this->currentDataset->getData();
             foreach ($data as $key => $row) {
                 if (!in_array($key, $keys_sub_total)) {
                     for ($j = 0; $j < $count_labels; $j++) {
@@ -269,9 +292,9 @@ abstract class AbstractPdf extends TCPDF
                     $this->Ln();
                 }
             }
-            // $this->setPage(1);
-            // $this->SetY(self::MARGIN_LEFT + 10);
         }
+        // $this->setPage(1);
+        // $this->SetY(self::MARGIN_LEFT + 10);
         // $this->Cell(array_sum($puntColumns), 0, '', 'T');
     }
     private function isInterval(string $interval): bool
@@ -295,15 +318,15 @@ abstract class AbstractPdf extends TCPDF
         //paint circle right top 
         $circleMill = $package->getUrl('build/images/circleMill.svg');
         $this->ImageSVG($circleMill, $widthPage - 60, $thirtPage, 80, 0, '', 'L', false, 0, 0);
-        
+
         $logotypeBig = $package->getUrl('build/images/logotypeBig.svg');
 
         $this->ImageSVG($logotypeBig, self::MARGIN_LEFT, self::MARGIN_TOP / 2, self::WIDTH_LOGO_BIG, 0, 'www.techno-les.com', 'L', false, 0, 0);
         // $this->ImageSVG($logotypeBig, $widthPage - self::WIDTH_LOGO_BIG - self::MARGIN_LEFT / 2, self::MARGIN_TOP / 2, self::WIDTH_LOGO_BIG, 0, 'www.techno-les.com', 'L', false, 0, 0);
-        
+
         $siberiaGroupLogo = $package->getUrl('build/images/siberiaGroupLogo.svg');
         $this->ImageSVG($siberiaGroupLogo, $widthPage - 100 - self::MARGIN_LEFT / 2, self::MARGIN_TOP / 2, 100, 0, '', 'L', false, 0, 0);
-        
+
 
         $this->SetFontSize(50);
         $this->SetXY(self::MARGIN_LEFT, $thirtPage);
