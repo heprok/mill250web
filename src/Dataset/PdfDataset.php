@@ -216,20 +216,20 @@ class PdfDataset extends AbstractDataset
         $totalColumns = $this->getTotalColumns();
         $groupColumns = $this->getGroupColumns();
         $keysColumnTotal = $this->getKeysOnColumns($totalColumns);
-        $keysColumnGroup = $this->getKeysOnColumns($groupColumns);
+        $keysColumnGroup = array_values($this->getKeysOnColumns($groupColumns));
         $data_array_reserve = array_reverse($this->data);
         $countData = count($this->data);
         $total = [];
-        $stringSubTotal = $this->textSubTotal;
         //подсчёт снизу вверх, итогов до ключа в keysSubTotal
+        $stringSubTotal = $this->textSubTotal;
 
         foreach ($data_array_reserve as $key => $value) {
-            if ($countData == 1 || in_array($countData - $key, $this->keysSubTotal)) {
-                $stringSubTotal .= '(';
-                foreach ($keysColumnGroup as $key) {
-                    $stringSubTotal .= $value[$key] . ($key + 1 == count($keysColumnGroup)  ? ')' : ', ');
+            if ((!$this->keysSubTotal && $key == 0 ) || in_array($countData - $key, $this->keysSubTotal)) {
+                if($keysColumnGroup) $stringSubTotal .= '(';
+                foreach ($keysColumnGroup as $keyArray => $keyColumn) {
+                    $stringSubTotal .= $value[$keyColumn] . ($keyArray + 1 == count($keysColumnGroup)  ? ')' : ', ');
                 }
-                if ($countData !== 1)
+                if ($this->keysSubTotal)
                     break;
             }
             $total = $this->getTotal($keysColumnTotal, $value, $total);
