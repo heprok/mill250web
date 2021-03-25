@@ -16,48 +16,49 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 /**
  * @ORM\Entity(repositoryClass=EventRepository::class)
  * @ORM\Table(name="mill.event")
- * @ApiResource(
- *      collectionOperations={"get"},
- *      itemOperations={"get"},
- *      normalizationContext={"groups"={"event:read"}},
- *      denormalizationContext={"groups"={"event:write"}}
- * )
- * @ApiFilter(SearchFilter::class, properties={"type": "partial", "source": "partial"})
- * @ApiFilter(DateFilter::class, properties={"drecTimestampKey"})
  * @ORM\HasLifecycleCallbacks()
  */
+#[ApiFilter(SearchFilter::class, properties: ["type" => "partial", "source" => "partial"])]
+#[ApiFilter(DateFilter::class, properties: ["drecTimestampKey"])]
+#[
+    ApiResource(
+        collectionOperations: ["get"],
+        itemOperations: ["get"],
+        normalizationContext: ["groups" => ["event:read"]],
+        denormalizationContext: ["groups" => ["event:write"]]
+    )
+]
 class Event
 {
-
     private DateTime $drec;
-    
+
     /**
      * @ORM\Id
      * @ORM\Column(name="drec", type="string",
      *      options={"comment":"Начало события"})
-     * @ApiProperty(identifier=true)
-     * @Groups({"event:read"})
      */
+    #[ApiProperty(identifier: true)]
+    #[Groups(["event:read"])]
     private $drecTimestampKey;
 
     /**
      * @ORM\ManyToOne(targetEntity=EventType::class)
      * @ORM\JoinColumn(nullable=false, name="type")
-     * @Groups({"event:read"})
      */
+    #[Groups(["event:read"])]
     private $type;
 
     /**
      * @ORM\ManyToOne(targetEntity=EventSource::class)
      * @ORM\JoinColumn(nullable=false, name="source")
-     * @Groups({"event:read"})
      */
+    #[Groups(["event:read"])]
     private $source;
 
     /**
      * @ORM\Column(type="string", length=128)
-     * @Groups({"event:read"})
      */
+    #[Groups(["event:read"])]
     private $text;
 
     public function getDrecTimestampKey(): ?int
@@ -70,17 +71,13 @@ class Event
         return $this->drec;
     }
 
-    /**
-     * @Groups({"event:read"})
-     */
+    #[Groups(["event:read"])]
     public function getStart(): ?string
     {
         return $this->drec->format(BaseEntity::DATETIME_FOR_FRONT);
     }
 
-    /**
-     * @Groups({"event:read"})
-     */
+    #[Groups(["event:read"])]
     public function getStartTime(): ?string
     {
         return $this->drec->format(BaseEntity::TIME_FOR_FRONT);
@@ -89,8 +86,8 @@ class Event
     /**
      * @ORM\Column(type="smallint", 
      *      options={"comment", "Код ошибки"})
-     * @Groups({"event:read"})
      */
+    #[Groups(["event:read"])]
     private ?int $code;
 
     public function setDrec(\DateTimeInterface $drec): self
@@ -105,11 +102,11 @@ class Event
         return $this->type;
     }
 
-    public function getCode() :?int
+    public function getCode(): ?int
     {
         return $this->code;
     }
-    
+
     public function setType(?EventType $type): self
     {
         $this->type = $type;
@@ -161,8 +158,8 @@ class Event
         $entityManager = $event->getEntityManager();
         $connection = $entityManager->getConnection();
         $platform = $connection->getDatabasePlatform();
-        $this->drec = DateTime::createFromFormat($platform->getDateTimeTzFormatString(), $this->drecTimestampKey) ?: 
-            \DateTime::createFromFormat($platform->getDateTimeFormatString(), $this->drecTimestampKey) ?: 
-                \DateTime::createFromFormat(BaseEntity::DATE_SECOND_FORMAT_DB, $this->drecTimestampKey);
+        $this->drec = DateTime::createFromFormat($platform->getDateTimeTzFormatString(), $this->drecTimestampKey) ?:
+            \DateTime::createFromFormat($platform->getDateTimeFormatString(), $this->drecTimestampKey) ?:
+            \DateTime::createFromFormat(BaseEntity::DATE_SECOND_FORMAT_DB, $this->drecTimestampKey);
     }
 }

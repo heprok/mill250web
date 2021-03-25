@@ -13,34 +13,35 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass=LengthRepository::class)
  * @ORM\Table(name="mill.length",
  *      options={"comment":"Cтандартные длины"})
- * @ApiResource(
- *      collectionOperations={"get", "post"},
- *      itemOperations={"get", "put", "delete"},
- *      normalizationContext={"groups"={"length:read"}},
- *      denormalizationContext={"groups"={"length:write"}, "disable_type_enforcement"=true}
- * )
  */
+#[
+ApiResource(
+    collectionOperations: ["get", "post"],
+    itemOperations: ["get", "put", "delete"],
+    normalizationContext: ["groups" => ["length:read"]],
+    denormalizationContext: ["groups" => ["length:write"], "disable_type_enforcement" => true]
+)]
 class Length
 {
     /**
      * @ORM\Id()
      * @ORM\Column(type="integer")
-     * @Groups({"length:read", "length:write"})
      */
+    #[Groups(["length:read", "length:write"])]
     private int $standard;
 
     /**
      * @ORM\Column(type="integer",
      *      options={"comment":"Минимальная граница диапзаона не включая, мм"})
-     * @Groups({"length:read", "length:write"})
      */
+    #[Groups(["length:read", "length:write"])]
     private int $minimum;
 
     /**
      * @ORM\Column(type="integer",
      *      options={"comment":"Максимальная граница диапзаона не включая, мм"})
-     * @Groups({"length:read", "length:write"})
      */
+    #[Groups(["length:read", "length:write"])]
     private int $maximum;
 
     public function __construct(int $standard)
@@ -70,8 +71,8 @@ class Length
         $this->minimum = $minimum;
 
         return $this;
-    }    
-    
+    }
+
     public function getMaximum(): ?int
     {
         return $this->maximum;

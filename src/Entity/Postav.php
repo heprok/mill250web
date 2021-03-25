@@ -12,21 +12,23 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass=PostavRepository::class)
  * @ORM\Table(name="mill.postav",
  *      options={"comment":"Таблица поставов в формате JSON"})
- * @ApiResource(
- *      collectionOperations={"get"},
- *      itemOperations={"get"},
- *      normalizationContext={"groups"={"postav:read"}},
- *      denormalizationContext={"groups"={"postav:write"}}
- * )
  */
+#[
+    ApiResource(
+        collectionOperations: ["get"],
+        itemOperations: ["get"],
+        normalizationContext: ["groups" => ["postav:read"]],
+        denormalizationContext: ["groups" => ["postav:write"]]
+    )
+]
 class Postav
 {
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"postav:read"})
      */
+    #[Groups(["postav:read"])]
     private int $id;
 
     /**
@@ -91,9 +93,7 @@ class Postav
         return $this->postav;
     }
 
-    /**
-     * @Groups({"postav:read"})
-     */
+    #[Groups(["postav:read"])]
     public function getName(): string
     {
         return $this->postav['name'] != '' ? $this->postav['name'] :  $this->comm;
