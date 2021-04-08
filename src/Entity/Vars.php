@@ -24,7 +24,7 @@ ApiResource(
 #[ApiFilter(SearchFilter::class, properties: ["name" => "exact"])]
 class Vars
 {
-    /**
+    /** 
      * @ORM\Id
      * @ORM\Column(type="string",length=64,
      *      options={"comment":"Ключ"})

@@ -4,25 +4,19 @@
       <v-col cols="12">
         <crud-table
           title="Список пород"
-          url-api='/species'
+          url-api="/species"
           icon="mdi-pine-tree"
           :headers="headers"
           isCheckPass
           is-crud
         >
-        <template #[`item.fir`]="{ item }">
-        <v-simple-checkbox
-          v-model="item.fir"
-          disabled
-        />
-      </template>
+          <template #[`item.fir`]="{ item }">
+            <v-simple-checkbox v-model="item.fir" disabled />
+          </template>
 
-      <template #[`item.enabled`]="{ item }">
-        <v-simple-checkbox
-          v-model="item.enabled"
-          disabled
-        />
-      </template>
+          <template #[`item.enabled`]="{ item }">
+            <v-simple-checkbox v-model="item.enabled" disabled />
+          </template>
         </crud-table>
       </v-col>
     </v-row>
@@ -30,12 +24,9 @@
 </template>
 
 <script>
-
-
-
 export default {
   name: "manual_species_dashboard",
-  
+
   data() {
     return {
       headers: [
@@ -46,7 +37,7 @@ export default {
           value: "id",
         },
         { text: "Название", value: "name" },
-        { text: "Хвойное", type: 'bool', value: "fir" },
+        { text: "Хвойное", type: "bool", value: "fir" },
         { text: "Включен", type: "bool", value: "enabled" },
         { text: "Действия", value: "actions", edited: false },
       ],

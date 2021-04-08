@@ -67,12 +67,12 @@ final class DowntimeReport extends AbstractReport
             $columnDurationInMain = new Column(title: 'Длит-ност', precentWidth: 10, group: false, align: 'C',  total: true),
         ];
 
-        $groupDatatsetColumns = [
+        $groupDatasetColumns = [
             new Column(title: 'Группа', precentWidth: 40, group: false, align: 'R', total: false),
             $columndDurationInGroup = new Column(title: 'Длительность', precentWidth: 30, group: false, align: 'C', total: true),
             new Column(title: '% от длит. простоев', precentWidth: 30, group: false, align: 'C', total: true),
         ];
-        $techDatatsetColumns = [
+        $techDatasetColumns = [
             new Column(title: 'Место', precentWidth: 20, group: false, align: 'C', total: false),
             new Column(title: 'Причина', precentWidth: 20, group: false, align: 'C', total: false),
             new Column(title: 'Начало', precentWidth: 20, group: false, align: 'C', total: false),
@@ -82,12 +82,12 @@ final class DowntimeReport extends AbstractReport
 
         $groupSummaryPdfDataset = new SummaryPdfDataset(
             nameSummary: 'Группы простоев',
-            columns: $groupDatatsetColumns,
+            columns: $groupDatasetColumns,
             textTotal: 'Итого',
         );
         $techSummaryPdfDataset = new SummaryPdfDataset(
             nameSummary: 'Технологические простои',
-            columns: $techDatatsetColumns,
+            columns: $techDatasetColumns,
             textTotal: 'Общая продолжительность',
             textSubTotal: 'Длительность простоя за день'
         );

@@ -220,20 +220,29 @@ class PdfDataset extends AbstractDataset
         $data_array_reserve = array_reverse($this->data);
         $countData = count($this->data);
         $total = [];
-        //подсчёт снизу вверх, итогов до ключа в keysSubTotal
         $stringSubTotal = $this->textSubTotal;
 
-        foreach ($data_array_reserve as $key => $value) {
-            if ((!$this->keysSubTotal && $key == 0 ) || in_array($countData - $key, $this->keysSubTotal)) {
-                if($keysColumnGroup) $stringSubTotal .= '(';
+        for ($i = max(empty($this->keysSubTotal) ? [-1] : $this->keysSubTotal) + 1; $i < count($this->data); $i++) {
+            if ((!$this->keysSubTotal && $i == 0) || in_array($i - 1, $this->keysSubTotal)) {
+                if ($keysColumnGroup) $stringSubTotal .= '(';
                 foreach ($keysColumnGroup as $keyArray => $keyColumn) {
-                    $stringSubTotal .= $value[$keyColumn] . ($keyArray + 1 == count($keysColumnGroup)  ? ')' : ', ');
+                    $stringSubTotal .= $this->data[$i][$keyColumn] . ($keyArray + 1 == count($keysColumnGroup)  ? ')' : ', ');
                 }
-                if ($this->keysSubTotal)
-                    break;
             }
-            $total = $this->getTotal($keysColumnTotal, $value, $total);
+            $total = $this->getTotal($keysColumnTotal, $this->data[$i], $total);
         }
+        // foreach ($data_array_reserve as $key => $value) {
+        //     // if(count($this->keysSubTotal) == 2) dd($data_array_reserve);
+        //     if ((!$this->keysSubTotal && $key == 0) || in_array($countData - $key, $this->keysSubTotal)) {
+        //         if ($keysColumnGroup) $stringSubTotal .= '(';
+        //         foreach ($keysColumnGroup as $keyArray => $keyColumn) {
+        //             $stringSubTotal .= $value[$keyColumn] . ($keyArray + 1 == count($keysColumnGroup)  ? ')' : ', ');
+        //         }
+        //         if ($this->keysSubTotal)
+        //             break;
+        //     }
+        //     $total = $this->getTotal($keysColumnTotal, $value, $total);
+        // }
         $stringSubTotal .= "{" . (string)($this->getCountColumn() - count($totalColumns)) . '}';
 
         foreach ($total as $value) {
