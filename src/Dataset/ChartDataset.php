@@ -6,24 +6,16 @@ namespace App\Dataset;
 
 final class ChartDataset extends AbstractDataset
 {
-    private string $backgroundColor;
-    private string $borderColor;
-    private string $pointBorderColor;
-    private string $pointBackgroundColor;
-    private int $borderWidth;
-    private string $label;
-    private bool $fill;
-
-    public function __construct(string $label)
-    {
-        $this->label = $label;
-        $this->backgroundColor = '#007bff';
-        $this->pointBackgroundColor = 'white';
-        $this->pointBorderColor = 'white';
-        $this->borderColor = '#FC2525';
-        $this->borderWidth = 1;
+    public function __construct(
+        private string $label,
+        private string $borderColor = '#FC2525',
+        private string $backgroundColor = '#007bff',
+        private string $pointBorderColor = 'white',
+        private string $pointBackgroundColor = 'white',
+        private int $borderWidth = 1,
+        private bool $fill = false,
+    ) {
         $this->data = [];
-        $this->fill = false;
     }
 
     public function __serialize(): array
@@ -38,6 +30,11 @@ final class ChartDataset extends AbstractDataset
             'borderWidth' => $this->getBorderWidth(),
             'data' => $this->getData(),
         ];
+    }
+
+    public function setData(array $data)
+    {
+        $this->data = $data;
     }
 
     public function getBackgroundColor(): string
@@ -92,7 +89,7 @@ final class ChartDataset extends AbstractDataset
     {
         return $this->borderWidth;
     }
-    
+
     public function setBorderWidth(int $borderWidth): self
     {
         $this->borderWidth = $borderWidth;
