@@ -8,8 +8,8 @@ final class ChartDataset extends AbstractDataset
 {
     public function __construct(
         private string $label,
-        private string $borderColor = '#FC2525',
         private string $backgroundColor = '#007bff',
+        private string $borderColor = '#000',
         private string $pointBorderColor = 'white',
         private string $pointBackgroundColor = 'white',
         private int $borderWidth = 1,
