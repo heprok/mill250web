@@ -233,7 +233,7 @@ export default {
   },
   watch: {
     query(val) {
-      console.log(val);
+      // console.log(val);
     },
     dates() {
       // if (this.dates.length == 0) return;
