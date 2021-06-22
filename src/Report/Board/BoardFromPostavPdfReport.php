@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Report\Board;
 
-use App\Report\AbstractPdf;
+use Tlc\ReportBundle\Report\AbstractPdf;
 use Tlc\ReportBundle\Report\AbstractReport;
 
 final class BoardFromPostavPdfReport extends AbstractPdf

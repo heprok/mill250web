@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Tlc\ReportBundle\Report\AbstractReport;
-use App\Report\Event\EventPdfReport;
-use App\Report\Event\AlertEventReport;
+use Tlc\ManualBundle\Report\Event\EventPdfReport;
+use Tlc\ManualBundle\Report\Event\AlertEventReport;
 use App\Repository\EventRepository;
 use App\Repository\PeopleRepository;
 use App\Repository\ShiftRepository;

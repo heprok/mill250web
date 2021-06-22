@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Report\Timber;
 
-use App\Dataset\PdfDataset;
+use Tlc\ReportBundle\Dataset\PdfDataset;
 use Tlc\ReportBundle\Entity\BaseEntity;;
-use App\Entity\Column;
-use App\Entity\SummaryStat;
-use App\Entity\SummaryStatMaterial;
+use Tlc\ReportBundle\Entity\Column;
+use Tlc\ReportBundle\Entity\SummaryStat;
+use Tlc\ReportBundle\Entity\SummaryStatMaterial;
 use App\Entity\Timber;
 use Tlc\ReportBundle\Report\AbstractReport;
 use App\Repository\TimberRepository;

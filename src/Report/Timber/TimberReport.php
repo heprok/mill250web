@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Report\Timber;
 
-use App\Dataset\PdfDataset;
-use App\Entity\Column;
+use Tlc\ReportBundle\Dataset\PdfDataset;
+use Tlc\ReportBundle\Entity\Column;
 use App\Entity\Shift;
 use Tlc\ReportBundle\Report\AbstractReport;
 use App\Repository\TimberRepository;
 use DatePeriod;
-use App\Entity\SummaryStat;
-use App\Entity\SummaryStatMaterial;
+use Tlc\ReportBundle\Entity\SummaryStat;
+use Tlc\ReportBundle\Entity\SummaryStatMaterial;
 
 final class TimberReport extends AbstractReport
 {
