@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Report\Timber;
 
 use App\Report\AbstractPdf;
-use App\Report\AbstractReport;
+use Tlc\ReportBundle\Report\AbstractReport;
 
 final class TimberPdfReport extends AbstractPdf
 {

@@ -2,11 +2,9 @@
 
 namespace App\Identifier;
 
-use ApiPlatform\Core\Exception\InvalidIdentifierException;
-use App\Entity\BaseEntity;
-use App\Entity\Downtime;
 use DateTime;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Tlc\ReportBundle\Entity\BaseEntity;
 
 final class DrecNormalizer implements DenormalizerInterface
 {

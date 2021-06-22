@@ -46,6 +46,9 @@
     "doctrine/dbal": {
         "version": "2.12.1"
     },
+    "doctrine/deprecations": {
+        "version": "v0.5.3"
+    },
     "doctrine/doctrine-bundle": {
         "version": "2.0",
         "recipe": {
@@ -122,12 +125,6 @@
     "laminas/laminas-code": {
         "version": "4.0.0"
     },
-    "laminas/laminas-eventmanager": {
-        "version": "3.3.0"
-    },
-    "laminas/laminas-zendframework-bridge": {
-        "version": "1.1.1"
-    },
     "monolog/monolog": {
         "version": "2.2.0"
     },
@@ -175,6 +172,9 @@
     },
     "qipsius/tcpdf-bundle": {
         "version": "2.0.2"
+    },
+    "salamek/php-daterange": {
+        "version": "v1.0.1"
     },
     "symfony/asset": {
         "version": "v5.2.3"
@@ -316,6 +316,9 @@
     "symfony/orm-pack": {
         "version": "v2.0.0"
     },
+    "symfony/password-hasher": {
+        "version": "v5.3.2"
+    },
     "symfony/polyfill-intl-grapheme": {
         "version": "v1.22.0"
     },
@@ -331,6 +334,9 @@
     "symfony/polyfill-php80": {
         "version": "v1.22.0"
     },
+    "symfony/polyfill-php81": {
+        "version": "v1.23.0"
+    },
     "symfony/profiler-pack": {
         "version": "v1.0.5"
     },
@@ -339,6 +345,9 @@
     },
     "symfony/property-info": {
         "version": "v5.2.3"
+    },
+    "symfony/proxy-manager-bridge": {
+        "version": "v5.2.10"
     },
     "symfony/routing": {
         "version": "5.1",
@@ -479,6 +488,12 @@
     },
     "tlc/doctrineextensions": {
         "version": "9999999-dev"
+    },
+    "tlc/manual-bundle": {
+        "version": "0.1.0"
+    },
+    "tlc/report-bundle": {
+        "version": "0.1.0"
     },
     "twig/twig": {
         "version": "v3.3.0"

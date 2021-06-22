@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\BreakShedule;
-use App\Report\AbstractReport;
-use App\Report\Downtime\DowntimePdfReport;
-use App\Report\Downtime\DowntimeReport;
+use Tlc\ReportBundle\Report\AbstractReport;
+use Tlc\ManualBundle\Report\Downtime\DowntimePdfReport;
+use Tlc\ManualBundle\Report\Downtime\DowntimeReport;
 use App\Repository\BreakSheduleRepository;
 use App\Repository\DowntimeRepository;
 use App\Repository\PeopleRepository;

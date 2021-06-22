@@ -257,7 +257,7 @@ export default {
       let end = value + "T23:59:59";
       let config = {
         params: {
-          startTimestampKey: start + "..." + end,
+          period: start + "..." + end,
         },
       };
 

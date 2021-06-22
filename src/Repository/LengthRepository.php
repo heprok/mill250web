@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Length;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Tlc\ManualBundle\Repository\StandardLengthRepository as BaseStandardLengthRepository;
 
 /**
  * @method Length|null find($id, $lockMode = null, $lockVersion = null)
@@ -12,39 +13,11 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Length[]    findAll()
  * @method Length[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class LengthRepository extends ServiceEntityRepository
+class LengthRepository extends BaseStandardLengthRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Length::class);
+        $this->nameClass = Length::class;
+        parent::__construct($registry);
     }
-
-    // /**
-    //  * @return Length[] Returns an array of Length objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('l')
-            ->andWhere('l.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('l.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Length
-    {
-        return $this->createQueryBuilder('l')
-            ->andWhere('l.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

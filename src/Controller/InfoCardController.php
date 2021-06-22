@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\BaseEntity;
+use Tlc\ReportBundle\Entity\BaseEntity;
 use App\Entity\Downtime;
 use App\Repository\ShiftRepository;
 use App\Entity\Shift;
@@ -157,8 +157,8 @@ class InfoCardController extends AbstractController
 
         $cause = $lastDowntime->getCause();
 
-        $startTime = $lastDowntime->getDrec();
-        $endTime = $lastDowntime->getFinish();
+        $startTime = $lastDowntime->getStartDate();
+        $endTime = $lastDowntime->getFinishDate();
         $nowTime = new DateTime();
         // BaseEntity::intervalToString()
         $duration = $endTime ? BaseEntity::intervalToString($endTime->diff($startTime, true)) : 'Продолжается(' . BaseEntity::intervalToString($nowTime->diff($startTime, true)) . ')';
@@ -186,7 +186,7 @@ class InfoCardController extends AbstractController
             $result['shifts'][$key]['idOperator'] = $shift->getPeople()->getId();
             $result['shifts'][$key]['fioOperator'] = $shift->getPeople()->getFio();
             $result['shifts'][$key]['start'] = $shift->getStart();
-            $result['shifts'][$key]['end'] = $shift->getStop() ? $shift->getStop()->format(BaseEntity::DATE_FORMAT_DB) : date(BaseEntity::DATE_FORMAT_DB); 
+            $result['shifts'][$key]['end'] = $shift->getStopDate() ? $shift->getStopDate()->format(BaseEntity::DATE_FORMAT_DB) : date(BaseEntity::DATE_FORMAT_DB); 
             $result['shifts'][$key]['volumeBoards'] = round($this->timberRepository->getVolumeBoardsByPeriod($shift->getPeriod()), BaseEntity::PRECISION_FOR_FLOAT);
             $result['shifts'][$key]['downtime'] = $this->downtimeRepository->getTotalDowntimeByPeriod($shift->getPeriod());
         }

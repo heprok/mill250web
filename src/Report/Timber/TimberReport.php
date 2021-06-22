@@ -7,7 +7,7 @@ namespace App\Report\Timber;
 use App\Dataset\PdfDataset;
 use App\Entity\Column;
 use App\Entity\Shift;
-use App\Report\AbstractReport;
+use Tlc\ReportBundle\Report\AbstractReport;
 use App\Repository\TimberRepository;
 use DatePeriod;
 use App\Entity\SummaryStat;

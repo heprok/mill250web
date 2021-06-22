@@ -33,7 +33,7 @@ class TimberRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('t')
             ->where('t.drec BETWEEN :start AND :end')
             ->setParameter('start', $period->getStartDate()->format(DATE_RFC3339_EXTENDED))
-            ->setParameter('end', $period->getEndDate()->format(DATE_RFC3339_EXTENDED))
+            ->setParameter('end', $period->end ? $period->getEndDate()->format(DATE_RFC3339_EXTENDED) : date(DATE_RFC3339_EXTENDED))
             ->leftJoin('t.species', 's')
             ->leftJoin('t.postav', 'p');
 
@@ -105,7 +105,7 @@ class TimberRepository extends ServiceEntityRepository
         ";
         $params = [
             'start' => $period->getStartDate()->format(DATE_RFC3339_EXTENDED),
-            'end' => $period->getEndDate()->format(DATE_RFC3339_EXTENDED),
+            'end' => $period->end ? $period->getEndDate()->format(DATE_RFC3339_EXTENDED) : date(DATE_RFC3339_EXTENDED),
         ];
         $query = $this->getEntityManager()->getConnection()->prepare($sql);
         $query->execute($params);
@@ -128,7 +128,7 @@ class TimberRepository extends ServiceEntityRepository
         ";
         $params = [
             'start' => $period->getStartDate()->format(DATE_RFC3339_EXTENDED),
-            'end' => $period->getEndDate()->format(DATE_RFC3339_EXTENDED),
+            'end' => $period->end ? $period->getEndDate()->format(DATE_RFC3339_EXTENDED) : date(DATE_RFC3339_EXTENDED),
         ];
         $query = $this->getEntityManager()->getConnection()->prepare($sql);
         $query->execute($params);
@@ -150,7 +150,7 @@ class TimberRepository extends ServiceEntityRepository
         ";
         $params = [
             'start' => $period->getStartDate()->format(DATE_RFC3339_EXTENDED),
-            'end' => $period->getEndDate()->format(DATE_RFC3339_EXTENDED),
+            'end' => $period->end ? $period->getEndDate()->format(DATE_RFC3339_EXTENDED) : date(DATE_RFC3339_EXTENDED),
         ];
         $query = $this->getEntityManager()->getConnection()->prepare($sql);
         $query->execute($params);
@@ -209,7 +209,7 @@ class TimberRepository extends ServiceEntityRepository
         ";
         $params = [
             'start' => $period->getStartDate()->format(DATE_RFC3339_EXTENDED),
-            'end' => $period->getEndDate()->format(DATE_RFC3339_EXTENDED),
+            'end' => $period->end ? $period->getEndDate()->format(DATE_RFC3339_EXTENDED) : date(DATE_RFC3339_EXTENDED),
         ];
         $query = $this->getEntityManager()->getConnection()->prepare($sql);
         $query->execute($params);
@@ -325,7 +325,7 @@ class TimberRepository extends ServiceEntityRepository
         ";
         $params = [
             'start' => $period->getStartDate()->format(DATE_RFC3339_EXTENDED),
-            'end' => $period->getEndDate()->format(DATE_RFC3339_EXTENDED),
+            'end' => $period->end ? $period->getEndDate()->format(DATE_RFC3339_EXTENDED) : date(DATE_RFC3339_EXTENDED),
         ];
         $query = $this->getEntityManager()->getConnection()->prepare($sql);
         $query->execute($params);

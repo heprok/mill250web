@@ -9,7 +9,7 @@ use App\Entity\Column;
 use App\Entity\Shift;
 use App\Entity\SummaryStat;
 use App\Entity\SummaryStatMaterial;
-use App\Report\AbstractReport;
+use Tlc\ReportBundle\Report\AbstractReport;
 use App\Repository\TimberRepository;
 use DatePeriod;
 

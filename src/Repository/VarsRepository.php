@@ -19,17 +19,6 @@ class VarsRepository extends ServiceEntityRepository
         parent::__construct($registry, Vars::class);
     }
 
-    
-    public function findOneByName(string $name): ?Vars
-    {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.name = :val')
-            ->setParameter('val', $name)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-
     // /**
     //  * @return Vars[] Returns an array of Vars objects
     //  */
@@ -47,15 +36,13 @@ class VarsRepository extends ServiceEntityRepository
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?Vars
+    public function findOneByName(string $name): ?Vars
     {
         return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere('v.name = :val')
+            ->setParameter('val', $name)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
 }

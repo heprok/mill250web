@@ -8,11 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ORM\Entity(repositoryClass=PostavRepository::class)
- * @ORM\Table(name="mill.postav",
- *      options={"comment":"Таблица поставов в формате JSON"})
- */
+
+#[ORM\Entity(repositoryClass: PostavRepository::class)]
+#[ORM\Table(schema: "mill", name: "postav", options: ["comment" => "Таблица поставов в формате JSON"])]
 #[
     ApiResource(
         collectionOperations: ["get"],
@@ -23,35 +21,23 @@ use Symfony\Component\Serializer\Annotation\Groups;
 ]
 class Postav
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+
+    #[ORM\Id()]
+    #[ORM\GeneratedValue()]
+    #[ORM\Column(type: "integer")]
     #[Groups(["postav:read"])]
     private int $id;
 
-    /**
-     * @ORM\Column(type="datetime",
-     *      options={"comment":"Время создания"})
-     */
+    #[ORM\Column(type: "datetime", options: ["comment" => "Время создания"])]
     private $drec;
 
-    /**
-     * @ORM\Column(type="text", nullable=true,
-     *      options={"comment":"Примечание"})
-     */
+    #[ORM\Column(type: "text", nullable: true, options: ["comment" => "Примечание"])]
     private $comm;
 
-    /**
-     * @ORM\Column(type="json")
-     */
+    #[ORM\Column(type: "json")]
     private $postav = [];
 
-    /**
-     * @ORM\Column(type="boolean",
-     *      options={"default":"true"})
-     */
+    #[ORM\Column(type: "boolean", options: ["default" => "true"])]
     private $enabled;
 
     public function __construct()

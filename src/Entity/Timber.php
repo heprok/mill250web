@@ -4,92 +4,57 @@ namespace App\Entity;
 
 use App\Repository\TimberRepository;
 use Doctrine\ORM\Mapping as ORM;
-/**
- * @ORM\Entity(repositoryClass=TimberRepository::class)
- * @ORM\Table(name="mill.timber",
- *      options={"comment":"Брёвна"})
- */
+
+#[ORM\Entity(repositoryClass: TimberRepository::class)]
+#[ORM\Table(schema: "mill", name: "timber", options: ["comment" => "Брёвна"])]
 class Timber
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="bigint")
-     */
+
+    #[ORM\Id()]
+    #[ORM\GeneratedValue()]
+    #[ORM\Column(type: "bigint")]
     private $id;
 
-    /**
-     * @ORM\Column(type="integer",
-     *      options={"comment":"Сканер ID"})
-     */
+    #[ORM\Column(type: "integer", options: ["comment" => "Сканер ID"])]
     private $scid;
 
-    /**
-     * @ORM\Column(type="datetime",
-     *      options={"comment":"Время записи"})
-     */
+    #[ORM\Column(type: "datetime", options: ["comment" => "Время записи"])]
     private $drec;
 
-    /**
-     * @ORM\Column(type="float",
-     *      options={"comment":"Диаметр вершины, мм"})
-     */
+
+    #[ORM\Column(type: "float", options: ["comment" => "Диаметр вершины, мм"])]
     private $top;
 
-    /**
-     * @ORM\Column(type="float",
-     *      options={"comment":"Диаметр комля, мм"})
-     */
+
+    #[ORM\Column(type: "float", options: ["comment" => "Диаметр комля, мм"])]
     private $butt;
 
-
-    /**
-     * @ORM\Column(type="float",
-     *      options={"comment":"Сбег вершины, мм/м2"})
-     */
+    #[ORM\Column(type: "float", options: ["comment" => "Сбег вершины, мм/м2"])]
     private $top_taper;
 
-    /**
-     * @ORM\Column(type="float",
-     *      options={"comment":"Сбег комля, мм"})
-     */
+    #[ORM\Column(type: "float", options: ["comment" => "Сбег комля, мм"])]
     private $butt_taper;
 
-    /**
-     * @ORM\Column(type="integer",
-     *      options={"comment":"Длина бревна, мм"})
-     */
+    #[ORM\Column(type: "integer", options: ["comment" => "Длина бревна, мм"])]
     private $length;
 
-    /**
-     * @ORM\Column(type="float",
-     *      options={"comment":"Кривизна, %"})
-     */
+    #[ORM\Column(type: "float", options: ["comment" => "Кривизна, %"])]
     private $sweep;
 
-    /**
-     * @ORM\Column(type="float",
-     *      options={"comment":"Учётный диаметр по ГОСТ, см"})
-     */
+
+    #[ORM\Column(type: "float", options: ["comment" => "Учётный диаметр по ГОСТ, см"])]
     private $diam;
 
-    /**
-     * @ORM\Column(type="bnom[]")
-     *      options={"comment":"Номинальные размеры досок })
-     */
+    #[ORM\Column(type: "bnom[]", options: ["comment" => "Номинальные размеры досок"])]
     private $boards;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Postav::class)
-     */
+
+    #[ORM\ManyToOne(targetEntity: Postav::class)]
     private $postav;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Species::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Species::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $species;
-
 
     public function getId(): ?int
     {

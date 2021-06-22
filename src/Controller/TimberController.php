@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Report\AbstractReport;
+use Tlc\ReportBundle\Report\AbstractReport;
 use App\Report\Timber\RegistryTimberPdfReport;
 use App\Report\Timber\RegistryTimberReport;
 use App\Report\Timber\TimberFromPostavPdfReport;
