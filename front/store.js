@@ -11,7 +11,7 @@ export default new Vuex.Store({
     isNextDay: true,
     timeForTheDay: '08:00:00',
     isAdmin: false,
-    timezone: 'Asia/Irkutsk',
+    timezone: 'Europe/Moscow',
     apiEntryPoint: '/api',
     durationCard: JSON.parse(localStorage.getItem('durationCard') || "{}")
   },

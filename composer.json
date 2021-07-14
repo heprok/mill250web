@@ -5,16 +5,16 @@
     "prefer-stable": true,
     "repositories": [        
         {
-            "type": "path",
-            "url": "/home/ok/prj/library/php/DoctrineExtensions"
+            "type": "vcs",
+            "url": "git@github.com:technolescom/DoctrineExtensions.git"
         },
         {
-            "type": "path",
-            "url": "/home/ok/prj/sobr-ii/web/bundles/ManualBundle"
+            "type": "vcs",
+            "url": "git@github.com:technolescom/ManualBundle.git"
         },
         {
-            "type": "path",
-            "url": "/home/ok/prj/sobr-ii/web/bundles/ReportBundle"
+            "type": "vcs",
+            "url": "git@github.com:technolescom/ReportBundle.git"
         }
     ],
     "require": {
@@ -46,7 +46,7 @@
         "symfony/webpack-encore-bundle": "^1.7",
         "symfony/yaml": "5.3.*",
         "tlc/doctrineextensions": "master",
-        "tlc/manual-bundle": "^0.1.0"
+        "tlc/manual-bundle": "master"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",
