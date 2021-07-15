@@ -4,7 +4,7 @@
       <v-col cols="12">
         <crud-table
           title="Список стандартных длин"
-          url-api='/lengths'
+          url-api='/standard_lengths'
           icon="mdi-format-line-spacing"
           :headers="headers"
           isCheckPass

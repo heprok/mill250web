@@ -273,7 +273,7 @@ export default {
         label: "Длина, мм.",
         nameTable: "",
       };
-      Axios.get(this.$store.state.apiEntryPoint + "/lengths")
+      Axios.get(this.$store.state.apiEntryPoint + "/standard_lengths")
         .then((response) => {
           let data = response.data["hydra:member"];
           rule.options = data.map((length) => {

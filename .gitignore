@@ -19,4 +19,5 @@
 npm-debug.log
 webmill.7z
 yarn-error.log
+*.7z
 ###< symfony/webpack-encore-bundle ###
