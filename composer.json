@@ -46,7 +46,8 @@
         "symfony/webpack-encore-bundle": "^1.7",
         "symfony/yaml": "5.3.*",
         "tlc/doctrineextensions": "master",
-        "tlc/manual-bundle": "master"
+        "tlc/manual-bundle": "master",
+        "tlc/report-bundle": "master"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",
